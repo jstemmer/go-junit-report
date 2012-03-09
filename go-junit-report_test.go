@@ -1,19 +1,23 @@
 package main
 
 import (
+	"bytes"
+	"io/ioutil"
 	"os"
 	"testing"
 )
 
 type TestCase struct {
-	name           string
-	expectedReport Report
+	name       string
+	reportName string
+	report     *Report
 }
 
 var testCases []TestCase = []TestCase{
 	{
-		name: "01-pass.txt",
-		expectedReport: Report{
+		name:       "01-pass.txt",
+		reportName: "01-report.xml",
+		report: &Report{
 			Packages: []Package{
 				{
 					Name: "package/name",
@@ -37,8 +41,9 @@ var testCases []TestCase = []TestCase{
 		},
 	},
 	{
-		name: "02-fail.txt",
-		expectedReport: Report{
+		name:       "02-fail.txt",
+		reportName: "02-report.xml",
+		report: &Report{
 			Packages: []Package{
 				{
 					Name: "package/name",
@@ -79,7 +84,7 @@ func TestParser(t *testing.T) {
 			t.Fatalf("Report == nil")
 		}
 
-		expected := testCase.expectedReport
+		expected := testCase.report
 		if len(report.Packages) != len(expected.Packages) {
 			t.Fatalf("Report packages == %d, want %d", len(report.Packages), len(expected.Packages))
 		}
@@ -118,6 +123,26 @@ func TestParser(t *testing.T) {
 					t.Errorf("Test.Output == %s, want %s", test.Output, expTest.Output)
 				}
 			}
+		}
+	}
+}
+
+func TestJUnitFormatter(t *testing.T) {
+	for _, testCase := range testCases {
+		file, err := ioutil.ReadFile("tests/" + testCase.reportName)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		var junitReport bytes.Buffer
+
+		err = JUnitReportXML(testCase.report, &junitReport)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if string(junitReport.Bytes()) != string(file) {
+			t.Fatalf("Report xml ==\n%s, want\n%s", string(junitReport.Bytes()), string(file))
 		}
 	}
 }
