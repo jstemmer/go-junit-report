@@ -6,12 +6,9 @@ import (
 	"os"
 )
 
-type Report struct {
-}
-
 func main() {
 	// Read input
-	report, err := parse(os.Stdin)
+	report, err := Parse(os.Stdin)
 	if err != nil {
 		fmt.Printf("Error reading input: %s\n", err)
 		os.Exit(1)
@@ -23,10 +20,6 @@ func main() {
 		fmt.Printf("Error writing XML: %s\n", err)
 		os.Exit(1)
 	}
-}
-
-func parse(reader io.Reader) (Report, error) {
-	return Report{}, nil
 }
 
 func (r Report) XML(io.Writer) error {
