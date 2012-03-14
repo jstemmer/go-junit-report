@@ -12,7 +12,7 @@ type Result int
 
 const (
 	PASS Result = iota
-	FAIL Result = iota
+	FAIL
 )
 
 type Report struct {
