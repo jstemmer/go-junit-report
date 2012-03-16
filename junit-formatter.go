@@ -74,7 +74,7 @@ func JUnitReportXML(report *Report, w io.Writer) error {
 				ts.Failures += 1
 
 				// TODO: set error message
-				testCase.Failure = ""
+				testCase.Failure = "Failed"
 			}
 
 			ts.TestCases = append(ts.TestCases, testCase)
