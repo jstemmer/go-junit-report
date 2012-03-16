@@ -2,8 +2,11 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"os"
+	"runtime"
+	"strings"
 	"testing"
 )
 
@@ -129,20 +132,31 @@ func TestParser(t *testing.T) {
 
 func TestJUnitFormatter(t *testing.T) {
 	for _, testCase := range testCases {
-		file, err := ioutil.ReadFile("tests/" + testCase.reportName)
+		report, err := loadTestReport(testCase.reportName)
 		if err != nil {
 			t.Fatal(err)
 		}
 
 		var junitReport bytes.Buffer
 
-		err = JUnitReportXML(testCase.report, &junitReport)
-		if err != nil {
+		if err = JUnitReportXML(testCase.report, &junitReport); err != nil {
 			t.Fatal(err)
 		}
 
-		if string(junitReport.Bytes()) != string(file) {
-			t.Fatalf("Report xml ==\n%s, want\n%s", string(junitReport.Bytes()), string(file))
+		if string(junitReport.Bytes()) != report {
+			t.Fatalf("Report xml ==\n%s, want\n%s", string(junitReport.Bytes()), report)
 		}
 	}
+}
+
+func loadTestReport(name string) (string, error) {
+	contents, err := ioutil.ReadFile("tests/" + name)
+	if err != nil {
+		return "", err
+	}
+
+	// replace value="1.0" With actual version
+	report := strings.Replace(string(contents), `value="1.0"`, fmt.Sprintf(`value="%s"`, runtime.Version()), 1)
+
+	return report, nil
 }

@@ -5,16 +5,18 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
+	"runtime"
 	"strings"
 )
 
 type JUnitTestSuite struct {
-	XMLName   xml.Name `xml:"testsuite"`
-	Tests     int      `xml:"tests,attr"`
-	Failures  int      `xml:"failures,attr"`
-	Time      string   `xml:"time,attr"`
-	Name      string   `xml:"name,attr"`
-	TestCases []JUnitTestCase
+	XMLName    xml.Name        `xml:"testsuite"`
+	Tests      int             `xml:"tests,attr"`
+	Failures   int             `xml:"failures,attr"`
+	Time       string          `xml:"time,attr"`
+	Name       string          `xml:"name,attr"`
+	Properties []JUnitProperty `xml:"properties>property,omitempty"`
+	TestCases  []JUnitTestCase
 }
 
 type JUnitTestCase struct {
@@ -25,23 +27,39 @@ type JUnitTestCase struct {
 	Failure   string  `xml:"failure,omitempty"`
 }
 
+type JUnitProperty struct {
+	Name  string `xml:"name,attr"`
+	Value string `xml:"value,attr"`
+}
+
+func NewJUnitProperty(name, value string) JUnitProperty {
+	return JUnitProperty{
+		Name:  name,
+		Value: value,
+	}
+}
+
 func JUnitReportXML(report *Report, w io.Writer) error {
 	suites := []JUnitTestSuite{}
 
 	// convert Report to JUnit test suites
 	for _, pkg := range report.Packages {
 		ts := JUnitTestSuite{
-			Tests:     len(pkg.Tests),
-			Failures:  0,
-			Time:      formatTime(pkg.Time),
-			Name:      pkg.Name,
-			TestCases: []JUnitTestCase{},
+			Tests:      len(pkg.Tests),
+			Failures:   0,
+			Time:       formatTime(pkg.Time),
+			Name:       pkg.Name,
+			Properties: []JUnitProperty{},
+			TestCases:  []JUnitTestCase{},
 		}
 
 		classname := pkg.Name
 		if idx := strings.LastIndex(classname, "/"); idx > -1 && idx < len(pkg.Name) {
 			classname = pkg.Name[idx+1:]
 		}
+
+		// properties
+		ts.Properties = append(ts.Properties, NewJUnitProperty("go.version", runtime.Version()))
 
 		// individual test cases
 		for _, test := range pkg.Tests {
