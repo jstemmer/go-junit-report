@@ -22,7 +22,7 @@ type JUnitTestCase struct {
 	Classname string   `xml:"classname,attr"`
 	Name      string   `xml:"name,attr"`
 	Time      string   `xml:"time,attr"`
-	Failure   *string  `xml:"failure"`
+	Failure   string  `xml:"failure,omitempty"`
 }
 
 func JUnitReportXML(report *Report, w io.Writer) error {
@@ -49,15 +49,14 @@ func JUnitReportXML(report *Report, w io.Writer) error {
 				Classname: classname,
 				Name:      test.Name,
 				Time:      formatTime(test.Time),
-				Failure:   nil,
+				Failure:   "",
 			}
 
 			if test.Result == FAIL {
 				ts.Failures += 1
 
 				// TODO: set error message
-				msg := ""
-				testCase.Failure = &msg
+				testCase.Failure = ""
 			}
 
 			ts.TestCases = append(ts.TestCases, testCase)
