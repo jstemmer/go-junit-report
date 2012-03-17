@@ -97,7 +97,7 @@ func Parse(r io.Reader) (*Report, error) {
 				test.Time = parseTime(matches[3]) * 10
 			} else if strings.HasPrefix(line, "\t") {
 				// test output
-				test.Output = append(test.Output, strings.TrimLeft(line, "\t"))
+				test.Output = append(test.Output, line[1:])
 			}
 		}
 	}
