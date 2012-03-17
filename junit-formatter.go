@@ -20,16 +20,22 @@ type JUnitTestSuite struct {
 }
 
 type JUnitTestCase struct {
-	XMLName   xml.Name `xml:"testcase"`
-	Classname string   `xml:"classname,attr"`
-	Name      string   `xml:"name,attr"`
-	Time      string   `xml:"time,attr"`
-	Failure   string  `xml:"failure,omitempty"`
+	XMLName   xml.Name      `xml:"testcase"`
+	Classname string        `xml:"classname,attr"`
+	Name      string        `xml:"name,attr"`
+	Time      string        `xml:"time,attr"`
+	Failure   *JUnitFailure `xml:"failure,omitempty"`
 }
 
 type JUnitProperty struct {
 	Name  string `xml:"name,attr"`
 	Value string `xml:"value,attr"`
+}
+
+type JUnitFailure struct {
+	Message  string `xml:"message,attr"`
+	Type     string `xml:"type,attr"`
+	Contents string `xml:",chardata"`
 }
 
 func NewJUnitProperty(name, value string) JUnitProperty {
@@ -69,14 +75,17 @@ func JUnitReportXML(report *Report, w io.Writer) error {
 				Classname: classname,
 				Name:      test.Name,
 				Time:      formatTime(test.Time),
-				Failure:   "",
+				Failure:   nil,
 			}
 
 			if test.Result == FAIL {
 				ts.Failures += 1
 
-				// TODO: set error message
-				testCase.Failure = "Failed"
+				testCase.Failure = &JUnitFailure{
+					Message:  "Failed",
+					Type:     "",
+					Contents: strings.Join(test.Output, "\n"),
+				}
 			}
 
 			ts.TestCases = append(ts.TestCases, testCase)

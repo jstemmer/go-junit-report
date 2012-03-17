@@ -4,7 +4,10 @@
 		<property name="go.version" value="1.0"></property>
 	</properties>
 	<testcase classname="name" name="TestOne" time="0.020">
-		<failure>Failed</failure>
+		<failure message="Failed" type="">file_test.go:11: Error message
+file_test.go:11: Longer
+error
+message.</failure>
 	</testcase>
 	<testcase classname="name" name="TestTwo" time="0.130"></testcase>
 </testsuite>

@@ -30,13 +30,13 @@ var testCases []TestCase = []TestCase{
 							Name:   "TestOne",
 							Time:   60,
 							Result: PASS,
-							Output: "",
+							Output: []string{},
 						},
 						{
 							Name:   "TestTwo",
 							Time:   100,
 							Result: PASS,
-							Output: "",
+							Output: []string{},
 						},
 					},
 				},
@@ -56,13 +56,18 @@ var testCases []TestCase = []TestCase{
 							Name:   "TestOne",
 							Time:   20,
 							Result: FAIL,
-							Output: "",
+							Output: []string{
+								"file_test.go:11: Error message",
+								"file_test.go:11: Longer",
+								"error",
+								"message.",
+							},
 						},
 						{
 							Name:   "TestTwo",
 							Time:   130,
 							Result: PASS,
-							Output: "",
+							Output: []string{},
 						},
 					},
 				},
@@ -122,8 +127,10 @@ func TestParser(t *testing.T) {
 					t.Errorf("Test.Result == %d, want %d", test.Result, expTest.Result)
 				}
 
-				if test.Output != expTest.Output {
-					t.Errorf("Test.Output == %s, want %s", test.Output, expTest.Output)
+				testOutput := strings.Join(test.Output, "\n")
+				expTestOutput := strings.Join(expTest.Output, "\n")
+				if testOutput != expTestOutput {
+					t.Errorf("Test.Output ==\n%s, want\n%s", testOutput, expTestOutput)
 				}
 			}
 		}
