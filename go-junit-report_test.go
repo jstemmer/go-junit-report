@@ -69,6 +69,14 @@ var testCases []TestCase = []TestCase{
 							Result: PASS,
 							Output: []string{},
 						},
+						{
+							Name:   "TestThree",
+							Time:   0,
+							Result: SKIP,
+							Output: []string{
+								"Skipped because I'm broken",
+							},
+						},
 					},
 				},
 			},
@@ -82,6 +90,7 @@ func TestParser(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		defer file.Close()
 
 		report, err := Parse(file)
 		if err != nil {
@@ -124,13 +133,13 @@ func TestParser(t *testing.T) {
 				}
 
 				if test.Result != expTest.Result {
-					t.Errorf("Test.Result == %d, want %d", test.Result, expTest.Result)
+					t.Errorf("Test.Result == %#v, want %#v", test, expTest)
 				}
 
 				testOutput := strings.Join(test.Output, "\n")
 				expTestOutput := strings.Join(expTest.Output, "\n")
 				if testOutput != expTestOutput {
-					t.Errorf("Test.Output ==\n%s\n, want\n%s", testOutput, expTestOutput)
+					t.Errorf("Test.Output ==\n%s\n, want\n%s\n", testOutput, expTestOutput)
 				}
 			}
 		}
@@ -151,7 +160,7 @@ func TestJUnitFormatter(t *testing.T) {
 		}
 
 		if string(junitReport.Bytes()) != report {
-			t.Fatalf("Report xml ==\n%s, want\n%s", string(junitReport.Bytes()), report)
+			t.Fatalf("Report xml ==\n%s, want\n%s\n", string(junitReport.Bytes()), report)
 		}
 	}
 }

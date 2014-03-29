@@ -6,6 +6,9 @@
 		message.
 === RUN TestTwo
 --- PASS: TestTwo (0.13 seconds)
+=== RUN TestThree
+--- SKIP: TestThree (0.00 seconds)
+	Skipped because I'm broken
 FAIL
 exit status 1
 FAIL	package/name 0.151s

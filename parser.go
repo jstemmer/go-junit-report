@@ -13,6 +13,7 @@ type Result int
 const (
 	PASS Result = iota
 	FAIL
+	SKIP
 )
 
 type Report struct {
@@ -33,7 +34,7 @@ type Test struct {
 }
 
 var (
-	regexStatus = regexp.MustCompile(`^--- (PASS|FAIL): (.+) \((\d+\.\d+) seconds\)$`)
+	regexStatus = regexp.MustCompile(`^--- (PASS|FAIL|SKIP): (.+) \((\d+\.\d+) seconds\)$`)
 	regexResult = regexp.MustCompile(`^(ok|FAIL)\s+(.+)\s(\d+\.\d+)s$`)
 )
 
@@ -64,7 +65,6 @@ func Parse(r io.Reader) (*Report, error) {
 			if test != nil {
 				tests = append(tests, *test)
 			}
-
 			test = &Test{
 				Name:   line[8:],
 				Result: FAIL,
@@ -87,10 +87,13 @@ func Parse(r io.Reader) (*Report, error) {
 		} else if test != nil {
 			if matches := regexStatus.FindStringSubmatch(line); len(matches) == 4 {
 				// test status
-				if matches[1] == "PASS" {
+				switch matches[1] {
+				case "PASS":
 					test.Result = PASS
-				} else {
+				case "FAIL":
 					test.Result = FAIL
+				case "SKIP":
+					test.Result = SKIP
 				}
 
 				test.Name = matches[2]

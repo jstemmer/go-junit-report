@@ -13,6 +13,7 @@ type JUnitTestSuite struct {
 	XMLName    xml.Name        `xml:"testsuite"`
 	Tests      int             `xml:"tests,attr"`
 	Failures   int             `xml:"failures,attr"`
+	Skips      int             `xml:"skips,attr"`
 	Time       string          `xml:"time,attr"`
 	Name       string          `xml:"name,attr"`
 	Properties []JUnitProperty `xml:"properties>property,omitempty"`
@@ -25,6 +26,7 @@ type JUnitTestCase struct {
 	Name      string        `xml:"name,attr"`
 	Time      string        `xml:"time,attr"`
 	Failure   *JUnitFailure `xml:"failure,omitempty"`
+	Skip      *JUnitSkip    `xml:"skipped,omitempty"`
 }
 
 type JUnitProperty struct {
@@ -33,6 +35,12 @@ type JUnitProperty struct {
 }
 
 type JUnitFailure struct {
+	Message  string `xml:"message,attr"`
+	Type     string `xml:"type,attr"`
+	Contents string `xml:",chardata"`
+}
+
+type JUnitSkip struct {
 	Message  string `xml:"message,attr"`
 	Type     string `xml:"type,attr"`
 	Contents string `xml:",chardata"`
@@ -76,9 +84,10 @@ func JUnitReportXML(report *Report, w io.Writer) error {
 				Name:      test.Name,
 				Time:      formatTime(test.Time),
 				Failure:   nil,
+				Skip:      nil,
 			}
-
-			if test.Result == FAIL {
+			switch test.Result {
+			case FAIL:
 				ts.Failures += 1
 
 				testCase.Failure = &JUnitFailure{
@@ -86,6 +95,15 @@ func JUnitReportXML(report *Report, w io.Writer) error {
 					Type:     "",
 					Contents: strings.Join(test.Output, "\n"),
 				}
+			case SKIP:
+				ts.Skips += 1
+
+				testCase.Skip = &JUnitSkip{
+					Message:  "Skipped",
+					Type:     "",
+					Contents: strings.Join(test.Output, "\n"),
+				}
+
 			}
 
 			ts.TestCases = append(ts.TestCases, testCase)
