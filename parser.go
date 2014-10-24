@@ -13,6 +13,7 @@ type Result int
 const (
 	PASS Result = iota
 	FAIL
+	SKIP
 )
 
 type Report struct {
@@ -87,8 +88,10 @@ func Parse(r io.Reader) (*Report, error) {
 		} else if test != nil {
 			if matches := regexStatus.FindStringSubmatch(line); len(matches) == 4 {
 				// test status
-				if matches[1] == "PASS" || matches[1] == "SKIP" {
+				if matches[1] == "PASS" {
 					test.Result = PASS
+				} else if matches[1] == "SKIP" {
+					test.Result = SKIP
 				} else {
 					test.Result = FAIL
 				}
