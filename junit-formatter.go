@@ -9,6 +9,15 @@ import (
 	"strings"
 )
 
+type JUnitTestSuites struct {
+	XMLName	   xml.Name         `xml:"testsuites"`
+	Tests      int              `xml:"tests,attr"`
+	Failures   int              `xml:"failures,attr"`
+	Time       string           `xml:"time,attr"`
+	Name       string           `xml:"name,attr"`
+        TestSuites []JUnitTestSuite
+}
+
 type JUnitTestSuite struct {
 	XMLName    xml.Name        `xml:"testsuite"`
 	Tests      int             `xml:"tests,attr"`
@@ -34,7 +43,6 @@ type JUnitProperty struct {
 
 type JUnitFailure struct {
 	Message  string `xml:"message,attr"`
-	Type     string `xml:"type,attr"`
 	Contents string `xml:",chardata"`
 }
 
@@ -48,9 +56,19 @@ func NewJUnitProperty(name, value string) JUnitProperty {
 // JUnitReportXML writes a junit xml representation of the given report to w
 // in the format described at http://windyroad.org/dl/Open%20Source/JUnit.xsd
 func JUnitReportXML(report *Report, w io.Writer) error {
-	suites := []JUnitTestSuite{}
+	if len(report.Packages) == 0 {
+		return nil
+	}
+
+	suites := JUnitTestSuites{
+		Name:       report.Packages[0].Name,  // There a better value to use?
+		Tests:      0,
+		Failures:   0,
+		TestSuites: []JUnitTestSuite{},
+	}
 
 	// convert Report to JUnit test suites
+	totalTime := 0
 	for _, pkg := range report.Packages {
 		ts := JUnitTestSuite{
 			Tests:      len(pkg.Tests),
@@ -83,7 +101,6 @@ func JUnitReportXML(report *Report, w io.Writer) error {
 
 				testCase.Failure = &JUnitFailure{
 					Message:  "Failed",
-					Type:     "",
 					Contents: strings.Join(test.Output, "\n"),
 				}
 			}
@@ -91,8 +108,12 @@ func JUnitReportXML(report *Report, w io.Writer) error {
 			ts.TestCases = append(ts.TestCases, testCase)
 		}
 
-		suites = append(suites, ts)
+		totalTime += pkg.Time
+		suites.Tests += ts.Tests
+		suites.Failures += ts.Failures
+		suites.TestSuites = append(suites.TestSuites, ts)
 	}
+	suites.Time = formatTime(totalTime)
 
 	// to xml
 	bytes, err := xml.MarshalIndent(suites, "", "\t")
@@ -104,6 +125,7 @@ func JUnitReportXML(report *Report, w io.Writer) error {
 
 	// remove newline from xml.Header, because xml.MarshalIndent starts with a newline
 	writer.WriteString(xml.Header[:len(xml.Header)-1])
+	writer.WriteByte('\n')
 	writer.Write(bytes)
 	writer.WriteByte('\n')
 	writer.Flush()
