@@ -34,7 +34,7 @@ type Test struct {
 
 var (
 	regexStatus = regexp.MustCompile(`^--- (PASS|FAIL): (.+) \((\d+\.\d+) seconds\)$`)
-	regexResult = regexp.MustCompile(`^(ok|FAIL)\s+(.+)\s(\d+\.\d+)s$`)
+	regexResult = regexp.MustCompile(`^(ok|FAIL)\s+(.+)\s(\d+\.\d+)s`)
 )
 
 func Parse(r io.Reader) (*Report, error) {
