@@ -9,3 +9,11 @@
 FAIL
 exit status 1
 FAIL	package/name 0.151s
+=== RUN TestThree
+--- FAIL: TestThree (0.02 seconds)
+	file_test.go:11: Simpler error message
+=== RUN TestFour
+--- PASS: TestFour (0.13 seconds)
+FAIL
+exit status 1
+FAIL	package/name/other 0.151s

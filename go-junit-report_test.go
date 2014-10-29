@@ -71,6 +71,26 @@ var testCases []TestCase = []TestCase{
 						},
 					},
 				},
+				{
+					Name: "package/name/other",
+					Time: 151,
+					Tests: []Test{
+						{
+							Name:   "TestThree",
+							Time:   20,
+							Result: FAIL,
+							Output: []string{
+								"file_test.go:11: Simpler error message",
+							},
+						},
+						{
+							Name:   "TestFour",
+							Time:   130,
+							Result: PASS,
+							Output: []string{},
+						},
+					},
+				},
 			},
 		},
 	},
@@ -163,7 +183,7 @@ func loadTestReport(name string) (string, error) {
 	}
 
 	// replace value="1.0" With actual version
-	report := strings.Replace(string(contents), `value="1.0"`, fmt.Sprintf(`value="%s"`, runtime.Version()), 1)
+	report := strings.Replace(string(contents), `value="1.0"`, fmt.Sprintf(`value="%s"`, runtime.Version()), len(testCases))
 
 	return report, nil
 }
