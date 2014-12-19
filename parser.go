@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type Result int
@@ -37,7 +38,7 @@ var (
 	regexResult = regexp.MustCompile(`^(ok|FAIL)\s+(.+)\s(\d+\.\d+)s$`)
 )
 
-func Parse(r io.Reader) (*Report, error) {
+func Parse(r io.Reader, isCompiledTest bool, specifiedPackageName string) (*Report, error) {
 	reader := bufio.NewReader(r)
 
 	report := &Report{make([]Package, 0)}
@@ -47,6 +48,8 @@ func Parse(r io.Reader) (*Report, error) {
 
 	// current test
 	var test *Test
+
+	startTime := time.Now()
 
 	// parse lines
 	for {
@@ -100,6 +103,23 @@ func Parse(r io.Reader) (*Report, error) {
 				test.Output = append(test.Output, line[1:])
 			}
 		}
+	}
+
+	endTime := time.Now()
+
+	if test != nil && isCompiledTest {
+		tests = append(tests, *test)
+
+		packageName := "should set by -packageName"
+		if "" != specifiedPackageName {
+			packageName = specifiedPackageName
+		}
+
+		report.Packages = append(report.Packages, Package{
+			Name:  packageName,
+			Time:  int(endTime.Sub(startTime).Seconds()),
+			Tests: tests,
+		})
 	}
 
 	return report, nil
