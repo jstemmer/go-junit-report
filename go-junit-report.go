@@ -1,11 +1,20 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 )
 
+var noXmlHeader bool
+
+func init() {
+	flag.BoolVar(&noXmlHeader, "noXmlHeader", false, "do not print xml header")
+}
+
 func main() {
+	flag.Parse()
+
 	// Read input
 	report, err := Parse(os.Stdin)
 	if err != nil {
@@ -14,7 +23,7 @@ func main() {
 	}
 
 	// Write xml
-	err = JUnitReportXML(report, os.Stdout)
+	err = JUnitReportXML(report, noXmlHeader, os.Stdout)
 	if err != nil {
 		fmt.Printf("Error writing XML: %s\n", err)
 		os.Exit(1)
