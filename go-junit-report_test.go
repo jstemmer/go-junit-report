@@ -74,6 +74,34 @@ var testCases []TestCase = []TestCase{
 			},
 		},
 	},
+	{
+		name:       "03-skip.txt",
+		reportName: "03-report.xml",
+		report: &Report{
+			Packages: []Package{
+				{
+					Name: "package/name",
+					Time: 150,
+					Tests: []Test{
+						{
+							Name:   "TestOne",
+							Time:   20,
+							Result: SKIP,
+							Output: []string{
+								"file_test.go:11: Skip message",
+							},
+						},
+						{
+							Name:   "TestTwo",
+							Time:   130,
+							Result: PASS,
+							Output: []string{},
+						},
+					},
+				},
+			},
+		},
+	},
 }
 
 func TestParser(t *testing.T) {
