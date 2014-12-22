@@ -15,6 +15,7 @@ type TestCase struct {
 	reportName  string
 	report      *Report
 	noXmlHeader bool
+	packageName string
 }
 
 var testCases []TestCase = []TestCase{
@@ -156,6 +157,34 @@ var testCases []TestCase = []TestCase{
 		},
 		noXmlHeader: true,
 	},
+
+	{
+		name:       "07-compiled_test.txt",
+		reportName: "07-report.xml",
+		report: &Report{
+			Packages: []Package{
+				{
+					Name: "test/package",
+					Time: 160,
+					Tests: []Test{
+						{
+							Name:   "TestOne",
+							Time:   60,
+							Result: PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestTwo",
+							Time:   100,
+							Result: PASS,
+							Output: []string{},
+						},
+					},
+				},
+			},
+		},
+		packageName: "test/package",
+	},
 }
 
 func TestParser(t *testing.T) {
@@ -165,7 +194,7 @@ func TestParser(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		report, err := Parse(file)
+		report, err := Parse(file, testCase.packageName)
 		if err != nil {
 			t.Fatalf("error parsing: %s", err)
 		}
