@@ -11,9 +11,10 @@ import (
 )
 
 type TestCase struct {
-	name       string
-	reportName string
-	report     *Report
+	name        string
+	reportName  string
+	report      *Report
+	noXmlHeader bool
 }
 
 var testCases []TestCase = []TestCase{
@@ -128,6 +129,33 @@ var testCases []TestCase = []TestCase{
 			},
 		},
 	},
+	{
+		name:       "05-no_xml_header.txt",
+		reportName: "05-report.xml",
+		report: &Report{
+			Packages: []Package{
+				{
+					Name: "package/name",
+					Time: 160,
+					Tests: []Test{
+						{
+							Name:   "TestOne",
+							Time:   60,
+							Result: PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestTwo",
+							Time:   100,
+							Result: PASS,
+							Output: []string{},
+						},
+					},
+				},
+			},
+		},
+		noXmlHeader: true,
+	},
 }
 
 func TestParser(t *testing.T) {
@@ -200,7 +228,7 @@ func TestJUnitFormatter(t *testing.T) {
 
 		var junitReport bytes.Buffer
 
-		if err = JUnitReportXML(testCase.report, &junitReport); err != nil {
+		if err = JUnitReportXML(testCase.report, testCase.noXmlHeader, &junitReport); err != nil {
 			t.Fatal(err)
 		}
 
