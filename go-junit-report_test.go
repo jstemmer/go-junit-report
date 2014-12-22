@@ -102,6 +102,32 @@ var testCases []TestCase = []TestCase{
 			},
 		},
 	},
+	{
+		name:       "04-go_1_4.txt",
+		reportName: "04-report.xml",
+		report: &Report{
+			Packages: []Package{
+				{
+					Name: "package/name",
+					Time: 160,
+					Tests: []Test{
+						{
+							Name:   "TestOne",
+							Time:   60,
+							Result: PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestTwo",
+							Time:   100,
+							Result: PASS,
+							Output: []string{},
+						},
+					},
+				},
+			},
+		},
+	},
 }
 
 func TestParser(t *testing.T) {
