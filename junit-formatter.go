@@ -52,7 +52,7 @@ func NewJUnitProperty(name, value string) JUnitProperty {
 
 // JUnitReportXML writes a junit xml representation of the given report to w
 // in the format described at http://windyroad.org/dl/Open%20Source/JUnit.xsd
-func JUnitReportXML(report *Report, w io.Writer) error {
+func JUnitReportXML(report *Report, noXmlHeader bool, w io.Writer) error {
 	suites := []JUnitTestSuite{}
 
 	// convert Report to JUnit test suites
@@ -111,7 +111,9 @@ func JUnitReportXML(report *Report, w io.Writer) error {
 
 	writer := bufio.NewWriter(w)
 
-	writer.WriteString(xml.Header)
+	if !noXmlHeader {
+		writer.WriteString(xml.Header)
+	}
 	writer.Write(bytes)
 	writer.WriteByte('\n')
 	writer.Flush()
