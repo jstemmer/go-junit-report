@@ -20,11 +20,16 @@ type JUnitTestSuite struct {
 }
 
 type JUnitTestCase struct {
-	XMLName   xml.Name      `xml:"testcase"`
-	Classname string        `xml:"classname,attr"`
-	Name      string        `xml:"name,attr"`
-	Time      string        `xml:"time,attr"`
-	Failure   *JUnitFailure `xml:"failure,omitempty"`
+	XMLName     xml.Name          `xml:"testcase"`
+	Classname   string            `xml:"classname,attr"`
+	Name        string            `xml:"name,attr"`
+	Time        string            `xml:"time,attr"`
+	SkipMessage *JUnitSkipMessage `xml:"skipped,omitempty"`
+	Failure     *JUnitFailure     `xml:"failure,omitempty"`
+}
+
+type JUnitSkipMessage struct {
+	Message string `xml:"message,attr"`
 }
 
 type JUnitProperty struct {
@@ -86,6 +91,10 @@ func JUnitReportXML(report *Report, w io.Writer) error {
 					Type:     "",
 					Contents: strings.Join(test.Output, "\n"),
 				}
+			}
+
+			if test.Result == SKIP {
+				testCase.SkipMessage = &JUnitSkipMessage{strings.Join(test.Output, "\n")}
 			}
 
 			ts.TestCases = append(ts.TestCases, testCase)

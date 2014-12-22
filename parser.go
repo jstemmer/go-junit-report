@@ -13,6 +13,7 @@ type Result int
 const (
 	PASS Result = iota
 	FAIL
+	SKIP
 )
 
 type Report struct {
@@ -33,7 +34,7 @@ type Test struct {
 }
 
 var (
-	regexStatus = regexp.MustCompile(`^--- (PASS|FAIL): (.+) \((\d+\.\d+) seconds\)$`)
+	regexStatus = regexp.MustCompile(`^--- (PASS|FAIL|SKIP): (.+) \((\d+\.\d+) seconds\)$`)
 	regexResult = regexp.MustCompile(`^(ok|FAIL)\s+(.+)\s(\d+\.\d+)s$`)
 )
 
@@ -89,6 +90,8 @@ func Parse(r io.Reader) (*Report, error) {
 				// test status
 				if matches[1] == "PASS" {
 					test.Result = PASS
+				} else if matches[1] == "SKIP" {
+					test.Result = SKIP
 				} else {
 					test.Result = FAIL
 				}
