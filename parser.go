@@ -38,13 +38,16 @@ var (
 	regexResult = regexp.MustCompile(`^(ok|FAIL)\s+(.+)\s(\d+\.\d+)s$`)
 )
 
-func Parse(r io.Reader) (*Report, error) {
+func Parse(r io.Reader, specifiedPackageName string) (*Report, error) {
 	reader := bufio.NewReader(r)
 
 	report := &Report{make([]Package, 0)}
 
 	// keep track of tests we find
 	tests := make([]Test, 0)
+
+	// sum of tests' time, use this if current test has no result line (when it is compiled test)
+	testsTime := 0
 
 	// current test
 	var test *Test
@@ -85,6 +88,7 @@ func Parse(r io.Reader) (*Report, error) {
 			})
 
 			tests = make([]Test, 0)
+			testsTime = 0
 		} else if test != nil {
 			if matches := regexStatus.FindStringSubmatch(line); len(matches) == 4 {
 				// test status
@@ -97,12 +101,26 @@ func Parse(r io.Reader) (*Report, error) {
 				}
 
 				test.Name = matches[2]
-				test.Time = parseTime(matches[3]) * 10
+				testTime := parseTime(matches[3]) * 10
+				test.Time = testTime
+				testsTime += testTime
 			} else if strings.HasPrefix(line, "\t") {
 				// test output
 				test.Output = append(test.Output, line[1:])
 			}
 		}
+	}
+
+	if test != nil {
+		tests = append(tests, *test)
+	}
+
+	if len(tests) > 0 { //no result line found
+		report.Packages = append(report.Packages, Package{
+			Name:  specifiedPackageName,
+			Time:  testsTime,
+			Tests: tests,
+		})
 	}
 
 	return report, nil
