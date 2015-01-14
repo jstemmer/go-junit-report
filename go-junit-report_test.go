@@ -297,7 +297,7 @@ func loadTestReport(name string) (string, error) {
 	}
 
 	// replace value="1.0" With actual version
-	report := strings.Replace(string(contents), `value="1.0"`, fmt.Sprintf(`value="%s"`, runtime.Version()), 1)
+	report := strings.Replace(string(contents), `value="1.0"`, fmt.Sprintf(`value="%s"`, runtime.Version()), -1)
 
 	return report, nil
 }
