@@ -233,7 +233,7 @@ func TestJUnitFormatter(t *testing.T) {
 		}
 
 		if string(junitReport.Bytes()) != report {
-			t.Fatalf("Report xml ==\n%s, want\n%s", string(junitReport.Bytes()), report)
+			t.Fatalf("Fail: %s Report xml ==\n%s, want\n%s", testCase.name, string(junitReport.Bytes()), report)
 		}
 	}
 }

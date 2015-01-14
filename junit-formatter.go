@@ -9,6 +9,11 @@ import (
 	"strings"
 )
 
+type JUnitTestSuites struct {
+	XMLName xml.Name `xml:"testsuites"`
+	Suites  []JUnitTestSuite
+}
+
 type JUnitTestSuite struct {
 	XMLName    xml.Name        `xml:"testsuite"`
 	Tests      int             `xml:"tests,attr"`
@@ -53,7 +58,7 @@ func NewJUnitProperty(name, value string) JUnitProperty {
 // JUnitReportXML writes a junit xml representation of the given report to w
 // in the format described at http://windyroad.org/dl/Open%20Source/JUnit.xsd
 func JUnitReportXML(report *Report, noXmlHeader bool, w io.Writer) error {
-	suites := []JUnitTestSuite{}
+	suites := JUnitTestSuites{}
 
 	// convert Report to JUnit test suites
 	for _, pkg := range report.Packages {
@@ -100,7 +105,7 @@ func JUnitReportXML(report *Report, noXmlHeader bool, w io.Writer) error {
 			ts.TestCases = append(ts.TestCases, testCase)
 		}
 
-		suites = append(suites, ts)
+		suites.Suites = append(suites.Suites, ts)
 	}
 
 	// to xml
@@ -114,6 +119,7 @@ func JUnitReportXML(report *Report, noXmlHeader bool, w io.Writer) error {
 	if !noXmlHeader {
 		writer.WriteString(xml.Header)
 	}
+
 	writer.Write(bytes)
 	writer.WriteByte('\n')
 	writer.Flush()
