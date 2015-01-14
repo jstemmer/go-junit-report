@@ -156,10 +156,62 @@ var testCases []TestCase = []TestCase{
 		},
 		noXmlHeader: true,
 	},
+	{
+		name:       "06-mixed.txt",
+		reportName: "06-report.xml",
+		report: &Report{
+			Packages: []Package{
+				{
+					Name: "package/name1",
+					Time: 160,
+					Tests: []Test{
+						{
+							Name:   "TestOne",
+							Time:   60,
+							Result: PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestTwo",
+							Time:   100,
+							Result: PASS,
+							Output: []string{},
+						},
+					},
+				},
+				{
+					Name: "package/name2",
+					Time: 151,
+					Tests: []Test{
+						{
+							Name:   "TestOne",
+							Time:   20,
+							Result: FAIL,
+							Output: []string{
+								"file_test.go:11: Error message",
+								"file_test.go:11: Longer",
+								"\terror",
+								"\tmessage.",
+							},
+						},
+						{
+							Name:   "TestTwo",
+							Time:   130,
+							Result: PASS,
+							Output: []string{},
+						},
+					},
+				},
+			},
+		},
+		noXmlHeader: true,
+	},
 }
 
 func TestParser(t *testing.T) {
 	for _, testCase := range testCases {
+		t.Logf("Running: %s", testCase.name)
+
 		file, err := os.Open("tests/" + testCase.name)
 		if err != nil {
 			t.Fatal(err)
