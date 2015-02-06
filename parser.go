@@ -27,7 +27,7 @@ type Report struct {
 type Package struct {
 	Name  string
 	Time  int
-	Tests []Test
+	Tests []*Test
 }
 
 // Test contains the results of a single test.
@@ -52,13 +52,13 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 	report := &Report{make([]Package, 0)}
 
 	// keep track of tests we find
-	var tests []Test
+	var tests []*Test
 
 	// sum of tests' time, use this if current test has no result line (when it is compiled test)
 	testsTime := 0
 
 	// current test
-	var test *Test
+	var cur string
 
 	// parse lines
 	for {
@@ -72,58 +72,56 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 		line := string(l)
 
 		if strings.HasPrefix(line, "=== RUN ") {
-			// start of a new test
-			if test != nil {
-				tests = append(tests, *test)
-			}
-
-			test = &Test{
+			// new test
+			cur = line[8:]
+			tests = append(tests, &Test{
 				Name:   line[8:],
 				Result: FAIL,
 				Output: make([]string, 0),
-			}
+			})
 		} else if matches := regexResult.FindStringSubmatch(line); len(matches) == 4 {
 			// all tests in this package are finished
-			if test != nil {
-				tests = append(tests, *test)
-				test = nil
-			}
-
 			report.Packages = append(report.Packages, Package{
 				Name:  matches[2],
 				Time:  parseTime(matches[3]),
 				Tests: tests,
 			})
 
-			tests = make([]Test, 0)
+			tests = make([]*Test, 0)
+			cur = ""
 			testsTime = 0
-		} else if test != nil {
-			if matches := regexStatus.FindStringSubmatch(line); len(matches) == 4 {
-				// test status
-				if matches[1] == "PASS" {
-					test.Result = PASS
-				} else if matches[1] == "SKIP" {
-					test.Result = SKIP
-				} else {
-					test.Result = FAIL
-				}
-
-				test.Name = matches[2]
-				testTime := parseTime(matches[3]) * 10
-				test.Time = testTime
-				testsTime += testTime
-			} else if strings.HasPrefix(line, "\t") {
-				// test output
-				test.Output = append(test.Output, line[1:])
+		} else if matches := regexStatus.FindStringSubmatch(line); len(matches) == 4 {
+			cur = matches[2]
+			test := findTest(tests, cur)
+			if test == nil {
+				continue
 			}
+
+			// test status
+			if matches[1] == "PASS" {
+				test.Result = PASS
+			} else if matches[1] == "SKIP" {
+				test.Result = SKIP
+			} else {
+				test.Result = FAIL
+			}
+
+			test.Name = matches[2]
+			testTime := parseTime(matches[3]) * 10
+			test.Time = testTime
+			testsTime += testTime
+		} else if strings.HasPrefix(line, "\t") {
+			// test output
+			test := findTest(tests, cur)
+			if test == nil {
+				continue
+			}
+			test.Output = append(test.Output, line[1:])
 		}
 	}
 
-	if test != nil {
-		tests = append(tests, *test)
-	}
-
-	if len(tests) > 0 { // no result line found
+	if len(tests) > 0 {
+		// no result line found
 		report.Packages = append(report.Packages, Package{
 			Name:  pkgName,
 			Time:  testsTime,
@@ -140,4 +138,13 @@ func parseTime(time string) int {
 		return 0
 	}
 	return t
+}
+
+func findTest(tests []*Test, name string) *Test {
+	for i := 0; i < len(tests); i++ {
+		if tests[i].Name == name {
+			return tests[i]
+		}
+	}
+	return nil
 }

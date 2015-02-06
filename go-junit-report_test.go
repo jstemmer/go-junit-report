@@ -27,7 +27,7 @@ var testCases = []TestCase{
 				{
 					Name: "package/name",
 					Time: 160,
-					Tests: []Test{
+					Tests: []*Test{
 						{
 							Name:   "TestZ",
 							Time:   60,
@@ -53,7 +53,7 @@ var testCases = []TestCase{
 				{
 					Name: "package/name",
 					Time: 151,
-					Tests: []Test{
+					Tests: []*Test{
 						{
 							Name:   "TestOne",
 							Time:   20,
@@ -84,7 +84,7 @@ var testCases = []TestCase{
 				{
 					Name: "package/name",
 					Time: 150,
-					Tests: []Test{
+					Tests: []*Test{
 						{
 							Name:   "TestOne",
 							Time:   20,
@@ -112,7 +112,7 @@ var testCases = []TestCase{
 				{
 					Name: "package/name",
 					Time: 160,
-					Tests: []Test{
+					Tests: []*Test{
 						{
 							Name:   "TestOne",
 							Time:   60,
@@ -138,7 +138,7 @@ var testCases = []TestCase{
 				{
 					Name: "package/name",
 					Time: 160,
-					Tests: []Test{
+					Tests: []*Test{
 						{
 							Name:   "TestOne",
 							Time:   60,
@@ -165,7 +165,7 @@ var testCases = []TestCase{
 				{
 					Name: "package/name1",
 					Time: 160,
-					Tests: []Test{
+					Tests: []*Test{
 						{
 							Name:   "TestOne",
 							Time:   60,
@@ -183,7 +183,7 @@ var testCases = []TestCase{
 				{
 					Name: "package/name2",
 					Time: 151,
-					Tests: []Test{
+					Tests: []*Test{
 						{
 							Name:   "TestOne",
 							Time:   20,
@@ -215,7 +215,7 @@ var testCases = []TestCase{
 				{
 					Name: "test/package",
 					Time: 160,
-					Tests: []Test{
+					Tests: []*Test{
 						{
 							Name:   "TestOne",
 							Time:   60,
@@ -233,6 +233,32 @@ var testCases = []TestCase{
 			},
 		},
 		packageName: "test/package",
+	},
+	{
+		name:       "08-parallel.txt",
+		reportName: "08-report.xml",
+		report: &Report{
+			Packages: []Package{
+				{
+					Name: "github.com/dmitris/test-go-junit-report",
+					Time: 440,
+					Tests: []*Test{
+						{
+							Name:   "TestDoFoo",
+							Time:   270,
+							Result: PASS,
+							Output: []string{"cov_test.go:10: DoFoo log 1", "cov_test.go:10: DoFoo log 2"},
+						},
+						{
+							Name:   "TestDoFoo2",
+							Time:   160,
+							Result: PASS,
+							Output: []string{"cov_test.go:21: DoFoo2 log 1", "cov_test.go:21: DoFoo2 log 2"},
+						},
+					},
+				},
+			},
+		},
 	},
 }
 
