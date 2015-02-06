@@ -29,13 +29,13 @@ var testCases []TestCase = []TestCase{
 					Time: 160,
 					Tests: []Test{
 						{
-							Name:   "TestOne",
+							Name:   "TestZ",
 							Time:   60,
 							Result: PASS,
 							Output: []string{},
 						},
 						{
-							Name:   "TestTwo",
+							Name:   "TestA",
 							Time:   100,
 							Result: PASS,
 							Output: []string{},
