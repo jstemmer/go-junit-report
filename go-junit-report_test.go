@@ -14,11 +14,11 @@ type TestCase struct {
 	name        string
 	reportName  string
 	report      *Report
-	noXmlHeader bool
+	noXMLHeader bool
 	packageName string
 }
 
-var testCases []TestCase = []TestCase{
+var testCases = []TestCase{
 	{
 		name:       "01-pass.txt",
 		reportName: "01-report.xml",
@@ -155,7 +155,7 @@ var testCases []TestCase = []TestCase{
 				},
 			},
 		},
-		noXmlHeader: true,
+		noXMLHeader: true,
 	},
 	{
 		name:       "06-mixed.txt",
@@ -205,7 +205,7 @@ var testCases []TestCase = []TestCase{
 				},
 			},
 		},
-		noXmlHeader: true,
+		noXMLHeader: true,
 	},
 	{
 		name:       "07-compiled_test.txt",
@@ -308,7 +308,7 @@ func TestJUnitFormatter(t *testing.T) {
 
 		var junitReport bytes.Buffer
 
-		if err = JUnitReportXML(testCase.report, testCase.noXmlHeader, &junitReport); err != nil {
+		if err = JUnitReportXML(testCase.report, testCase.noXMLHeader, &junitReport); err != nil {
 			t.Fatal(err)
 		}
 

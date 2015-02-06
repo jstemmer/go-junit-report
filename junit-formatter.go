@@ -9,11 +9,14 @@ import (
 	"strings"
 )
 
+// JUnitTestSuites is a collection of JUnit test suites.
 type JUnitTestSuites struct {
 	XMLName xml.Name `xml:"testsuites"`
 	Suites  []JUnitTestSuite
 }
 
+// JUnitTestSuite is a single JUnit test suite which may contain many
+// testcases.
 type JUnitTestSuite struct {
 	XMLName    xml.Name        `xml:"testsuite"`
 	Tests      int             `xml:"tests,attr"`
@@ -24,6 +27,7 @@ type JUnitTestSuite struct {
 	TestCases  []JUnitTestCase
 }
 
+// JUnitTestCase is a single test case with its result.
 type JUnitTestCase struct {
 	XMLName     xml.Name          `xml:"testcase"`
 	Classname   string            `xml:"classname,attr"`
@@ -33,31 +37,27 @@ type JUnitTestCase struct {
 	Failure     *JUnitFailure     `xml:"failure,omitempty"`
 }
 
+// JUnitSkipMessage contains the reason why a testcase was skipped.
 type JUnitSkipMessage struct {
 	Message string `xml:"message,attr"`
 }
 
+// JUnitProperty represents a key/value pair used to define properties.
 type JUnitProperty struct {
 	Name  string `xml:"name,attr"`
 	Value string `xml:"value,attr"`
 }
 
+// JUnitFailure contains data related to a failed test.
 type JUnitFailure struct {
 	Message  string `xml:"message,attr"`
 	Type     string `xml:"type,attr"`
 	Contents string `xml:",chardata"`
 }
 
-func NewJUnitProperty(name, value string) JUnitProperty {
-	return JUnitProperty{
-		Name:  name,
-		Value: value,
-	}
-}
-
-// JUnitReportXML writes a junit xml representation of the given report to w
+// JUnitReportXML writes a JUnit xml representation of the given report to w
 // in the format described at http://windyroad.org/dl/Open%20Source/JUnit.xsd
-func JUnitReportXML(report *Report, noXmlHeader bool, w io.Writer) error {
+func JUnitReportXML(report *Report, noXMLHeader bool, w io.Writer) error {
 	suites := JUnitTestSuites{}
 
 	// convert Report to JUnit test suites
@@ -77,7 +77,7 @@ func JUnitReportXML(report *Report, noXmlHeader bool, w io.Writer) error {
 		}
 
 		// properties
-		ts.Properties = append(ts.Properties, NewJUnitProperty("go.version", runtime.Version()))
+		ts.Properties = append(ts.Properties, JUnitProperty{"go.version", runtime.Version()})
 
 		// individual test cases
 		for _, test := range pkg.Tests {
@@ -89,8 +89,7 @@ func JUnitReportXML(report *Report, noXmlHeader bool, w io.Writer) error {
 			}
 
 			if test.Result == FAIL {
-				ts.Failures += 1
-
+				ts.Failures++
 				testCase.Failure = &JUnitFailure{
 					Message:  "Failed",
 					Type:     "",
@@ -116,7 +115,7 @@ func JUnitReportXML(report *Report, noXmlHeader bool, w io.Writer) error {
 
 	writer := bufio.NewWriter(w)
 
-	if !noXmlHeader {
+	if !noXMLHeader {
 		writer.WriteString(xml.Header)
 	}
 
@@ -130,7 +129,7 @@ func JUnitReportXML(report *Report, noXmlHeader bool, w io.Writer) error {
 func countFailures(tests []Test) (result int) {
 	for _, test := range tests {
 		if test.Result == FAIL {
-			result += 1
+			result++
 		}
 	}
 	return

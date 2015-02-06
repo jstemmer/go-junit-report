@@ -8,24 +8,29 @@ import (
 	"strings"
 )
 
+// Result represents a test result.
 type Result int
 
+// Test result constants
 const (
 	PASS Result = iota
 	FAIL
 	SKIP
 )
 
+// Report is a collection of package tests.
 type Report struct {
 	Packages []Package
 }
 
+// Package contains the test results of a single package.
 type Package struct {
 	Name  string
 	Time  int
 	Tests []Test
 }
 
+// Test contains the results of a single test.
 type Test struct {
 	Name   string
 	Time   int
@@ -38,13 +43,16 @@ var (
 	regexResult = regexp.MustCompile(`^(ok|FAIL)\s+(.+)\s(\d+\.\d+)s$`)
 )
 
-func Parse(r io.Reader, specifiedPackageName string) (*Report, error) {
+// Parse parses go test output from reader r and returns a report with the
+// results. An optional pkgName can be given, which is used in case a package
+// result line is missing.
+func Parse(r io.Reader, pkgName string) (*Report, error) {
 	reader := bufio.NewReader(r)
 
 	report := &Report{make([]Package, 0)}
 
 	// keep track of tests we find
-	tests := make([]Test, 0)
+	var tests []Test
 
 	// sum of tests' time, use this if current test has no result line (when it is compiled test)
 	testsTime := 0
@@ -115,9 +123,9 @@ func Parse(r io.Reader, specifiedPackageName string) (*Report, error) {
 		tests = append(tests, *test)
 	}
 
-	if len(tests) > 0 { //no result line found
+	if len(tests) > 0 { // no result line found
 		report.Packages = append(report.Packages, Package{
-			Name:  specifiedPackageName,
+			Name:  pkgName,
 			Time:  testsTime,
 			Tests: tests,
 		})
