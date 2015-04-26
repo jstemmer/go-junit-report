@@ -148,3 +148,18 @@ func findTest(tests []*Test, name string) *Test {
 	}
 	return nil
 }
+
+// Failures counts the number of failed tests in this report
+func (r *Report) Failures() int {
+	count := 0
+
+	for _, p := range r.Packages {
+		for _, t := range p.Tests {
+			if t.Result == FAIL {
+				count++
+			}
+		}
+	}
+
+	return count
+}
