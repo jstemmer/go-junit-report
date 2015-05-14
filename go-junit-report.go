@@ -4,6 +4,8 @@ import (
 	"flag"
 	"fmt"
 	"os"
+
+	"github.com/jstemmer/go-junit-report/parser"
 )
 
 var (
@@ -22,7 +24,7 @@ func main() {
 	flag.Parse()
 
 	// Read input
-	report, err := Parse(os.Stdin, packageName)
+	report, err := parser.Parse(os.Stdin, packageName)
 	if err != nil {
 		fmt.Printf("Error reading input: %s\n", err)
 		os.Exit(1)
