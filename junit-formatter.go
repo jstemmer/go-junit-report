@@ -78,6 +78,9 @@ func JUnitReportXML(report *Report, noXMLHeader bool, w io.Writer) error {
 
 		// properties
 		ts.Properties = append(ts.Properties, JUnitProperty{"go.version", runtime.Version()})
+		if pkg.CoveragePct != "" {
+			ts.Properties = append(ts.Properties, JUnitProperty{"coverage.statements.pct", pkg.CoveragePct})
+		}
 
 		// individual test cases
 		for _, test := range pkg.Tests {

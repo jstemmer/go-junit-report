@@ -260,6 +260,73 @@ var testCases = []TestCase{
 			},
 		},
 	},
+	{
+		name:       "09-coverage.txt",
+		reportName: "09-report.xml",
+		report: &Report{
+			Packages: []Package{
+				{
+					Name: "package/name",
+					Time: 160,
+					Tests: []*Test{
+						{
+							Name:   "TestZ",
+							Time:   60,
+							Result: PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestA",
+							Time:   100,
+							Result: PASS,
+							Output: []string{},
+						},
+					},
+					CoveragePct: "13.37",
+				},
+			},
+		},
+	},
+	{
+		name:       "10-multipkg-coverage.txt",
+		reportName: "10-report.xml",
+		report: &Report{
+			Packages: []Package{
+				{
+					Name: "package1/foo",
+					Time: 400,
+					Tests: []*Test{
+						{
+							Name:   "TestA",
+							Time:   100,
+							Result: PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestB",
+							Time:   300,
+							Result: PASS,
+							Output: []string{},
+						},
+					},
+					CoveragePct: "10.0",
+				},
+				{
+					Name: "package2/bar",
+					Time: 4200,
+					Tests: []*Test{
+						{
+							Name:   "TestC",
+							Time:   4200,
+							Result: PASS,
+							Output: []string{},
+						},
+					},
+					CoveragePct: "99.8",
+				},
+			},
+		},
+	},
 }
 
 func TestParser(t *testing.T) {
@@ -320,6 +387,9 @@ func TestParser(t *testing.T) {
 				if testOutput != expTestOutput {
 					t.Errorf("Test.Output ==\n%s\n, want\n%s", testOutput, expTestOutput)
 				}
+			}
+			if pkg.CoveragePct != expPkg.CoveragePct {
+				t.Errorf("Package.CoveragePct == %s, want %s", pkg.CoveragePct, expPkg.CoveragePct)
 			}
 		}
 	}
