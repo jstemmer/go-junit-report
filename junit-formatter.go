@@ -7,6 +7,8 @@ import (
 	"io"
 	"runtime"
 	"strings"
+
+	"github.com/jstemmer/go-junit-report/parser"
 )
 
 // JUnitTestSuites is a collection of JUnit test suites.
@@ -57,7 +59,7 @@ type JUnitFailure struct {
 
 // JUnitReportXML writes a JUnit xml representation of the given report to w
 // in the format described at http://windyroad.org/dl/Open%20Source/JUnit.xsd
-func JUnitReportXML(report *Report, noXMLHeader bool, w io.Writer) error {
+func JUnitReportXML(report *parser.Report, noXMLHeader bool, w io.Writer) error {
 	suites := JUnitTestSuites{}
 
 	// convert Report to JUnit test suites
@@ -91,7 +93,7 @@ func JUnitReportXML(report *Report, noXMLHeader bool, w io.Writer) error {
 				Failure:   nil,
 			}
 
-			if test.Result == FAIL {
+			if test.Result == parser.FAIL {
 				ts.Failures++
 				testCase.Failure = &JUnitFailure{
 					Message:  "Failed",
@@ -100,7 +102,7 @@ func JUnitReportXML(report *Report, noXMLHeader bool, w io.Writer) error {
 				}
 			}
 
-			if test.Result == SKIP {
+			if test.Result == parser.SKIP {
 				testCase.SkipMessage = &JUnitSkipMessage{strings.Join(test.Output, "\n")}
 			}
 
@@ -129,9 +131,9 @@ func JUnitReportXML(report *Report, noXMLHeader bool, w io.Writer) error {
 	return nil
 }
 
-func countFailures(tests []Test) (result int) {
+func countFailures(tests []parser.Test) (result int) {
 	for _, test := range tests {
-		if test.Result == FAIL {
+		if test.Result == parser.FAIL {
 			result++
 		}
 	}

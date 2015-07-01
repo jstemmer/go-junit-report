@@ -8,12 +8,14 @@ import (
 	"runtime"
 	"strings"
 	"testing"
+
+	"github.com/jstemmer/go-junit-report/parser"
 )
 
 type TestCase struct {
 	name        string
 	reportName  string
-	report      *Report
+	report      *parser.Report
 	noXMLHeader bool
 	packageName string
 }
@@ -22,22 +24,22 @@ var testCases = []TestCase{
 	{
 		name:       "01-pass.txt",
 		reportName: "01-report.xml",
-		report: &Report{
-			Packages: []Package{
+		report: &parser.Report{
+			Packages: []parser.Package{
 				{
 					Name: "package/name",
 					Time: 160,
-					Tests: []*Test{
+					Tests: []*parser.Test{
 						{
 							Name:   "TestZ",
 							Time:   60,
-							Result: PASS,
+							Result: parser.PASS,
 							Output: []string{},
 						},
 						{
 							Name:   "TestA",
 							Time:   100,
-							Result: PASS,
+							Result: parser.PASS,
 							Output: []string{},
 						},
 					},
@@ -48,16 +50,16 @@ var testCases = []TestCase{
 	{
 		name:       "02-fail.txt",
 		reportName: "02-report.xml",
-		report: &Report{
-			Packages: []Package{
+		report: &parser.Report{
+			Packages: []parser.Package{
 				{
 					Name: "package/name",
 					Time: 151,
-					Tests: []*Test{
+					Tests: []*parser.Test{
 						{
 							Name:   "TestOne",
 							Time:   20,
-							Result: FAIL,
+							Result: parser.FAIL,
 							Output: []string{
 								"file_test.go:11: Error message",
 								"file_test.go:11: Longer",
@@ -68,7 +70,7 @@ var testCases = []TestCase{
 						{
 							Name:   "TestTwo",
 							Time:   130,
-							Result: PASS,
+							Result: parser.PASS,
 							Output: []string{},
 						},
 					},
@@ -79,16 +81,16 @@ var testCases = []TestCase{
 	{
 		name:       "03-skip.txt",
 		reportName: "03-report.xml",
-		report: &Report{
-			Packages: []Package{
+		report: &parser.Report{
+			Packages: []parser.Package{
 				{
 					Name: "package/name",
 					Time: 150,
-					Tests: []*Test{
+					Tests: []*parser.Test{
 						{
 							Name:   "TestOne",
 							Time:   20,
-							Result: SKIP,
+							Result: parser.SKIP,
 							Output: []string{
 								"file_test.go:11: Skip message",
 							},
@@ -96,7 +98,7 @@ var testCases = []TestCase{
 						{
 							Name:   "TestTwo",
 							Time:   130,
-							Result: PASS,
+							Result: parser.PASS,
 							Output: []string{},
 						},
 					},
@@ -107,22 +109,22 @@ var testCases = []TestCase{
 	{
 		name:       "04-go_1_4.txt",
 		reportName: "04-report.xml",
-		report: &Report{
-			Packages: []Package{
+		report: &parser.Report{
+			Packages: []parser.Package{
 				{
 					Name: "package/name",
 					Time: 160,
-					Tests: []*Test{
+					Tests: []*parser.Test{
 						{
 							Name:   "TestOne",
 							Time:   60,
-							Result: PASS,
+							Result: parser.PASS,
 							Output: []string{},
 						},
 						{
 							Name:   "TestTwo",
 							Time:   100,
-							Result: PASS,
+							Result: parser.PASS,
 							Output: []string{},
 						},
 					},
@@ -133,22 +135,22 @@ var testCases = []TestCase{
 	{
 		name:       "05-no_xml_header.txt",
 		reportName: "05-report.xml",
-		report: &Report{
-			Packages: []Package{
+		report: &parser.Report{
+			Packages: []parser.Package{
 				{
 					Name: "package/name",
 					Time: 160,
-					Tests: []*Test{
+					Tests: []*parser.Test{
 						{
 							Name:   "TestOne",
 							Time:   60,
-							Result: PASS,
+							Result: parser.PASS,
 							Output: []string{},
 						},
 						{
 							Name:   "TestTwo",
 							Time:   100,
-							Result: PASS,
+							Result: parser.PASS,
 							Output: []string{},
 						},
 					},
@@ -160,22 +162,22 @@ var testCases = []TestCase{
 	{
 		name:       "06-mixed.txt",
 		reportName: "06-report.xml",
-		report: &Report{
-			Packages: []Package{
+		report: &parser.Report{
+			Packages: []parser.Package{
 				{
 					Name: "package/name1",
 					Time: 160,
-					Tests: []*Test{
+					Tests: []*parser.Test{
 						{
 							Name:   "TestOne",
 							Time:   60,
-							Result: PASS,
+							Result: parser.PASS,
 							Output: []string{},
 						},
 						{
 							Name:   "TestTwo",
 							Time:   100,
-							Result: PASS,
+							Result: parser.PASS,
 							Output: []string{},
 						},
 					},
@@ -183,11 +185,11 @@ var testCases = []TestCase{
 				{
 					Name: "package/name2",
 					Time: 151,
-					Tests: []*Test{
+					Tests: []*parser.Test{
 						{
 							Name:   "TestOne",
 							Time:   20,
-							Result: FAIL,
+							Result: parser.FAIL,
 							Output: []string{
 								"file_test.go:11: Error message",
 								"file_test.go:11: Longer",
@@ -198,7 +200,7 @@ var testCases = []TestCase{
 						{
 							Name:   "TestTwo",
 							Time:   130,
-							Result: PASS,
+							Result: parser.PASS,
 							Output: []string{},
 						},
 					},
@@ -210,22 +212,22 @@ var testCases = []TestCase{
 	{
 		name:       "07-compiled_test.txt",
 		reportName: "07-report.xml",
-		report: &Report{
-			Packages: []Package{
+		report: &parser.Report{
+			Packages: []parser.Package{
 				{
 					Name: "test/package",
 					Time: 160,
-					Tests: []*Test{
+					Tests: []*parser.Test{
 						{
 							Name:   "TestOne",
 							Time:   60,
-							Result: PASS,
+							Result: parser.PASS,
 							Output: []string{},
 						},
 						{
 							Name:   "TestTwo",
 							Time:   100,
-							Result: PASS,
+							Result: parser.PASS,
 							Output: []string{},
 						},
 					},
@@ -237,22 +239,22 @@ var testCases = []TestCase{
 	{
 		name:       "08-parallel.txt",
 		reportName: "08-report.xml",
-		report: &Report{
-			Packages: []Package{
+		report: &parser.Report{
+			Packages: []parser.Package{
 				{
 					Name: "github.com/dmitris/test-go-junit-report",
 					Time: 440,
-					Tests: []*Test{
+					Tests: []*parser.Test{
 						{
 							Name:   "TestDoFoo",
 							Time:   270,
-							Result: PASS,
+							Result: parser.PASS,
 							Output: []string{"cov_test.go:10: DoFoo log 1", "cov_test.go:10: DoFoo log 2"},
 						},
 						{
 							Name:   "TestDoFoo2",
 							Time:   160,
-							Result: PASS,
+							Result: parser.PASS,
 							Output: []string{"cov_test.go:21: DoFoo2 log 1", "cov_test.go:21: DoFoo2 log 2"},
 						},
 					},
@@ -338,7 +340,7 @@ func TestParser(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		report, err := Parse(file, testCase.packageName)
+		report, err := parser.Parse(file, testCase.packageName)
 		if err != nil {
 			t.Fatalf("error parsing: %s", err)
 		}
