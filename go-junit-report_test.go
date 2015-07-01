@@ -265,22 +265,22 @@ var testCases = []TestCase{
 	{
 		name:       "09-coverage.txt",
 		reportName: "09-report.xml",
-		report: &Report{
-			Packages: []Package{
+		report: &parser.Report{
+			Packages: []parser.Package{
 				{
 					Name: "package/name",
 					Time: 160,
-					Tests: []*Test{
+					Tests: []*parser.Test{
 						{
 							Name:   "TestZ",
 							Time:   60,
-							Result: PASS,
+							Result: parser.PASS,
 							Output: []string{},
 						},
 						{
 							Name:   "TestA",
 							Time:   100,
-							Result: PASS,
+							Result: parser.PASS,
 							Output: []string{},
 						},
 					},
@@ -292,22 +292,22 @@ var testCases = []TestCase{
 	{
 		name:       "10-multipkg-coverage.txt",
 		reportName: "10-report.xml",
-		report: &Report{
-			Packages: []Package{
+		report: &parser.Report{
+			Packages: []parser.Package{
 				{
 					Name: "package1/foo",
 					Time: 400,
-					Tests: []*Test{
+					Tests: []*parser.Test{
 						{
 							Name:   "TestA",
 							Time:   100,
-							Result: PASS,
+							Result: parser.PASS,
 							Output: []string{},
 						},
 						{
 							Name:   "TestB",
 							Time:   300,
-							Result: PASS,
+							Result: parser.PASS,
 							Output: []string{},
 						},
 					},
@@ -316,11 +316,11 @@ var testCases = []TestCase{
 				{
 					Name: "package2/bar",
 					Time: 4200,
-					Tests: []*Test{
+					Tests: []*parser.Test{
 						{
 							Name:   "TestC",
 							Time:   4200,
-							Result: PASS,
+							Result: parser.PASS,
 							Output: []string{},
 						},
 					},
