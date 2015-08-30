@@ -40,6 +40,7 @@ type Test struct {
 }
 
 var (
+	regexCase   = regexp.MustCompile(`^=== RUN\s+(\w+)$`)
 	regexStatus   = regexp.MustCompile(`^--- (PASS|FAIL|SKIP): (.+) \((\d+\.\d+)(?: seconds|s)\)$`)
 	regexCoverage = regexp.MustCompile(`^coverage:\s+(\d+\.\d+)%\s+of\s+statements$`)
 	regexResult   = regexp.MustCompile(`^(ok|FAIL)\s+(.+)\s(\d+\.\d+)s(?:\s+coverage:\s+(\d+\.\d+)%\s+of\s+statements)?$`)
@@ -76,11 +77,11 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 
 		line := string(l)
 
-		if strings.HasPrefix(line, "=== RUN ") {
+		if matches := regexCase.FindStringSubmatch(line); len(matches) == 2 {
 			// new test
-			cur = line[8:]
+			cur = matches[1]
 			tests = append(tests, &Test{
-				Name:   line[8:],
+				Name:   matches[1],
 				Result: FAIL,
 				Output: make([]string, 0),
 			})
