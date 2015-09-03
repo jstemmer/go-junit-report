@@ -78,9 +78,9 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 
 		if strings.HasPrefix(line, "=== RUN ") {
 			// new test
-			cur = line[8:]
+			cur = strings.TrimSpace(line[8:])
 			tests = append(tests, &Test{
-				Name:   line[8:],
+				Name:   cur,
 				Result: FAIL,
 				Output: make([]string, 0),
 			})
