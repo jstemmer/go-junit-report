@@ -3,13 +3,12 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"github.com/jstemmer/go-junit-report/parser"
 	"io/ioutil"
 	"os"
 	"runtime"
 	"strings"
 	"testing"
-
-	"github.com/jstemmer/go-junit-report/parser"
 )
 
 type TestCase struct {
@@ -349,6 +348,26 @@ var testCases = []TestCase{
 							Time:   30,
 							Result: parser.PASS,
 							Output: []string{},
+						},
+					},
+				},
+			},
+		},
+	},
+	{
+		name:       "12-failed.txt",
+		reportName: "12-report.xml",
+		report: &parser.Report{
+			Packages: []parser.Package{
+				{
+					Name: "package/flailing",
+					Time: 0,
+					Tests: []*parser.Test{
+						{
+							Name:   "Build",
+							Time:   0,
+							Result: parser.FAIL,
+							Output: []string{"build failed"},
 						},
 					},
 				},

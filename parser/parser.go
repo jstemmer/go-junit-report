@@ -40,9 +40,10 @@ type Test struct {
 }
 
 var (
-	regexStatus   = regexp.MustCompile(`^--- (PASS|FAIL|SKIP): (.+) \((\d+\.\d+)(?: seconds|s)\)$`)
-	regexCoverage = regexp.MustCompile(`^coverage:\s+(\d+\.\d+)%\s+of\s+statements$`)
-	regexResult   = regexp.MustCompile(`^(ok|FAIL)\s+(.+)\s(\d+\.\d+)s(?:\s+coverage:\s+(\d+\.\d+)%\s+of\s+statements)?$`)
+	regexStatus    = regexp.MustCompile(`^--- (PASS|FAIL|SKIP): (.+) \((\d+\.\d+)(?: seconds|s)\)$`)
+	regexCoverage  = regexp.MustCompile(`^coverage:\s+(\d+\.\d+)%\s+of\s+statements$`)
+	regexResult    = regexp.MustCompile(`^(ok|FAIL)\s+(.+)\s(\d+\.\d+)s(?:\s+coverage:\s+(\d+\.\d+)%\s+of\s+statements)?$`)
+	regexBuildFail = regexp.MustCompile(`^FAIL\s+(.+)\s+\[build failed\]$`)
 )
 
 // Parse parses go test output from reader r and returns a report with the
@@ -101,6 +102,18 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 			coveragePct = ""
 			cur = ""
 			testsTime = 0
+		} else if matches := regexBuildFail.FindStringSubmatch(line); len(matches) == 2 {
+			cur = matches[1]
+			report.Packages = append(report.Packages, Package{
+				Name: matches[1],
+				Tests: []*Test{
+					&Test{
+						Name:   "Build",
+						Result: FAIL,
+						Output: []string{"build failed"},
+					},
+				},
+			})
 		} else if matches := regexStatus.FindStringSubmatch(line); len(matches) == 4 {
 			cur = matches[2]
 			test := findTest(tests, cur)
