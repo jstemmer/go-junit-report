@@ -40,9 +40,10 @@ type Test struct {
 }
 
 var (
-	regexStatus   = regexp.MustCompile(`^--- (PASS|FAIL|SKIP): (.+) \((\d+\.\d+)(?: seconds|s)\)$`)
-	regexCoverage = regexp.MustCompile(`^coverage:\s+(\d+\.\d+)%\s+of\s+statements$`)
-	regexResult   = regexp.MustCompile(`^(ok|FAIL)\s+(.+)\s(\d+\.\d+)s(?:\s+coverage:\s+(\d+\.\d+)%\s+of\s+statements)?$`)
+	regexStatus        = regexp.MustCompile(`^--- (PASS|FAIL|SKIP): (.+) \((\d+\.\d+)(?: seconds|s)\)$`)
+	regexGocheckStatus = regexp.MustCompile(`^(PASS|FAIL|SKIP): ([\w,\s-]+\.[A-Za-z]+):([0-9]+): (\w+)\.(\w+)\s+(\d+\.\d+)s$`)
+	regexCoverage      = regexp.MustCompile(`^coverage:\s+(\d+\.\d+)%\s+of\s+statements$`)
+	regexResult        = regexp.MustCompile(`^(ok|FAIL)\s+(.+)\s(\d+\.\d+)s(?:\s+coverage:\s+(\d+\.\d+)%\s+of\s+statements)?$`)
 )
 
 // Parse parses go test output from reader r and returns a report with the
@@ -84,6 +85,16 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 				Result: FAIL,
 				Output: make([]string, 0),
 			})
+		} else if matches := regexGocheckStatus.FindStringSubmatch(line); len(matches) == 7 {
+
+			//populate test
+			tests = append(tests, &Test{
+				Name:   matches[5],
+				Time:   parseTime(matches[6]),
+				Result: parseResult(matches[1]),
+				Output: make([]string, 0),
+			})
+
 		} else if matches := regexResult.FindStringSubmatch(line); len(matches) == 5 {
 			if matches[4] != "" {
 				coveragePct = matches[4]
@@ -108,18 +119,10 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 				continue
 			}
 
-			// test status
-			if matches[1] == "PASS" {
-				test.Result = PASS
-			} else if matches[1] == "SKIP" {
-				test.Result = SKIP
-			} else {
-				test.Result = FAIL
-			}
-
 			test.Name = matches[2]
 			testTime := parseTime(matches[3]) * 10
 			test.Time = testTime
+			test.Result = parseResult(matches[1])
 			testsTime += testTime
 		} else if matches := regexCoverage.FindStringSubmatch(line); len(matches) == 2 {
 			coveragePct = matches[1]
@@ -152,6 +155,17 @@ func parseTime(time string) int {
 		return 0
 	}
 	return t
+}
+
+func parseResult(resultStr string) Result {
+
+	// test status
+	if resultStr == "PASS" {
+		return PASS
+	} else if resultStr == "SKIP" {
+		return SKIP
+	}
+	return FAIL
 }
 
 func findTest(tests []*Test, name string) *Test {

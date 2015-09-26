@@ -1,0 +1,6 @@
+PASS: one_test.go:239: TestSuite.TestOne	0.020s
+PASS: two_test.go:226: TestSuite.TestTwo	0.030s
+OK: 2 passed
+PASS
+coverage: 13.37% of statements
+ok  	package/name	0.050s
