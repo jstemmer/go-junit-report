@@ -355,6 +355,33 @@ var testCases = []TestCase{
 			},
 		},
 	},
+	{
+		name:       "12-gocheck.v.txt",
+		reportName: "12-report.xml",
+		report: &parser.Report{
+			Packages: []parser.Package{
+				{
+					Name: "package/name",
+					Time: 50,
+					Tests: []*parser.Test{
+						{
+							Name:   "TestOne",
+							Time:   20,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestTwo",
+							Time:   30,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+					},
+					CoveragePct: "13.37",
+				},
+			},
+		},
+	},
 }
 
 func TestParser(t *testing.T) {
