@@ -356,8 +356,34 @@ var testCases = []TestCase{
 		},
 	},
 	{
-		name:       "12-go_1_7.txt",
+		name:       "12-multiple.txt",
 		reportName: "12-report.xml",
+		report: &parser.Report{
+			Packages: []parser.Package{
+				{
+					Name: "package/name",
+					Time: 160,
+					Tests: []*parser.Test{
+						{
+							Name:   "TestA",
+							Time:   60,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestA",
+							Time:   100,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+					},
+				},
+			},
+		},
+	},
+	{
+		name:       "13-go_1_7.txt",
+		reportName: "13-report.xml",
 		report: &parser.Report{
 			Packages: []parser.Package{
 				{
