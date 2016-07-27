@@ -155,7 +155,7 @@ func parseTime(time string) int {
 }
 
 func findTest(tests []*Test, name string) *Test {
-	for i := 0; i < len(tests); i++ {
+	for i := len(tests)-1; i >= 0; i-- {
 		if tests[i].Name == name {
 			return tests[i]
 		}
