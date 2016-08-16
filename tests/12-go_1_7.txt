@@ -1,0 +1,26 @@
+=== RUN   TestOne
+=== RUN   TestOne/Child
+=== RUN   TestOne/Child#01
+=== RUN   TestOne/Child=02
+--- PASS: TestOne (0.01s)
+    --- PASS: TestOne/Child (0.02s)
+    --- PASS: TestOne/Child#01 (0.03s)
+    --- PASS: TestOne/Child=02 (0.04s)
+=== RUN   TestTwo
+=== RUN   TestTwo/Child
+=== RUN   TestTwo/Child#01
+=== RUN   TestTwo/Child=02
+--- PASS: TestTwo (0.01s)
+    --- PASS: TestTwo/Child (0.02s)
+    --- PASS: TestTwo/Child#01 (0.03s)
+    --- PASS: TestTwo/Child=02 (0.04s)
+=== RUN   TestThree
+=== RUN   TestThree/a#1
+=== RUN   TestThree/a#1/b#1
+=== RUN   TestThree/a#1/b#1/c#1
+--- PASS: TestThree (0.01s)
+    --- PASS: TestThree/a#1 (0.02s)
+        --- PASS: TestThree/a#1/b#1 (0.03s)
+            --- PASS: TestThree/a#1/b#1/c#1 (0.04s)
+PASS
+ok  	package/name	0.050s
