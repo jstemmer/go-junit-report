@@ -43,6 +43,7 @@ var (
 	regexStatus   = regexp.MustCompile(`^\s*--- (PASS|FAIL|SKIP): (.+) \((\d+\.\d+)(?: seconds|s)\)$`)
 	regexCoverage = regexp.MustCompile(`^coverage:\s+(\d+\.\d+)%\s+of\s+statements$`)
 	regexResult   = regexp.MustCompile(`^(ok|FAIL)\s+(.+)\s(\d+\.\d+)s(?:\s+coverage:\s+(\d+\.\d+)%\s+of\s+statements)?$`)
+	regexColors   = regexp.MustCompile(`\x1b\[[0-9;]*m`)
 )
 
 // Parse parses go test output from reader r and returns a report with the
@@ -74,7 +75,8 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 			return nil, err
 		}
 
-		line := string(l)
+		// Remove ANSI colors
+		line := string(regexColors.ReplaceAll(l, []byte{}))
 
 		if strings.HasPrefix(line, "=== RUN ") {
 			// new test
