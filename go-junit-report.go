@@ -14,6 +14,7 @@ var (
 	packageName string
 	setExitCode bool
 	outFile     string
+	outAppend   bool
 )
 
 func init() {
@@ -21,6 +22,7 @@ func init() {
 	flag.StringVar(&packageName, "package-name", "", "specify a package name (compiled test have no package name in output)")
 	flag.BoolVar(&setExitCode, "set-exit-code", false, "set exit code to 1 if tests failed")
 	flag.StringVar(&outFile, "out", "", "write output to file instead of stdout")
+	flag.BoolVar(&outAppend, "append", false, "append to output file instead of overwriting")
 }
 
 func main() {
@@ -30,7 +32,13 @@ func main() {
 	var input io.Reader = os.Stdin
 	if outFile != "" {
 		var err error
-		if output, err = os.Create(outFile); err != nil {
+		flags := os.O_WRONLY | os.O_CREATE
+		if outAppend {
+			flags |= os.O_APPEND
+		} else {
+			flags |= os.O_TRUNC
+		}
+		if output, err = os.OpenFile(outFile, flags, 0666); err != nil {
 			fmt.Printf("Error opening file: %s\n", err)
 			os.Exit(1)
 		}
