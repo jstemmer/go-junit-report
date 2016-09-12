@@ -436,6 +436,52 @@ var testCases = []TestCase{
 							Result: parser.PASS,
 							Output: []string{},
 						},
+						{
+							Name:   "TestFour",
+							Time:   20,
+							Result: parser.FAIL,
+							Output: []string{},
+						},
+						{
+							Name:   "TestFour/#00",
+							Time:   0,
+							Result: parser.FAIL,
+							Output: []string{
+								"example.go:12: Expected abc  OBTAINED:",
+								"	xyz",
+								"example.go:123: Expected and obtained are different.",
+							},
+						},
+						{
+							Name:   "TestFour/#01",
+							Time:   0,
+							Result: parser.SKIP,
+							Output: []string{
+								"example.go:1234: Not supported yet.",
+							},
+						},
+						{
+							Name:   "TestFour/#02",
+							Time:   0,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestFive",
+							Time:   0,
+							Result: parser.SKIP,
+							Output: []string{
+								"example.go:1392: Not supported yet.",
+							},
+						},
+						{
+							Name:   "TestSix",
+							Time:   0,
+							Result: parser.FAIL,
+							Output: []string{
+								"example.go:371: This should not fail!",
+							},
+						},
 					},
 				},
 			},
@@ -499,7 +545,7 @@ func TestParser(t *testing.T) {
 				testOutput := strings.Join(test.Output, "\n")
 				expTestOutput := strings.Join(expTest.Output, "\n")
 				if testOutput != expTestOutput {
-					t.Errorf("Test.Output ==\n%s\n, want\n%s", testOutput, expTestOutput)
+					t.Errorf("Test.Output (%s) ==\n%s\n, want\n%s", test.Name, testOutput, expTestOutput)
 				}
 			}
 			if pkg.CoveragePct != expPkg.CoveragePct {
