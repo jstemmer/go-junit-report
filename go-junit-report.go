@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/jstemmer/go-junit-report/parser"
+	"github.com/improbable-io/go-junit-report/parser"
 )
 
 var (
