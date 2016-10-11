@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+	<testsuite tests="12" failures="0" time="0.050" name="package/name">
+		<properties>
+			<property name="go.version" value="go1.7"></property>
+		</properties>
+		<testcase classname="name" name="TestOne" time="0.010"></testcase>
+		<testcase classname="name" name="TestOne/Child" time="0.020"></testcase>
+		<testcase classname="name" name="TestOne/Child#01" time="0.030"></testcase>
+		<testcase classname="name" name="TestOne/Child=02" time="0.040"></testcase>
+		<testcase classname="name" name="TestTwo" time="0.010"></testcase>
+		<testcase classname="name" name="TestTwo/Child" time="0.020"></testcase>
+		<testcase classname="name" name="TestTwo/Child#01" time="0.030"></testcase>
+		<testcase classname="name" name="TestTwo/Child=02" time="0.040"></testcase>
+		<testcase classname="name" name="TestThree" time="0.010"></testcase>
+		<testcase classname="name" name="TestThree/a#1" time="0.020"></testcase>
+		<testcase classname="name" name="TestThree/a#1/b#1" time="0.030"></testcase>
+		<testcase classname="name" name="TestThree/a#1/b#1/c#1" time="0.040"></testcase>
+	</testsuite>
+</testsuites>

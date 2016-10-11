@@ -2,7 +2,9 @@ package parser
 
 import (
 	"bufio"
+	"fmt"
 	"io"
+	"os"
 	"regexp"
 	"strconv"
 	"strings"
@@ -40,9 +42,10 @@ type Test struct {
 }
 
 var (
-	regexStatus   = regexp.MustCompile(`^--- (PASS|FAIL|SKIP): (.+) \((\d+\.\d+)(?: seconds|s)\)$`)
+	regexStatus   = regexp.MustCompile(`^\s*--- (PASS|FAIL|SKIP): (.+) \((\d+\.\d+)(?: seconds|s)\)$`)
 	regexCoverage = regexp.MustCompile(`^coverage:\s+(\d+\.\d+)%\s+of\s+statements$`)
 	regexResult   = regexp.MustCompile(`^(ok|FAIL)\s+(.+)\s(\d+\.\d+)s(?:\s+coverage:\s+(\d+\.\d+)%\s+of\s+statements)?$`)
+	regexColors   = regexp.MustCompile(`\x1b\[[0-9;]*m`)
 )
 
 // Parse parses go test output from reader r and returns a report with the
@@ -55,12 +58,13 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 
 	// keep track of tests we find
 	var tests []*Test
+	running := map[string][]*Test{}
+
+	// test for last seen result line
+	var lastResult *Test
 
 	// sum of tests' time, use this if current test has no result line (when it is compiled test)
 	testsTime := 0
-
-	// current test
-	var cur string
 
 	// coverage percentage report for current package
 	var coveragePct string
@@ -74,19 +78,31 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 			return nil, err
 		}
 
-		line := string(l)
+		// Remove ANSI colors
+		line := string(regexColors.ReplaceAll(l, []byte{}))
 
 		if strings.HasPrefix(line, "=== RUN ") {
 			// new test
-			cur = strings.TrimSpace(line[8:])
-			tests = append(tests, &Test{
-				Name:   cur,
+			name := strings.TrimSpace(line[8:])
+			test := &Test{
+				Name:   name,
 				Result: FAIL,
 				Output: make([]string, 0),
-			})
+			}
+			if len(running[test.Name]) > 0 {
+				fmt.Fprintf(os.Stderr, "multiple tests with name %v running concurrently\n", test.Name)
+			}
+			running[test.Name] = append(running[test.Name], test)
+			tests = append(tests, test)
 		} else if matches := regexResult.FindStringSubmatch(line); len(matches) == 5 {
 			if matches[4] != "" {
 				coveragePct = matches[4]
+			}
+
+			if len(running) > 0 {
+				// `go test` should ensure that individual packets' tests' output are serialized,
+				// so there should be no running tests at package boundaries.
+				fmt.Fprintf(os.Stderr, "%v tests still running after package\n", len(running))
 			}
 
 			// all tests in this package are finished
@@ -97,39 +113,51 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 				CoveragePct: coveragePct,
 			})
 
-			tests = make([]*Test, 0)
+			tests = nil
+			running = map[string][]*Test{}
 			coveragePct = ""
-			cur = ""
 			testsTime = 0
+			lastResult = nil
 		} else if matches := regexStatus.FindStringSubmatch(line); len(matches) == 4 {
-			cur = matches[2]
-			test := findTest(tests, cur)
-			if test == nil {
-				continue
+			name := matches[2]
+			if len(running[name]) == 0 {
+				fmt.Fprintf(os.Stderr, "Got test result for %v but no tests are running\n", name)
+				lastResult = &Test{
+					Name:   name,
+					Result: FAIL,
+					Output: make([]string, 0),
+				}
+			} else {
+				lastResult = running[name][0]
+				if len(running[name]) > 1 {
+					running[name] = running[name][1:]
+				} else {
+					delete(running, name)
+				}
 			}
 
 			// test status
 			if matches[1] == "PASS" {
-				test.Result = PASS
+				lastResult.Result = PASS
 			} else if matches[1] == "SKIP" {
-				test.Result = SKIP
+				lastResult.Result = SKIP
 			} else {
-				test.Result = FAIL
+				lastResult.Result = FAIL
 			}
 
-			test.Name = matches[2]
+			lastResult.Name = matches[2]
 			testTime := parseTime(matches[3]) * 10
-			test.Time = testTime
+			lastResult.Time = testTime
 			testsTime += testTime
+			lastResult = lastResult
 		} else if matches := regexCoverage.FindStringSubmatch(line); len(matches) == 2 {
 			coveragePct = matches[1]
 		} else if strings.HasPrefix(line, "\t") {
 			// test output
-			test := findTest(tests, cur)
-			if test == nil {
+			if lastResult == nil {
 				continue
 			}
-			test.Output = append(test.Output, line[1:])
+			lastResult.Output = append(lastResult.Output, line[1:])
 		}
 	}
 
@@ -155,7 +183,7 @@ func parseTime(time string) int {
 }
 
 func findTest(tests []*Test, name string) *Test {
-	for i := len(tests)-1; i >= 0; i-- {
+	for i := len(tests) - 1; i >= 0; i-- {
 		if tests[i].Name == name {
 			return tests[i]
 		}

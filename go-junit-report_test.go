@@ -381,6 +381,92 @@ var testCases = []TestCase{
 			},
 		},
 	},
+	{
+		name:       "13-go_1_7.txt",
+		reportName: "13-report.xml",
+		report: &parser.Report{
+			Packages: []parser.Package{
+				{
+					Name: "package/name",
+					Time: 50,
+					Tests: []*parser.Test{
+						{
+							Name:   "TestOne",
+							Time:   10,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestOne/Child",
+							Time:   20,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestOne/Child#01",
+							Time:   30,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestOne/Child=02",
+							Time:   40,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestTwo",
+							Time:   10,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestTwo/Child",
+							Time:   20,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestTwo/Child#01",
+							Time:   30,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestTwo/Child=02",
+							Time:   40,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestThree",
+							Time:   10,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestThree/a#1",
+							Time:   20,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestThree/a#1/b#1",
+							Time:   30,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestThree/a#1/b#1/c#1",
+							Time:   40,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+					},
+				},
+			},
+		},
+	},
 }
 
 func TestParser(t *testing.T) {
