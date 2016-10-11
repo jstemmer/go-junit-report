@@ -3,7 +3,7 @@
 Converts `go test` output to an xml report, suitable for applications that
 expect junit xml reports (e.g. [Jenkins](http://jenkins-ci.org)).
 
-[![Build Status](https://travis-ci.org/jstemmer/go-junit-report.svg)](https://travis-ci.org/jstemmer/go-junit-report)
+[![Build Status](https://travis-ci.org/improbable-io/go-junit-report.svg)](https://travis-ci.org/improbable-io/go-junit-report)
 
 
 ## Installation
@@ -11,7 +11,7 @@ expect junit xml reports (e.g. [Jenkins](http://jenkins-ci.org)).
 Go version 1.1 or higher is required. Install or update using the `go get`
 command:
 
-	go get -u github.com/jstemmer/go-junit-report
+	go get -u github.com/improbable-io/go-junit-report
 
 ## Usage
 

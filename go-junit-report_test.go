@@ -9,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/jstemmer/go-junit-report/parser"
+	"github.com/improbable-io/go-junit-report/parser"
 )
 
 type TestCase struct {
@@ -347,6 +347,118 @@ var testCases = []TestCase{
 						{
 							Name:   "TestTwo",
 							Time:   30,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+					},
+				},
+			},
+		},
+	},
+	{
+		name:       "12-multiple.txt",
+		reportName: "12-report.xml",
+		report: &parser.Report{
+			Packages: []parser.Package{
+				{
+					Name: "package/name",
+					Time: 160,
+					Tests: []*parser.Test{
+						{
+							Name:   "TestA",
+							Time:   60,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestA",
+							Time:   100,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+					},
+				},
+			},
+		},
+	},
+	{
+		name:       "13-go_1_7.txt",
+		reportName: "13-report.xml",
+		report: &parser.Report{
+			Packages: []parser.Package{
+				{
+					Name: "package/name",
+					Time: 50,
+					Tests: []*parser.Test{
+						{
+							Name:   "TestOne",
+							Time:   10,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestOne/Child",
+							Time:   20,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestOne/Child#01",
+							Time:   30,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestOne/Child=02",
+							Time:   40,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestTwo",
+							Time:   10,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestTwo/Child",
+							Time:   20,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestTwo/Child#01",
+							Time:   30,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestTwo/Child=02",
+							Time:   40,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestThree",
+							Time:   10,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestThree/a#1",
+							Time:   20,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestThree/a#1/b#1",
+							Time:   30,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestThree/a#1/b#1/c#1",
+							Time:   40,
 							Result: parser.PASS,
 							Output: []string{},
 						},
