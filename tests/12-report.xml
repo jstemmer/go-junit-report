@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+	<testsuite tests="18" failures="3" time="0.050" name="package/name">
+		<properties>
+			<property name="go.version" value="1.0"></property>
+		</properties>
+		<testcase classname="name" name="TestOne" time="0.010"></testcase>
+		<testcase classname="name" name="TestOne/Child" time="0.020"></testcase>
+		<testcase classname="name" name="TestOne/Child#01" time="0.030"></testcase>
+		<testcase classname="name" name="TestOne/Child=02" time="0.040"></testcase>
+		<testcase classname="name" name="TestTwo" time="0.010"></testcase>
+		<testcase classname="name" name="TestTwo/Child" time="0.020"></testcase>
+		<testcase classname="name" name="TestTwo/Child#01" time="0.030"></testcase>
+		<testcase classname="name" name="TestTwo/Child=02" time="0.040"></testcase>
+		<testcase classname="name" name="TestThree" time="0.010"></testcase>
+		<testcase classname="name" name="TestThree/a#1" time="0.020"></testcase>
+		<testcase classname="name" name="TestThree/a#1/b#1" time="0.030"></testcase>
+		<testcase classname="name" name="TestThree/a#1/b#1/c#1" time="0.040"></testcase>
+		<testcase classname="name" name="TestFour" time="0.020">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+		<testcase classname="name" name="TestFour/#00" time="0.000">
+			<failure message="Failed" type="">example.go:12: Expected abc  OBTAINED:&#xA;&#x9;xyz&#xA;example.go:123: Expected and obtained are different.</failure>
+		</testcase>
+		<testcase classname="name" name="TestFour/#01" time="0.000">
+			<skipped message="example.go:1234: Not supported yet."></skipped>
+		</testcase>
+		<testcase classname="name" name="TestFour/#02" time="0.000"></testcase>
+		<testcase classname="name" name="TestFive" time="0.000">
+			<skipped message="example.go:1392: Not supported yet."></skipped>
+		</testcase>
+		<testcase classname="name" name="TestSix" time="0.000">
+			<failure message="Failed" type="">example.go:371: This should not fail!</failure>
+		</testcase>
+	</testsuite>
+</testsuites>

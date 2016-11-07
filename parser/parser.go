@@ -40,9 +40,10 @@ type Test struct {
 }
 
 var (
-	regexStatus   = regexp.MustCompile(`^--- (PASS|FAIL|SKIP): (.+) \((\d+\.\d+)(?: seconds|s)\)$`)
+	regexStatus   = regexp.MustCompile(`^\s*--- (PASS|FAIL|SKIP): (.+) \((\d+\.\d+)(?: seconds|s)\)$`)
 	regexCoverage = regexp.MustCompile(`^coverage:\s+(\d+\.\d+)%\s+of\s+statements$`)
 	regexResult   = regexp.MustCompile(`^(ok|FAIL)\s+(.+)\s(\d+\.\d+)s(?:\s+coverage:\s+(\d+\.\d+)%\s+of\s+statements)?$`)
+	regexOutput   = regexp.MustCompile(`(    )*\t(.*)`)
 )
 
 // Parse parses go test output from reader r and returns a report with the
@@ -123,13 +124,15 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 			testsTime += testTime
 		} else if matches := regexCoverage.FindStringSubmatch(line); len(matches) == 2 {
 			coveragePct = matches[1]
-		} else if strings.HasPrefix(line, "\t") {
-			// test output
+		} else if matches := regexOutput.FindStringSubmatch(line); len(matches) == 3 {
+			// Sub-tests start with one or more series of 4-space indents, followed by a hard tab,
+			// followed by the test output
+			// Top-level tests start with a hard tab.
 			test := findTest(tests, cur)
 			if test == nil {
 				continue
 			}
-			test.Output = append(test.Output, line[1:])
+			test.Output = append(test.Output, matches[2])
 		}
 	}
 

@@ -355,6 +355,138 @@ var testCases = []TestCase{
 			},
 		},
 	},
+	{
+		name:       "12-go_1_7.txt",
+		reportName: "12-report.xml",
+		report: &parser.Report{
+			Packages: []parser.Package{
+				{
+					Name: "package/name",
+					Time: 50,
+					Tests: []*parser.Test{
+						{
+							Name:   "TestOne",
+							Time:   10,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestOne/Child",
+							Time:   20,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestOne/Child#01",
+							Time:   30,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestOne/Child=02",
+							Time:   40,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestTwo",
+							Time:   10,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestTwo/Child",
+							Time:   20,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestTwo/Child#01",
+							Time:   30,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestTwo/Child=02",
+							Time:   40,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestThree",
+							Time:   10,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestThree/a#1",
+							Time:   20,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestThree/a#1/b#1",
+							Time:   30,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestThree/a#1/b#1/c#1",
+							Time:   40,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestFour",
+							Time:   20,
+							Result: parser.FAIL,
+							Output: []string{},
+						},
+						{
+							Name:   "TestFour/#00",
+							Time:   0,
+							Result: parser.FAIL,
+							Output: []string{
+								"example.go:12: Expected abc  OBTAINED:",
+								"	xyz",
+								"example.go:123: Expected and obtained are different.",
+							},
+						},
+						{
+							Name:   "TestFour/#01",
+							Time:   0,
+							Result: parser.SKIP,
+							Output: []string{
+								"example.go:1234: Not supported yet.",
+							},
+						},
+						{
+							Name:   "TestFour/#02",
+							Time:   0,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestFive",
+							Time:   0,
+							Result: parser.SKIP,
+							Output: []string{
+								"example.go:1392: Not supported yet.",
+							},
+						},
+						{
+							Name:   "TestSix",
+							Time:   0,
+							Result: parser.FAIL,
+							Output: []string{
+								"example.go:371: This should not fail!",
+							},
+						},
+					},
+				},
+			},
+		},
+	},
 }
 
 func TestParser(t *testing.T) {
@@ -413,7 +545,7 @@ func TestParser(t *testing.T) {
 				testOutput := strings.Join(test.Output, "\n")
 				expTestOutput := strings.Join(expTest.Output, "\n")
 				if testOutput != expTestOutput {
-					t.Errorf("Test.Output ==\n%s\n, want\n%s", testOutput, expTestOutput)
+					t.Errorf("Test.Output (%s) ==\n%s\n, want\n%s", test.Name, testOutput, expTestOutput)
 				}
 			}
 			if pkg.CoveragePct != expPkg.CoveragePct {
