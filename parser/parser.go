@@ -29,6 +29,7 @@ type Package struct {
 	Time        int
 	Tests       []*Test
 	CoveragePct string
+	Result      Result
 }
 
 // Test contains the results of a single test.
@@ -40,10 +41,11 @@ type Test struct {
 }
 
 var (
-	regexStatus   = regexp.MustCompile(`^\s*--- (PASS|FAIL|SKIP): (.+) \((\d+\.\d+)(?: seconds|s)\)$`)
-	regexCoverage = regexp.MustCompile(`^coverage:\s+(\d+\.\d+)%\s+of\s+statements$`)
-	regexResult   = regexp.MustCompile(`^(ok|FAIL)\s+(.+)\s(\d+\.\d+)s(?:\s+coverage:\s+(\d+\.\d+)%\s+of\s+statements)?$`)
-	regexOutput   = regexp.MustCompile(`(    )*\t(.*)`)
+	regexStatus       = regexp.MustCompile(`^\s*--- (PASS|FAIL|SKIP): (.+) \((\d+\.\d+)(?: seconds|s)\)$`)
+	regexCoverage     = regexp.MustCompile(`^coverage:\s+(\d+\.\d+)%\s+of\s+statements$`)
+	regexResult       = regexp.MustCompile(`^(ok|FAIL)\s+(.+)\s(\d+\.\d+)s(?:\s+coverage:\s+(\d+\.\d+)%\s+of\s+statements)?$`)
+	regexBuildFailure = regexp.MustCompile(`^FAIL\s+(.+)\s\[build failed]$`)
+	regexOutput       = regexp.MustCompile(`(    )*\t(.*)`)
 )
 
 // Parse parses go test output from reader r and returns a report with the
@@ -65,6 +67,9 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 
 	// coverage percentage report for current package
 	var coveragePct string
+
+	// whole package test result
+	packageResult := FAIL
 
 	// parse lines
 	for {
@@ -88,6 +93,9 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 		} else if matches := regexResult.FindStringSubmatch(line); len(matches) == 5 {
 			if matches[4] != "" {
 				coveragePct = matches[4]
+				if matches[0] == "ok" {
+					packageResult = PASS
+				}
 			}
 
 			// all tests in this package are finished
@@ -96,12 +104,19 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 				Time:        parseTime(matches[3]),
 				Tests:       tests,
 				CoveragePct: coveragePct,
+				Result:      packageResult,
 			})
 
 			tests = make([]*Test, 0)
 			coveragePct = ""
 			cur = ""
 			testsTime = 0
+		} else if matches := regexBuildFailure.FindStringSubmatch(line); len(matches) == 2 {
+			report.Packages = append(report.Packages, Package{
+				Name:   matches[1],
+				Result: FAIL,
+			})
+
 		} else if matches := regexStatus.FindStringSubmatch(line); len(matches) == 4 {
 			cur = matches[2]
 			test := findTest(tests, cur)
@@ -143,6 +158,7 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 			Time:        testsTime,
 			Tests:       tests,
 			CoveragePct: coveragePct,
+			Result:      packageResult,
 		})
 	}
 
@@ -179,4 +195,13 @@ func (r *Report) Failures() int {
 	}
 
 	return count
+}
+
+func (r *Report) Failed() bool {
+	for _, p := range r.Packages {
+		if p.Result == FAIL {
+			return true
+		}
+	}
+	return false
 }

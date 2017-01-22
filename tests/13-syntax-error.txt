@@ -1,0 +1,2 @@
+package/name/file_test.go:9: undefined: x
+FAIL	package/name [build failed]

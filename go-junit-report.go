@@ -37,7 +37,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	if setExitCode && report.Failures() > 0 {
+	if setExitCode && report.Failed() {
 		os.Exit(1)
 	}
 }
