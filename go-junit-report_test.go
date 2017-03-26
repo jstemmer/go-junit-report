@@ -556,15 +556,23 @@ func TestParser(t *testing.T) {
 }
 
 func TestJUnitFormatter(t *testing.T) {
+	testJUnitFormatter(t, "")
+}
+
+func TestVersionFlag(t *testing.T) {
+	testJUnitFormatter(t, "custom-version")
+}
+
+func testJUnitFormatter(t *testing.T, goVersion string) {
 	for _, testCase := range testCases {
-		report, err := loadTestReport(testCase.reportName)
+		report, err := loadTestReport(testCase.reportName, goVersion)
 		if err != nil {
 			t.Fatal(err)
 		}
 
 		var junitReport bytes.Buffer
 
-		if err = JUnitReportXML(testCase.report, testCase.noXMLHeader, &junitReport); err != nil {
+		if err = JUnitReportXML(testCase.report, testCase.noXMLHeader, goVersion, &junitReport); err != nil {
 			t.Fatal(err)
 		}
 
@@ -574,14 +582,19 @@ func TestJUnitFormatter(t *testing.T) {
 	}
 }
 
-func loadTestReport(name string) (string, error) {
+func loadTestReport(name, goVersion string) (string, error) {
 	contents, err := ioutil.ReadFile("tests/" + name)
 	if err != nil {
 		return "", err
 	}
 
+	if goVersion == "" {
+		// if goVersion is not specified, default to runtime version
+		goVersion = runtime.Version()
+	}
+
 	// replace value="1.0" With actual version
-	report := strings.Replace(string(contents), `value="1.0"`, fmt.Sprintf(`value="%s"`, runtime.Version()), -1)
+	report := strings.Replace(string(contents), `value="1.0"`, fmt.Sprintf(`value="%s"`, goVersion), -1)
 
 	return report, nil
 }

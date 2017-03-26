@@ -59,7 +59,7 @@ type JUnitFailure struct {
 
 // JUnitReportXML writes a JUnit xml representation of the given report to w
 // in the format described at http://windyroad.org/dl/Open%20Source/JUnit.xsd
-func JUnitReportXML(report *parser.Report, noXMLHeader bool, w io.Writer) error {
+func JUnitReportXML(report *parser.Report, noXMLHeader bool, goVersion string, w io.Writer) error {
 	suites := JUnitTestSuites{}
 
 	// convert Report to JUnit test suites
@@ -79,7 +79,11 @@ func JUnitReportXML(report *parser.Report, noXMLHeader bool, w io.Writer) error 
 		}
 
 		// properties
-		ts.Properties = append(ts.Properties, JUnitProperty{"go.version", runtime.Version()})
+		if goVersion == "" {
+			// if goVersion was not specified as a flag, fall back to version reported by runtime
+			goVersion = runtime.Version()
+		}
+		ts.Properties = append(ts.Properties, JUnitProperty{"go.version", goVersion})
 		if pkg.CoveragePct != "" {
 			ts.Properties = append(ts.Properties, JUnitProperty{"coverage.statements.pct", pkg.CoveragePct})
 		}
