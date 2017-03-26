@@ -135,15 +135,6 @@ func JUnitReportXML(report *parser.Report, noXMLHeader bool, goVersion string, w
 	return nil
 }
 
-func countFailures(tests []parser.Test) (result int) {
-	for _, test := range tests {
-		if test.Result == parser.FAIL {
-			result++
-		}
-	}
-	return
-}
-
 func formatTime(time int) string {
 	return fmt.Sprintf("%.3f", float64(time)/1000.0)
 }
