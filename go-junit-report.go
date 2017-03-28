@@ -9,10 +9,10 @@ import (
 )
 
 var (
-	noXMLHeader bool
-	packageName string
+	noXMLHeader   bool
+	packageName   string
 	goVersionFlag string
-	setExitCode bool
+	setExitCode   bool
 )
 
 func init() {
