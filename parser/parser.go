@@ -29,7 +29,6 @@ type Package struct {
 	Time        int
 	Tests       []*Test
 	CoveragePct string
-	Result      Result
 }
 
 // Test contains the results of a single test.
@@ -41,11 +40,11 @@ type Test struct {
 }
 
 var (
-	regexStatus       = regexp.MustCompile(`^\s*--- (PASS|FAIL|SKIP): (.+) \((\d+\.\d+)(?: seconds|s)\)$`)
-	regexCoverage     = regexp.MustCompile(`^coverage:\s+(\d+\.\d+)%\s+of\s+statements$`)
-	regexResult       = regexp.MustCompile(`^(ok|FAIL)\s+(.+)\s(\d+\.\d+)s(?:\s+coverage:\s+(\d+\.\d+)%\s+of\s+statements)?$`)
-	regexBuildFailure = regexp.MustCompile(`^FAIL\s+(.+)\s\[build failed]$`)
-	regexOutput       = regexp.MustCompile(`(    )*\t(.*)`)
+	regexStatus   = regexp.MustCompile(`^\s*--- (PASS|FAIL|SKIP): (.+) \((\d+\.\d+)(?: seconds|s)\)$`)
+	regexCoverage = regexp.MustCompile(`^coverage:\s+(\d+\.\d+)%\s+of\s+statements$`)
+	regexResult   = regexp.MustCompile(`^(ok|FAIL)\s+([^ ]+)\s+(?:(\d+\.\d+)s|(\[build failed]))(?:\s+coverage:\s+(\d+\.\d+)%\sof\sstatements)?$`)
+	regexOutput   = regexp.MustCompile(`(    )*\t(.*)`)
+	regexCapture  = regexp.MustCompile(`^#\s(.+)`)
 )
 
 // Parse parses go test output from reader r and returns a report with the
@@ -68,8 +67,11 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 	// coverage percentage report for current package
 	var coveragePct string
 
-	// whole package test result
-	packageResult := FAIL
+	// stores mapping between package name and output of build failures
+	var packageCaptures = map[string][]string{}
+
+	// the name of the package which it's build failure output is being captured
+	var capturedPackage string
 
 	// parse lines
 	for {
@@ -90,33 +92,39 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 				Result: FAIL,
 				Output: make([]string, 0),
 			})
-		} else if matches := regexResult.FindStringSubmatch(line); len(matches) == 5 {
-			if matches[4] != "" {
-				coveragePct = matches[4]
-				if matches[0] == "ok" {
-					packageResult = PASS
-				}
+
+			// clear the current build package, so output lines won't be added to that build
+			capturedPackage = ""
+		} else if matches := regexResult.FindStringSubmatch(line); len(matches) == 6 {
+			if matches[5] != "" {
+				coveragePct = matches[5]
 			}
 
 			// all tests in this package are finished
-			report.Packages = append(report.Packages, Package{
+			pack := Package{
 				Name:        matches[2],
+				CoveragePct: coveragePct,
 				Time:        parseTime(matches[3]),
 				Tests:       tests,
-				CoveragePct: coveragePct,
-				Result:      packageResult,
-			})
+			}
 
+			if matches[4] == "[build failed]" {
+				// the build of the package failed, inject a dummy test into the package
+				// which indicate about the failure and contain the failure description.
+				pack.Tests = []*Test{
+					{
+						Name:   "build failed",
+						Result: FAIL,
+						Output: packageCaptures[matches[2]],
+					},
+				}
+			}
+
+			report.Packages = append(report.Packages, pack)
 			tests = make([]*Test, 0)
 			coveragePct = ""
 			cur = ""
 			testsTime = 0
-		} else if matches := regexBuildFailure.FindStringSubmatch(line); len(matches) == 2 {
-			report.Packages = append(report.Packages, Package{
-				Name:   matches[1],
-				Result: FAIL,
-			})
-
 		} else if matches := regexStatus.FindStringSubmatch(line); len(matches) == 4 {
 			cur = matches[2]
 			test := findTest(tests, cur)
@@ -148,6 +156,12 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 				continue
 			}
 			test.Output = append(test.Output, matches[2])
+		} else if matches := regexCapture.FindStringSubmatch(line); len(matches) == 2 {
+			// set the current build package
+			capturedPackage = matches[1]
+		} else if capturedPackage != "" {
+			// current line is build failure capture for the current built package
+			packageCaptures[capturedPackage] = append(packageCaptures[capturedPackage], line)
 		}
 	}
 
@@ -158,7 +172,6 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 			Time:        testsTime,
 			Tests:       tests,
 			CoveragePct: coveragePct,
-			Result:      packageResult,
 		})
 	}
 
@@ -195,13 +208,4 @@ func (r *Report) Failures() int {
 	}
 
 	return count
-}
-
-func (r *Report) Failed() bool {
-	for _, p := range r.Packages {
-		if p.Result == FAIL {
-			return true
-		}
-	}
-	return false
 }
