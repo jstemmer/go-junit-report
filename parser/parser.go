@@ -42,7 +42,7 @@ type Test struct {
 var (
 	regexStatus   = regexp.MustCompile(`^\s*--- (PASS|FAIL|SKIP): (.+) \((\d+\.\d+)(?: seconds|s)\)$`)
 	regexCoverage = regexp.MustCompile(`^coverage:\s+(\d+\.\d+)%\s+of\s+statements$`)
-	regexResult   = regexp.MustCompile(`^(ok|FAIL)\s+(.+)\s(\d+\.\d+)s(?:\s+coverage:\s+(\d+\.\d+)%\s+of\s+statements)?$`)
+	regexResult   = regexp.MustCompile(`^(ok|FAIL)\s+([^ ]+)\s+(?:(\d+\.\d+)s|(\[build failed]))(?:\s+coverage:\s+(\d+\.\d+)%\sof\sstatements)?$`)
 	regexOutput   = regexp.MustCompile(`(    )*\t(.*)`)
 )
 
@@ -66,6 +66,12 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 	// coverage percentage report for current package
 	var coveragePct string
 
+	// stores mapping between package name and output of build failures
+	var packageCaptures = map[string][]string{}
+
+	// the name of the package which it's build failure output is being captured
+	var capturedPackage string
+
 	// parse lines
 	for {
 		l, _, err := reader.ReadLine()
@@ -85,9 +91,21 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 				Result: FAIL,
 				Output: make([]string, 0),
 			})
-		} else if matches := regexResult.FindStringSubmatch(line); len(matches) == 5 {
-			if matches[4] != "" {
-				coveragePct = matches[4]
+
+			// clear the current build package, so output lines won't be added to that build
+			capturedPackage = ""
+		} else if matches := regexResult.FindStringSubmatch(line); len(matches) == 6 {
+			if matches[5] != "" {
+				coveragePct = matches[5]
+			}
+			if matches[4] == "[build failed]" {
+				// the build of the package failed, inject a dummy test into the package
+				// which indicate about the failure and contain the failure description.
+				tests = append(tests, &Test{
+					Name:   "build failed",
+					Result: FAIL,
+					Output: packageCaptures[matches[2]],
+				})
 			}
 
 			// all tests in this package are finished
@@ -133,6 +151,12 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 				continue
 			}
 			test.Output = append(test.Output, matches[2])
+		} else if strings.HasPrefix(line, "# ") {
+			// indicates a capture of build output of a package. set the current build package.
+			capturedPackage = line[2:]
+		} else if capturedPackage != "" {
+			// current line is build failure capture for the current built package
+			packageCaptures[capturedPackage] = append(packageCaptures[capturedPackage], line)
 		}
 	}
 

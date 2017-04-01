@@ -487,6 +487,64 @@ var testCases = []TestCase{
 			},
 		},
 	},
+	{
+		name:       "13-syntax-error.txt",
+		reportName: "13-report.xml",
+		report: &parser.Report{
+			Packages: []parser.Package{
+				{
+					Name: "package/name/passing1",
+					Time: 100,
+					Tests: []*parser.Test{
+						{
+							Name:   "TestA",
+							Time:   100,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+					},
+				},
+				{
+					Name: "package/name/passing2",
+					Time: 100,
+					Tests: []*parser.Test{
+						{
+							Name:   "TestB",
+							Time:   100,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+					},
+				},
+				{
+					Name: "package/name/failing1",
+					Tests: []*parser.Test{
+						{
+							Name:   "build failed",
+							Time:   0,
+							Result: parser.FAIL,
+							Output: []string{
+								"failing1/failing_test.go:15: undefined: x",
+							},
+						},
+					},
+				},
+				{
+					Name: "package/name/failing2",
+					Tests: []*parser.Test{
+						{
+							Name:   "build failed",
+							Time:   0,
+							Result: parser.FAIL,
+							Output: []string{
+								"failing2/another_failing_test.go:20: undefined: y",
+							},
+						},
+					},
+				},
+			},
+		},
+	},
 }
 
 func TestParser(t *testing.T) {
