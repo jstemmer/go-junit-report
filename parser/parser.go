@@ -44,7 +44,6 @@ var (
 	regexCoverage = regexp.MustCompile(`^coverage:\s+(\d+\.\d+)%\s+of\s+statements$`)
 	regexResult   = regexp.MustCompile(`^(ok|FAIL)\s+([^ ]+)\s+(?:(\d+\.\d+)s|(\[build failed]))(?:\s+coverage:\s+(\d+\.\d+)%\sof\sstatements)?$`)
 	regexOutput   = regexp.MustCompile(`(    )*\t(.*)`)
-	regexCapture  = regexp.MustCompile(`^#\s(.+)`)
 )
 
 // Parse parses go test output from reader r and returns a report with the
@@ -99,28 +98,24 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 			if matches[5] != "" {
 				coveragePct = matches[5]
 			}
-
-			// all tests in this package are finished
-			pack := Package{
-				Name:        matches[2],
-				CoveragePct: coveragePct,
-				Time:        parseTime(matches[3]),
-				Tests:       tests,
-			}
-
 			if matches[4] == "[build failed]" {
 				// the build of the package failed, inject a dummy test into the package
 				// which indicate about the failure and contain the failure description.
-				pack.Tests = []*Test{
-					{
-						Name:   "build failed",
-						Result: FAIL,
-						Output: packageCaptures[matches[2]],
-					},
-				}
+				tests = append(tests, &Test{
+					Name:   "build failed",
+					Result: FAIL,
+					Output: packageCaptures[matches[2]],
+				})
 			}
 
-			report.Packages = append(report.Packages, pack)
+			// all tests in this package are finished
+			report.Packages = append(report.Packages, Package{
+				Name:        matches[2],
+				Time:        parseTime(matches[3]),
+				Tests:       tests,
+				CoveragePct: coveragePct,
+			})
+
 			tests = make([]*Test, 0)
 			coveragePct = ""
 			cur = ""
@@ -156,9 +151,9 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 				continue
 			}
 			test.Output = append(test.Output, matches[2])
-		} else if matches := regexCapture.FindStringSubmatch(line); len(matches) == 2 {
-			// set the current build package
-			capturedPackage = matches[1]
+		} else if strings.HasPrefix(line, "# ") {
+			// indicates a capture of build output of a package. set the current build package.
+			capturedPackage = line[2:]
 		} else if capturedPackage != "" {
 			// current line is build failure capture for the current built package
 			packageCaptures[capturedPackage] = append(packageCaptures[capturedPackage], line)
