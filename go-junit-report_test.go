@@ -520,7 +520,7 @@ var testCases = []TestCase{
 					Name: "package/name/failing1",
 					Tests: []*parser.Test{
 						{
-							Name:   "build failed",
+							Name:   "[build failed]",
 							Time:   0,
 							Result: parser.FAIL,
 							Output: []string{
@@ -533,11 +533,27 @@ var testCases = []TestCase{
 					Name: "package/name/failing2",
 					Tests: []*parser.Test{
 						{
-							Name:   "build failed",
+							Name:   "[build failed]",
 							Time:   0,
 							Result: parser.FAIL,
 							Output: []string{
 								"failing2/another_failing_test.go:20: undefined: y",
+							},
+						},
+					},
+				},
+				{
+					Name: "package/name/setupfailing1",
+					Tests: []*parser.Test{
+						{
+							Name:   "[setup failed]",
+							Time:   0,
+							Result: parser.FAIL,
+							Output: []string{
+								"setupfailing1/failing_test.go:4: cannot find package \"other/package\" in any of:",
+								"\t/path/vendor (vendor tree)",
+								"\t/path/go/root (from $GOROOT)",
+								"\t/path/go/path (from $GOPATH)",
 							},
 						},
 					},

@@ -42,7 +42,7 @@ type Test struct {
 var (
 	regexStatus   = regexp.MustCompile(`^\s*--- (PASS|FAIL|SKIP): (.+) \((\d+\.\d+)(?: seconds|s)\)$`)
 	regexCoverage = regexp.MustCompile(`^coverage:\s+(\d+\.\d+)%\s+of\s+statements$`)
-	regexResult   = regexp.MustCompile(`^(ok|FAIL)\s+([^ ]+)\s+(?:(\d+\.\d+)s|(\[build failed]))(?:\s+coverage:\s+(\d+\.\d+)%\sof\sstatements)?$`)
+	regexResult   = regexp.MustCompile(`^(ok|FAIL)\s+([^ ]+)\s+(?:(\d+\.\d+)s|(\[\w+ failed]))(?:\s+coverage:\s+(\d+\.\d+)%\sof\sstatements)?$`)
 	regexOutput   = regexp.MustCompile(`(    )*\t(.*)`)
 )
 
@@ -98,11 +98,11 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 			if matches[5] != "" {
 				coveragePct = matches[5]
 			}
-			if matches[4] == "[build failed]" {
+			if strings.HasSuffix(matches[4], "failed]") {
 				// the build of the package failed, inject a dummy test into the package
 				// which indicate about the failure and contain the failure description.
 				tests = append(tests, &Test{
-					Name:   "build failed",
+					Name:   matches[4],
 					Result: FAIL,
 					Output: packageCaptures[matches[2]],
 				})
@@ -142,7 +142,7 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 			testsTime += testTime
 		} else if matches := regexCoverage.FindStringSubmatch(line); len(matches) == 2 {
 			coveragePct = matches[1]
-		} else if matches := regexOutput.FindStringSubmatch(line); len(matches) == 3 {
+		} else if matches := regexOutput.FindStringSubmatch(line); capturedPackage == "" && len(matches) == 3 {
 			// Sub-tests start with one or more series of 4-space indents, followed by a hard tab,
 			// followed by the test output
 			// Top-level tests start with a hard tab.
