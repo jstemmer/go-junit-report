@@ -72,6 +72,9 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 	// the name of the package which it's build failure output is being captured
 	var capturedPackage string
 
+	// capture any non-test output
+	var buffer []string
+
 	// parse lines
 	for {
 		l, _, err := reader.ReadLine()
@@ -106,6 +109,15 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 					Result: FAIL,
 					Output: packageCaptures[matches[2]],
 				})
+			} else if matches[1] == "FAIL" && len(tests) == 0 && len(buffer) > 0 {
+				// This package didn't have any tests, but it failed with some
+				// output. Create a dummy test with the output.
+				tests = append(tests, &Test{
+					Name:   "Failure",
+					Result: FAIL,
+					Output: buffer,
+				})
+				buffer = buffer[0:0]
 			}
 
 			// all tests in this package are finished
@@ -116,6 +128,7 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 				CoveragePct: coveragePct,
 			})
 
+			buffer = buffer[0:0]
 			tests = make([]*Test, 0)
 			coveragePct = ""
 			cur = ""
@@ -157,6 +170,9 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 		} else if capturedPackage != "" {
 			// current line is build failure capture for the current built package
 			packageCaptures[capturedPackage] = append(packageCaptures[capturedPackage], line)
+		} else {
+			// buffer anything else that we didn't recognize
+			buffer = append(buffer, line)
 		}
 	}
 
