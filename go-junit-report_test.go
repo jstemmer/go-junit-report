@@ -561,6 +561,55 @@ var testCases = []TestCase{
 			},
 		},
 	},
+	{
+		name:       "14-panic.txt",
+		reportName: "14-report.xml",
+		report: &parser.Report{
+			Packages: []parser.Package{
+				{
+					Name: "package/panic",
+					Time: 3,
+					Tests: []*parser.Test{
+						{
+							Name:   "Failure",
+							Result: parser.FAIL,
+							Output: []string{
+								"panic: init",
+								"stacktrace",
+							},
+						},
+					},
+				},
+				{
+					Name: "package/panic2",
+					Time: 3,
+					Tests: []*parser.Test{
+						{
+							Name:   "Failure",
+							Result: parser.FAIL,
+							Output: []string{
+								"panic: init",
+								"stacktrace",
+							},
+						},
+					},
+				},
+			},
+		},
+	},
+	{
+		name:       "15-empty.txt",
+		reportName: "15-report.xml",
+		report: &parser.Report{
+			Packages: []parser.Package{
+				{
+					Name:  "package/empty",
+					Time:  1,
+					Tests: []*parser.Test{},
+				},
+			},
+		},
+	},
 }
 
 func TestParser(t *testing.T) {
