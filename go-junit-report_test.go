@@ -610,6 +610,38 @@ var testCases = []TestCase{
 			},
 		},
 	},
+	{
+		name:       "16-repeated-names.txt",
+		reportName: "16-report.xml",
+		report: &parser.Report{
+			Packages: []parser.Package{
+				{
+					Name: "package/repeated-names",
+					Time: 1,
+					Tests: []*parser.Test{
+						{
+							Name:   "TestRepeat",
+							Time:   0,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestRepeat",
+							Time:   0,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestRepeat",
+							Time:   0,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+					},
+				},
+			},
+		},
+	},
 }
 
 func TestParser(t *testing.T) {
