@@ -7,6 +7,8 @@
 		<testcase classname="name" name="TestOne" time="0.020">
 			<failure message="Failed" type="">file_test.go:11: Error message&#xA;file_test.go:11: Longer&#xA;&#x9;error&#xA;&#x9;message.</failure>
 		</testcase>
-		<testcase classname="name" name="TestTwo" time="0.130"></testcase>
+		<testcase classname="name" name="TestTwo" time="0.130">
+			<system-out></system-out>
+		</testcase>
 	</testsuite>
 </testsuites>

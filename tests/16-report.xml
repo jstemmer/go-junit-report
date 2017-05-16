@@ -4,8 +4,14 @@
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
-		<testcase classname="repeated-names" name="TestRepeat" time="0.000"></testcase>
-		<testcase classname="repeated-names" name="TestRepeat" time="0.000"></testcase>
-		<testcase classname="repeated-names" name="TestRepeat" time="0.000"></testcase>
+		<testcase classname="repeated-names" name="TestRepeat" time="0.000">
+			<system-out></system-out>
+		</testcase>
+		<testcase classname="repeated-names" name="TestRepeat" time="0.000">
+			<system-out></system-out>
+		</testcase>
+		<testcase classname="repeated-names" name="TestRepeat" time="0.000">
+			<system-out></system-out>
+		</testcase>
 	</testsuite>
 </testsuites>
