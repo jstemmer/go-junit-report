@@ -1,0 +1,40 @@
+=== RUN   TestRace
+test output
+2 0xc4200153d0
+==================
+WARNING: DATA RACE
+Write at 0x00c4200153d0 by goroutine 7:
+  race_test.TestRace.func1()
+      race_test.go:13 +0x3b
+
+Previous write at 0x00c4200153d0 by goroutine 6:
+  race_test.TestRace()
+      race_test.go:15 +0x136
+  testing.tRunner()
+      /usr/local/Cellar/go/1.8.3/libexec/src/testing/testing.go:657 +0x107
+
+Goroutine 7 (running) created at:
+  race_test.TestRace()
+      race_test.go:14 +0x125
+  testing.tRunner()
+      /usr/local/Cellar/go/1.8.3/libexec/src/testing/testing.go:657 +0x107
+
+Goroutine 6 (running) created at:
+  testing.(*T).Run()
+      /usr/local/Cellar/go/1.8.3/libexec/src/testing/testing.go:697 +0x543
+  testing.runTests.func1()
+      /usr/local/Cellar/go/1.8.3/libexec/src/testing/testing.go:882 +0xaa
+  testing.tRunner()
+      /usr/local/Cellar/go/1.8.3/libexec/src/testing/testing.go:657 +0x107
+  testing.runTests()
+      /usr/local/Cellar/go/1.8.3/libexec/src/testing/testing.go:888 +0x4e0
+  testing.(*M).Run()
+      /usr/local/Cellar/go/1.8.3/libexec/src/testing/testing.go:822 +0x1c3
+  main.main()
+      _test/_testmain.go:52 +0x20f
+==================
+--- FAIL: TestRace (0.00s)
+	testing.go:610: race detected during execution of test
+FAIL
+exit status 1
+FAIL	race_test	0.015s

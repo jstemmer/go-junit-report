@@ -41,9 +41,10 @@ type Test struct {
 
 var (
 	regexStatus   = regexp.MustCompile(`^\s*--- (PASS|FAIL|SKIP): (.+) \((\d+\.\d+)(?: seconds|s)\)$`)
-	regexCoverage = regexp.MustCompile(`^coverage:\s+(\d+\.\d+)%\s+of\s+statements(?:\sin\s.+)?$`)
-	regexResult   = regexp.MustCompile(`^(ok|FAIL)\s+([^ ]+)\s+(?:(\d+\.\d+)s|(\[\w+ failed]))(?:\s+coverage:\s+(\d+\.\d+)%\sof\sstatements(?:\sin\s.+)?)?$`)
+	regexCoverage = regexp.MustCompile(`^coverage:\s+(\d+(?:\.\d+)?)%\s+of\s+statements(?:\sin\s.+)?$`)
+	regexResult   = regexp.MustCompile(`^(ok|FAIL)\s+([^ ]+)\s+(?:(\d+\.\d+)s|(\[\w+ failed]))(?:\s+coverage:\s+(\d+(?:\.\d+))%\sof\sstatements(?:\sin\s.+)?)?$`)
 	regexOutput   = regexp.MustCompile(`(    )*\t(.*)`)
+	regexSummary  = regexp.MustCompile(`^(PASS|FAIL|SKIP)$`)
 )
 
 // Parse parses go test output from reader r and returns a report with the
@@ -170,9 +171,16 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 		} else if capturedPackage != "" {
 			// current line is build failure capture for the current built package
 			packageCaptures[capturedPackage] = append(packageCaptures[capturedPackage], line)
+		} else if regexSummary.MatchString(line) {
+			// ignore
 		} else {
-			// buffer anything else that we didn't recognize
-			buffer = append(buffer, line)
+			test := findTest(tests, cur)
+			if test == nil {
+				// buffer anything else that we didn't recognize
+				buffer = append(buffer, line)
+			} else {
+				test.Output = append(test.Output, line)
+			}
 		}
 	}
 
