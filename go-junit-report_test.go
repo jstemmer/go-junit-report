@@ -642,6 +642,46 @@ var testCases = []TestCase{
 			},
 		},
 	},
+	{
+		name:       "18-coverpkg.txt",
+		reportName: "18-report.xml",
+		report: &parser.Report{
+			Packages: []parser.Package{
+				{
+					Name: "package1/foo",
+					Time: 400,
+					Tests: []*parser.Test{
+						{
+							Name:   "TestA",
+							Time:   100,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestB",
+							Time:   300,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+					},
+					CoveragePct: "10.0",
+				},
+				{
+					Name: "package2/bar",
+					Time: 4200,
+					Tests: []*parser.Test{
+						{
+							Name:   "TestC",
+							Time:   4200,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+					},
+					CoveragePct: "99.8",
+				},
+			},
+		},
+	},
 }
 
 func TestParser(t *testing.T) {
