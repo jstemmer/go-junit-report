@@ -312,7 +312,9 @@ var testCases = []TestCase{
 							Name:   "TestB",
 							Time:   300,
 							Result: parser.PASS,
-							Output: []string{},
+							Output: []string{
+								"coverage: 10% of statements",
+							},
 						},
 					},
 					CoveragePct: "10.0",
@@ -722,7 +724,9 @@ var testCases = []TestCase{
 							Name:   "TestB",
 							Time:   300,
 							Result: parser.PASS,
-							Output: []string{},
+							Output: []string{
+								"coverage: 10% of statements in fmt, encoding/xml",
+							},
 						},
 					},
 					CoveragePct: "10.0",
