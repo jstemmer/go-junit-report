@@ -64,6 +64,9 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 	// current test
 	var cur string
 
+	// keep track if we've already seen a summary for the current test
+	var seenSummary bool
+
 	// coverage percentage report for current package
 	var coveragePct string
 
@@ -98,6 +101,7 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 
 			// clear the current build package, so output lines won't be added to that build
 			capturedPackage = ""
+			seenSummary = false
 		} else if matches := regexResult.FindStringSubmatch(line); len(matches) == 6 {
 			if matches[5] != "" {
 				coveragePct = matches[5]
@@ -172,15 +176,17 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 			// current line is build failure capture for the current built package
 			packageCaptures[capturedPackage] = append(packageCaptures[capturedPackage], line)
 		} else if regexSummary.MatchString(line) {
-			// ignore
+			// don't store any output after the summary
+			seenSummary = true
 		} else {
-			test := findTest(tests, cur)
-			if test == nil {
-				// buffer anything else that we didn't recognize
-				buffer = append(buffer, line)
-			} else {
-				test.Output = append(test.Output, line)
+			if !seenSummary {
+				if test := findTest(tests, cur); test != nil {
+					test.Output = append(test.Output, line)
+					continue
+				}
 			}
+			// buffer anything else that we didn't recognize
+			buffer = append(buffer, line)
 		}
 	}
 
