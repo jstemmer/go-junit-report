@@ -153,6 +153,7 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 			} else {
 				test.Result = FAIL
 			}
+			test.Output = buffer
 
 			test.Name = matches[2]
 			testTime := parseTime(matches[3]) * 10
@@ -178,13 +179,7 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 		} else if regexSummary.MatchString(line) {
 			// don't store any output after the summary
 			seenSummary = true
-		} else {
-			if !seenSummary {
-				if test := findTest(tests, cur); test != nil {
-					test.Output = append(test.Output, line)
-					continue
-				}
-			}
+		} else if !seenSummary {
 			// buffer anything else that we didn't recognize
 			buffer = append(buffer, line)
 		}
