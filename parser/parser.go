@@ -40,11 +40,12 @@ type Test struct {
 }
 
 var (
-	regexStatus   = regexp.MustCompile(`^\s*--- (PASS|FAIL|SKIP): (.+) \((\d+\.\d+)(?: seconds|s)\)$`)
+	regexStatus   = regexp.MustCompile(`\s*--- (PASS|FAIL|SKIP): (.+) \((\d+\.\d+)(?: seconds|s)\)$`)
 	regexCoverage = regexp.MustCompile(`^coverage:\s+(\d+\.\d+)%\s+of\s+statements(?:\sin\s.+)?$`)
 	regexResult   = regexp.MustCompile(`^(ok|FAIL)\s+([^ ]+)\s+(?:(\d+\.\d+)s|(\[\w+ failed]))(?:\s+coverage:\s+(\d+\.\d+)%\sof\sstatements(?:\sin\s.+)?)?$`)
 	regexOutput   = regexp.MustCompile(`(    )*\t(.*)`)
 	regexSummary  = regexp.MustCompile(`^(PASS|FAIL|SKIP)$`)
+	regexColors   = regexp.MustCompile(`\x1b\[[0-9;]*m`)
 )
 
 // Parse parses go test output from reader r and returns a report with the
@@ -88,7 +89,7 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 			return nil, err
 		}
 
-		line := string(l)
+		line := string(regexColors.ReplaceAll(l, []byte{}))
 
 		if strings.HasPrefix(line, "=== RUN ") {
 			// new test
