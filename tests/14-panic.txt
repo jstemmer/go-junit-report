@@ -1,6 +1,0 @@
-panic: init
-stacktrace
-FAIL    package/panic  0.003s
-panic: init
-stacktrace
-FAIL    package/panic2  0.003s

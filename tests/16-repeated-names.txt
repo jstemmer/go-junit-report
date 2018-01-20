@@ -1,8 +1,0 @@
-=== RUN   TestRepeat
---- PASS: TestRepeat (0.00s)
-=== RUN   TestRepeat
---- PASS: TestRepeat (0.00s)
-=== RUN   TestRepeat
---- PASS: TestRepeat (0.00s)
-PASS
-ok      package/repeated-names    0.001s

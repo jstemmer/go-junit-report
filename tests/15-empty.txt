@@ -1,3 +1,0 @@
-testing: warning: no tests to run
-PASS
-ok  	package/empty	0.001s

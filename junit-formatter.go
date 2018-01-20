@@ -8,7 +8,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/jstemmer/go-junit-report/parser"
+	"github.com/ujiro99/doctest-junit-report/parser"
 )
 
 // JUnitTestSuites is a collection of JUnit test suites.
