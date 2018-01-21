@@ -1,0 +1,116 @@
+[doctest] doctest version is "1.2.5"
+[doctest] run with "--help" for options
+===============================================================================
+logging.cpp(7)
+TEST CASE:  logging the counter of a loop
+
+logging.cpp(18) ERROR!
+  CHECK( vec[i] != (1 << i) )
+with expansion:
+  CHECK( 1 != 1 )
+with context:
+  current iteration of loop:
+  i := 0
+
+logging.cpp(18) ERROR!
+  CHECK( vec[i] != (1 << i) )
+with expansion:
+  CHECK( 2 != 2 )
+with context:
+  current iteration of loop:
+  i := 1
+
+logging.cpp(18) ERROR!
+  CHECK( vec[i] != (1 << i) )
+with expansion:
+  CHECK( 4 != 4 )
+with context:
+  current iteration of loop:
+  i := 2
+
+logging.cpp(18) ERROR!
+  CHECK( vec[i] != (1 << i) )
+with expansion:
+  CHECK( 8 != 8 )
+with context:
+  current iteration of loop:
+  i := 3
+
+logging.cpp(18) ERROR!
+  CHECK( vec[i] != (1 << i) )
+with expansion:
+  CHECK( 16 != 16 )
+with context:
+  current iteration of loop:
+  i := 4
+
+0.000738 s: logging the counter of a loop
+===============================================================================
+logging.cpp(29)
+TEST CASE:  a test case that will end from an exception
+
+logging.cpp(25) ERROR!
+  forcing the many captures (including those on the heap) to be stringified
+with context:
+  lots of captures - some on heap: 42 42 42;
+
+logging.cpp(40) ERROR!
+  CHECK( some_var == 666 )
+with expansion:
+  CHECK( 42 == 666 )
+with context:
+  someTests() returned: 42
+  this should be printed if an exception is thrown even if no assert has failed: 42
+  in a nested scope this should be printed as well: 42
+  why is this not 666 ?!
+
+TEST CASE FAILED!
+threw exception:
+  0
+
+0.000752 s: a test case that will end from an exception
+===============================================================================
+logging.cpp(46)
+TEST CASE:  a test case that will end from an exception and should print the unprinted context
+
+TEST CASE FAILED!
+threw exception:
+  0
+with context:
+  should be printed even if an exception is thrown and no assert fails before that
+
+0.000109 s: a test case that will end from an exception and should print the unprinted context
+===============================================================================
+logging.cpp(63)
+TEST CASE:  third party asserts can report failures to doctest
+
+logging.cpp(64) ERROR!
+  MY_ASSERT(false)
+
+logging.cpp(65) FATAL ERROR!
+  MY_ASSERT_FATAL(false)
+
+0.000231 s: third party asserts can report failures to doctest
+===============================================================================
+logging.cpp(68)
+TEST CASE:  explicit failures 1
+
+logging.cpp(69) ERROR!
+  this should not end the test case, but mark it as failing
+
+logging.cpp(70) MESSAGE!
+  reached!
+
+0.000095 s: explicit failures 1
+===============================================================================
+logging.cpp(73)
+TEST CASE:  explicit failures 2
+
+logging.cpp(74) FATAL ERROR!
+  fail the test case and also end it
+
+0.000068 s: explicit failures 2
+===============================================================================
+[doctest] test cases:      6 |      0 passed |      6 failed |      0 skipped
+[doctest] assertions:     11 |      0 passed |     11 failed |
+[doctest] Status: FAILURE!

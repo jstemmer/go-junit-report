@@ -20,64 +20,65 @@ const (
 
 // Report is a collection of package tests.
 type Report struct {
-	Packages []Package
+	TestSuites []*TestSuite
 }
 
-// Package contains the test results of a single package.
-type Package struct {
-	Name        string
-	Time        int
-	Tests       []*Test
-	CoveragePct string
+// TestSuite contains the test results of a single package.
+type TestSuite struct {
+	Name  string
+	Time  int
+	Tests []*Test
 }
 
 // Test contains the results of a single test.
 type Test struct {
-	Name   string
-	Time   int
-	Result Result
-	Output []string
+	Name     string
+	Time     int
+	Result   Result
+	Filename string
+	Output   []string
 }
 
 var (
-	regexStatus   = regexp.MustCompile(`^\s*--- (PASS|FAIL|SKIP): (.+) \((\d+\.\d+)(?: seconds|s)\)$`)
-	regexCoverage = regexp.MustCompile(`^coverage:\s+(\d+\.\d+)%\s+of\s+statements(?:\sin\s.+)?$`)
-	regexResult   = regexp.MustCompile(`^(ok|FAIL)\s+([^ ]+)\s+(?:(\d+\.\d+)s|(\[\w+ failed]))(?:\s+coverage:\s+(\d+\.\d+)%\sof\sstatements(?:\sin\s.+)?)?$`)
-	regexOutput   = regexp.MustCompile(`(    )*\t(.*)`)
-	regexSummary  = regexp.MustCompile(`^(PASS|FAIL|SKIP)$`)
+	passWords = []string{"PASSED!"}
+	failWords = []string{
+		"FATAL ERROR!",
+		"ERROR!",
+		"Should have failed but didn't",
+		"Test case exceeded time limit",
+	}
+	resultWords = strings.Join(append(passWords, failWords...), "|")
+)
+
+var (
+	regexResult    = regexp.MustCompile(`^.*(` + resultWords + `).*$`)
+	regexTestSuite = regexp.MustCompile(`^TEST SUITE: (.*)$`)
+	regexTestCase  = regexp.MustCompile(`^TEST CASE:  (.*)$`)
+	regexFileName  = regexp.MustCompile(`^(.*)\(.+\)$`)
+	regexTime      = regexp.MustCompile(`^(\d+.\d{6}) s:.*`)
 )
 
 // Parse parses go test output from reader r and returns a report with the
-// results. An optional pkgName can be given, which is used in case a package
-// result line is missing.
-func Parse(r io.Reader, pkgName string) (*Report, error) {
+// results.
+func Parse(r io.Reader) (*Report, error) {
 	reader := bufio.NewReader(r)
 
-	report := &Report{make([]Package, 0)}
-
-	// keep track of tests we find
-	var tests []*Test
-
-	// sum of tests' time, use this if current test has no result line (when it is compiled test)
-	testsTime := 0
+	report := &Report{make([]*TestSuite, 0)}
 
 	// current test
 	var cur string
 
-	// keep track if we've already seen a summary for the current test
-	var seenSummary bool
+	// current test file name
+	var filename string
 
-	// coverage percentage report for current package
-	var coveragePct string
+	// current test suite name
+	var testSuite string
 
-	// stores mapping between package name and output of build failures
-	var packageCaptures = map[string][]string{}
+	// test result separator
+	nextToSeparator := false
 
-	// the name of the package which it's build failure output is being captured
-	var capturedPackage string
-
-	// capture any non-test output
-	var buffer []string
+	// found test suite name
+	foundTestSuite := false
 
 	// parse lines
 	for {
@@ -90,109 +91,80 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 
 		line := string(l)
 
-		if strings.HasPrefix(line, "=== RUN ") {
-			// new test
-			cur = strings.TrimSpace(line[8:])
-			tests = append(tests, &Test{
-				Name:   cur,
-				Result: FAIL,
-				Output: make([]string, 0),
-			})
+		if strings.HasPrefix(line, "==========") {
+			// The file name is written next to the separator.
+			nextToSeparator = true
 
-			// clear the current build package, so output lines won't be added to that build
-			capturedPackage = ""
-			seenSummary = false
-		} else if matches := regexResult.FindStringSubmatch(line); len(matches) == 6 {
-			if matches[5] != "" {
-				coveragePct = matches[5]
+		} else if nextToSeparator {
+			if matches := regexFileName.FindStringSubmatch(line); len(matches) == 2 {
+				filename = matches[1]
 			}
-			if strings.HasSuffix(matches[4], "failed]") {
-				// the build of the package failed, inject a dummy test into the package
-				// which indicate about the failure and contain the failure description.
-				tests = append(tests, &Test{
-					Name:   matches[4],
-					Result: FAIL,
-					Output: packageCaptures[matches[2]],
+			nextToSeparator = false
+
+		} else if matches := regexTestSuite.FindStringSubmatch(line); len(matches) == 2 {
+			testSuite = matches[1]
+
+			// If not created, create new TestSuite.
+			s := findTestSuite(report.TestSuites, testSuite)
+			if s == nil {
+				report.TestSuites = append(report.TestSuites, &TestSuite{
+					Name:  testSuite,
+					Tests: make([]*Test, 0),
 				})
-			} else if matches[1] == "FAIL" && len(tests) == 0 && len(buffer) > 0 {
-				// This package didn't have any tests, but it failed with some
-				// output. Create a dummy test with the output.
-				tests = append(tests, &Test{
-					Name:   "Failure",
-					Result: FAIL,
-					Output: buffer,
+			}
+
+			foundTestSuite = true
+
+		} else if matches := regexTestCase.FindStringSubmatch(line); len(matches) == 2 {
+			// If not found any TestSuite by this line, use filename as TestSuite.
+			if !foundTestSuite {
+				testSuite = filename
+			}
+
+			// If not created TestSuite of file, create new TestSuite.
+			// This TestSuite is for TestCases right under the file.
+			s := findTestSuite(report.TestSuites, testSuite)
+			if s == nil {
+				s = &TestSuite{
+					Name:  filename,
+					Tests: make([]*Test, 0),
+				}
+				report.TestSuites = append(report.TestSuites, s)
+			}
+
+			// If not created TestCase by this line, create new TestCase.
+			cur = matches[1]
+			t := findTestCase(s.Tests, cur)
+			if t == nil {
+				s.Tests = append(s.Tests, &Test{
+					Name:     cur,
+					Result:   PASS,
+					Filename: filename,
+					Output:   make([]string, 0),
 				})
-				buffer = buffer[0:0]
 			}
 
-			// all tests in this package are finished
-			report.Packages = append(report.Packages, Package{
-				Name:        matches[2],
-				Time:        parseTime(matches[3]),
-				Tests:       tests,
-				CoveragePct: coveragePct,
-			})
+			// consumed
+			foundTestSuite = false
 
-			buffer = buffer[0:0]
-			tests = make([]*Test, 0)
-			coveragePct = ""
-			cur = ""
-			testsTime = 0
-		} else if matches := regexStatus.FindStringSubmatch(line); len(matches) == 4 {
-			cur = matches[2]
-			test := findTest(tests, cur)
-			if test == nil {
-				continue
-			}
+		} else if matches := regexTime.FindStringSubmatch(line); len(matches) == 2 {
+			// Update test time.
+			s := findTestSuite(report.TestSuites, testSuite)
+			t := findTestCase(s.Tests, cur)
+			t.Time = parseTime(matches[1])
+			s.Time += t.Time
 
-			// test status
-			if matches[1] == "PASS" {
-				test.Result = PASS
-			} else if matches[1] == "SKIP" {
-				test.Result = SKIP
-			} else {
-				test.Result = FAIL
+		} else if matches := regexResult.FindStringSubmatch(line); len(matches) == 2 {
+			// Update test result.
+			s := findTestSuite(report.TestSuites, testSuite)
+			t := findTestCase(s.Tests, cur)
+			r := matches[1]
+			for _, v := range failWords {
+				if r == v {
+					t.Result = FAIL
+				}
 			}
-			test.Output = buffer
-
-			test.Name = matches[2]
-			testTime := parseTime(matches[3]) * 10
-			test.Time = testTime
-			testsTime += testTime
-		} else if matches := regexCoverage.FindStringSubmatch(line); len(matches) == 2 {
-			coveragePct = matches[1]
-		} else if matches := regexOutput.FindStringSubmatch(line); capturedPackage == "" && len(matches) == 3 {
-			// Sub-tests start with one or more series of 4-space indents, followed by a hard tab,
-			// followed by the test output
-			// Top-level tests start with a hard tab.
-			test := findTest(tests, cur)
-			if test == nil {
-				continue
-			}
-			test.Output = append(test.Output, matches[2])
-		} else if strings.HasPrefix(line, "# ") {
-			// indicates a capture of build output of a package. set the current build package.
-			capturedPackage = line[2:]
-		} else if capturedPackage != "" {
-			// current line is build failure capture for the current built package
-			packageCaptures[capturedPackage] = append(packageCaptures[capturedPackage], line)
-		} else if regexSummary.MatchString(line) {
-			// don't store any output after the summary
-			seenSummary = true
-		} else if !seenSummary {
-			// buffer anything else that we didn't recognize
-			buffer = append(buffer, line)
 		}
-	}
-
-	if len(tests) > 0 {
-		// no result line found
-		report.Packages = append(report.Packages, Package{
-			Name:        pkgName,
-			Time:        testsTime,
-			Tests:       tests,
-			CoveragePct: coveragePct,
-		})
 	}
 
 	return report, nil
@@ -206,10 +178,19 @@ func parseTime(time string) int {
 	return t
 }
 
-func findTest(tests []*Test, name string) *Test {
-	for i := len(tests) - 1; i >= 0; i-- {
-		if tests[i].Name == name {
-			return tests[i]
+func findTestSuite(suites []*TestSuite, name string) *TestSuite {
+	for _, s := range suites {
+		if s.Name == name {
+			return s
+		}
+	}
+	return nil
+}
+
+func findTestCase(tests []*Test, name string) *Test {
+	for _, t := range tests {
+		if t.Name == name {
+			return t
 		}
 	}
 	return nil
@@ -219,7 +200,7 @@ func findTest(tests []*Test, name string) *Test {
 func (r *Report) Failures() int {
 	count := 0
 
-	for _, p := range r.Packages {
+	for _, p := range r.TestSuites {
 		for _, t := range p.Tests {
 			if t.Result == FAIL {
 				count++
@@ -228,4 +209,28 @@ func (r *Report) Failures() int {
 	}
 
 	return count
+}
+
+// Tests counts the number of tests in this report
+func (r *Report) Tests() int {
+	count := 0
+
+	for _, p := range r.TestSuites {
+		count += len(p.Tests)
+	}
+
+	return count
+}
+
+// Time counts the total times in this report
+func (r *Report) Time() int {
+	time := 0
+
+	for _, p := range r.TestSuites {
+		for _, t := range p.Tests {
+			time += t.Time
+		}
+	}
+
+	return time
 }

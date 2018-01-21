@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="0" time="0.000414">
+	<properties></properties>
+	<testsuite tests="1" failures="0" time="0.000414" name="alternative_macros.cpp">
+		<testcase classname="alternative_macros.cpp" name="custom macros" time="0.000414"></testcase>
+	</testsuite>
+</testsuites>

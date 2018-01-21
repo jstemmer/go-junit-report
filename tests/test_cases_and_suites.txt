@@ -1,0 +1,135 @@
+[doctest] doctest version is "1.2.5"
+[doctest] run with "--help" for options
+===============================================================================
+test_cases_and_suites.cpp(13)
+TEST CASE:  an empty test that will succeed - not part of a test suite
+
+0.000163 s: an empty test that will succeed - not part of a test suite
+===============================================================================
+test_cases_and_suites.cpp(15)
+TEST CASE:  should fail because of an exception
+
+test_cases_and_suites.cpp(10) PASSED!
+  CHECK( a == 7 )
+with expansion:
+  CHECK( 7 == 7 )
+
+TEST CASE FAILED!
+threw exception:
+  0
+
+0.001008 s: should fail because of an exception
+===============================================================================
+test_cases_and_suites.cpp(22)
+TEST SUITE: scoped test suite
+TEST CASE:  part of scoped
+
+test_cases_and_suites.cpp(23) FATAL ERROR!
+
+0.000107 s: part of scoped
+===============================================================================
+test_cases_and_suites.cpp(26)
+TEST SUITE: scoped test suite
+TEST CASE:  part of scoped 2
+
+test_cases_and_suites.cpp(27) FATAL ERROR!
+
+0.000095 s: part of scoped 2
+===============================================================================
+test_cases_and_suites.cpp(33)
+TEST SUITE: some TS
+TEST CASE:  part of some TS
+
+test_cases_and_suites.cpp(34) FATAL ERROR!
+
+0.000071 s: part of some TS
+===============================================================================
+test_cases_and_suites.cpp(39)
+TEST CASE:  fixtured test - not part of a test suite
+
+test_cases_and_suites.cpp(41) ERROR!
+  CHECK( data == 85 )
+with expansion:
+  CHECK( 21 == 85 )
+
+0.000075 s: fixtured test - not part of a test suite
+===============================================================================
+test_cases_and_suites.cpp(44)
+TEST SUITE: ts1
+TEST CASE:  normal test in a test suite from a decorator
+
+test_cases_and_suites.cpp(46) MESSAGE!
+  failing because of the timeout decorator!
+
+Test case exceeded time limit of 0.000001!
+0.000085 s: normal test in a test suite from a decorator
+===============================================================================
+test_cases_and_suites.cpp(52)
+DESCRIPTION: this test has overrided its skip decorator
+TEST SUITE: skipped test cases
+TEST CASE:  unskipped
+
+test_cases_and_suites.cpp(54) FATAL ERROR!
+
+0.000086 s: unskipped
+===============================================================================
+test_cases_and_suites.cpp(60)
+DESCRIPTION: regarding failures
+TEST SUITE: test suite with a description
+TEST CASE:  fails - and its allowed
+
+test_cases_and_suites.cpp(60) FATAL ERROR!
+
+0.000095 s: fails - and its allowed
+Allowed to fail so marking it as not failed
+===============================================================================
+test_cases_and_suites.cpp(61)
+DESCRIPTION: regarding failures
+TEST SUITE: test suite with a description
+TEST CASE:  doesn't fail which is fine
+
+0.000045 s: doesn't fail which is fine
+===============================================================================
+test_cases_and_suites.cpp(63)
+DESCRIPTION: regarding failures
+TEST SUITE: test suite with a description
+TEST CASE:  fails as it should
+
+test_cases_and_suites.cpp(63) FATAL ERROR!
+
+0.000093 s: fails as it should
+Failed as expected so marking it as not failed
+===============================================================================
+test_cases_and_suites.cpp(64)
+DESCRIPTION: regarding failures
+TEST SUITE: test suite with a description
+TEST CASE:  doesn't fail but it should have
+
+0.000058 s: doesn't fail but it should have
+Should have failed but didn't! Marking it as failed!
+===============================================================================
+test_cases_and_suites.cpp(66)
+DESCRIPTION: regarding failures
+TEST SUITE: test suite with a description
+TEST CASE:  fails 1 time as it should
+
+test_cases_and_suites.cpp(66) FATAL ERROR!
+
+0.000078 s: fails 1 time as it should
+Failed exactly 1 times as expected so marking it as not failed!
+===============================================================================
+test_cases_and_suites.cpp(67)
+DESCRIPTION: regarding failures
+TEST SUITE: test suite with a description
+TEST CASE:  fails more times as it should
+
+test_cases_and_suites.cpp(68) ERROR!
+
+test_cases_and_suites.cpp(69) ERROR!
+
+0.000387 s: fails more times as it should
+Didn't fail exactly 1 times so marking it as failed!
+===============================================================================
+[doctest] test cases:     14 |      5 passed |      9 failed |      1 skipped
+[doctest] assertions:     11 |      1 passed |     10 failed |
+[doctest] Status: FAILURE!

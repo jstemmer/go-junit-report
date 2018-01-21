@@ -5,7 +5,6 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
-	"runtime"
 	"strings"
 
 	"github.com/ujiro99/doctest-junit-report/parser"
@@ -13,20 +12,24 @@ import (
 
 // JUnitTestSuites is a collection of JUnit test suites.
 type JUnitTestSuites struct {
-	XMLName xml.Name `xml:"testsuites"`
-	Suites  []JUnitTestSuite
+	XMLName    xml.Name        `xml:"testsuites"`
+	Tests      int             `xml:"tests,attr"`
+	Failures   int             `xml:"failures,attr"`
+	Time       string          `xml:"time,attr"`
+	Name       string          `xml:"name,attr,omitempty"`
+	Properties []JUnitProperty `xml:"properties>property,omitempty"`
+	Suites     []JUnitTestSuite
 }
 
 // JUnitTestSuite is a single JUnit test suite which may contain many
 // testcases.
 type JUnitTestSuite struct {
-	XMLName    xml.Name        `xml:"testsuite"`
-	Tests      int             `xml:"tests,attr"`
-	Failures   int             `xml:"failures,attr"`
-	Time       string          `xml:"time,attr"`
-	Name       string          `xml:"name,attr"`
-	Properties []JUnitProperty `xml:"properties>property,omitempty"`
-	TestCases  []JUnitTestCase
+	XMLName   xml.Name `xml:"testsuite"`
+	Tests     int      `xml:"tests,attr"`
+	Failures  int      `xml:"failures,attr"`
+	Time      string   `xml:"time,attr"`
+	Name      string   `xml:"name,attr"`
+	TestCases []JUnitTestCase
 }
 
 // JUnitTestCase is a single test case with its result.
@@ -59,39 +62,33 @@ type JUnitFailure struct {
 
 // JUnitReportXML writes a JUnit xml representation of the given report to w
 // in the format described at http://windyroad.org/dl/Open%20Source/JUnit.xsd
-func JUnitReportXML(report *parser.Report, noXMLHeader bool, goVersion string, w io.Writer) error {
-	suites := JUnitTestSuites{}
+func JUnitReportXML(report *parser.Report, noXMLHeader bool, version string, packageName string, w io.Writer) error {
+	suites := JUnitTestSuites{
+		Name:       packageName,
+		Tests:      report.Tests(),
+		Failures:   report.Failures(),
+		Properties: []JUnitProperty{},
+		Time:       formatTime(report.Time()),
+	}
+
+	if version != "" {
+		suites.Properties = append(suites.Properties, JUnitProperty{"version", version})
+	}
 
 	// convert Report to JUnit test suites
-	for _, pkg := range report.Packages {
+	for _, pkg := range report.TestSuites {
 		ts := JUnitTestSuite{
-			Tests:      len(pkg.Tests),
-			Failures:   0,
-			Time:       formatTime(pkg.Time),
-			Name:       pkg.Name,
-			Properties: []JUnitProperty{},
-			TestCases:  []JUnitTestCase{},
-		}
-
-		classname := pkg.Name
-		if idx := strings.LastIndex(classname, "/"); idx > -1 && idx < len(pkg.Name) {
-			classname = pkg.Name[idx+1:]
-		}
-
-		// properties
-		if goVersion == "" {
-			// if goVersion was not specified as a flag, fall back to version reported by runtime
-			goVersion = runtime.Version()
-		}
-		ts.Properties = append(ts.Properties, JUnitProperty{"go.version", goVersion})
-		if pkg.CoveragePct != "" {
-			ts.Properties = append(ts.Properties, JUnitProperty{"coverage.statements.pct", pkg.CoveragePct})
+			Tests:     len(pkg.Tests),
+			Failures:  0,
+			Time:      formatTime(pkg.Time),
+			Name:      pkg.Name,
+			TestCases: []JUnitTestCase{},
 		}
 
 		// individual test cases
 		for _, test := range pkg.Tests {
 			testCase := JUnitTestCase{
-				Classname: classname,
+				Classname: test.Filename,
 				Name:      test.Name,
 				Time:      formatTime(test.Time),
 				Failure:   nil,
@@ -136,5 +133,5 @@ func JUnitReportXML(report *parser.Report, noXMLHeader bool, goVersion string, w
 }
 
 func formatTime(time int) string {
-	return fmt.Sprintf("%.3f", float64(time)/1000.0)
+	return fmt.Sprintf("%.6f", float64(time)/1000000.0)
 }

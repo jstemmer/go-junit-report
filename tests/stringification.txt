@@ -1,0 +1,44 @@
+[doctest] doctest version is "1.2.5"
+[doctest] run with "--help" for options
+===============================================================================
+stringification.cpp(85)
+TEST CASE:  all asserts should fail and show how the objects get stringified
+
+stringification.cpp(95) ERROR!
+  CHECK( f1 == f2 )
+with expansion:
+  CHECK( Foo{} == Foo{} )
+
+stringification.cpp(101) ERROR!
+  CHECK( dummy1 == dummy2 )
+with expansion:
+  CHECK( omg == tralala )
+
+stringification.cpp(113) ERROR!
+  CHECK( vec1 == vec2 )
+with expansion:
+  CHECK( [1, 2, 3] == [1, 2, 4] )
+
+stringification.cpp(125) ERROR!
+  CHECK( lst_1 == lst_2 )
+with expansion:
+  CHECK( [1, 42, 3, ] == [1, 2, 666, ] )
+
+TEST CASE FAILED!
+threw exception:
+  MyTypeInherited<int>(5, 4.0f)
+
+0.002175 s: all asserts should fail and show how the objects get stringified
+===============================================================================
+stringification.cpp(135)
+TEST CASE:  a test case that registers an exception translator for int and then throws one
+
+TEST CASE FAILED!
+threw exception:
+  5
+
+0.000066 s: a test case that registers an exception translator for int and then throws one
+===============================================================================
+[doctest] test cases:      2 |      0 passed |      2 failed |      0 skipped
+[doctest] assertions:      4 |      0 passed |      4 failed |
+[doctest] Status: FAILURE!

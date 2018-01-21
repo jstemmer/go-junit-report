@@ -1,0 +1,665 @@
+[doctest] doctest version is "1.2.5"
+[doctest] run with "--help" for options
+===============================================================================
+assertion_macros.cpp(7)
+TEST CASE:  normal macros
+
+assertion_macros.cpp(11) ERROR!
+  CHECK( throw_if(true, std::runtime_error("whops!")) == 42 )
+threw exception:
+  whops!
+
+assertion_macros.cpp(13) PASSED!
+  CHECK_FALSE( !(a == b) )
+with expansion:
+  CHECK_FALSE( false )
+
+assertion_macros.cpp(15) PASSED!
+  REQUIRE( a == b )
+with expansion:
+  REQUIRE( 5 == 5 )
+
+assertion_macros.cpp(17) PASSED!
+  CHECK_EQ( a, b )
+with expansion:
+  CHECK_EQ( 5, 5 )
+
+assertion_macros.cpp(19) PASSED!
+  FAST_CHECK_EQ( a, b )
+with expansion:
+  FAST_CHECK_EQ( 5, 5 )
+
+assertion_macros.cpp(21) PASSED!
+  CHECK( doctest::Approx(0.1000001) == 0.1000002 )
+with expansion:
+  CHECK( Approx( 0.1000001 ) == 0.1000002 )
+
+assertion_macros.cpp(22) ERROR!
+  CHECK( doctest::Approx(0.502) == 0.501 )
+with expansion:
+  CHECK( Approx( 0.502 ) == 0.501 )
+
+0.000993 s: normal macros
+===============================================================================
+assertion_macros.cpp(25)
+TEST CASE:  expressions should be evaluated only once
+
+assertion_macros.cpp(27) PASSED!
+  REQUIRE( ++a == 6 )
+with expansion:
+  REQUIRE( 6 == 6 )
+
+assertion_macros.cpp(28) PASSED!
+  REQUIRE_EQ( ++a, 7 )
+with expansion:
+  REQUIRE_EQ( 7, 7 )
+
+0.000061 s: expressions should be evaluated only once
+===============================================================================
+assertion_macros.cpp(31)
+TEST CASE:  exceptions-related macros
+
+assertion_macros.cpp(32) PASSED!
+  CHECK_THROWS( throw_if(true, 0) )
+
+assertion_macros.cpp(33) ERROR!
+  CHECK_THROWS( throw_if(false, 0) )
+didn't throw at all
+
+assertion_macros.cpp(34) PASSED!
+  CHECK_THROWS_AS( throw_if(true, 0), int )
+
+assertion_macros.cpp(35) ERROR!
+  CHECK_THROWS_AS( throw_if(true, 0), char )
+threw a different exception:
+  0
+
+assertion_macros.cpp(36) ERROR!
+  CHECK_THROWS_AS( throw_if(false, 0), int )
+didn't throw at all
+
+assertion_macros.cpp(38) ERROR!
+  CHECK_NOTHROW( throw_if(true, 0) )
+threw exception:
+  0
+
+assertion_macros.cpp(39) PASSED!
+  CHECK_NOTHROW( throw_if(false, 0) )
+
+0.000224 s: exceptions-related macros
+===============================================================================
+assertion_macros.cpp(42)
+TEST CASE:  exceptions-related macros for std::exception
+
+assertion_macros.cpp(43) ERROR!
+  CHECK_THROWS( throw_if(false, 0) )
+didn't throw at all
+
+assertion_macros.cpp(44) ERROR!
+  CHECK_THROWS_AS( throw_if(false, std::runtime_error("whops!")), std::exception )
+didn't throw at all
+
+assertion_macros.cpp(45) PASSED!
+  CHECK_THROWS_AS( throw_if(true, std::runtime_error("whops!")), std::exception )
+
+assertion_macros.cpp(46) ERROR!
+  CHECK_THROWS_AS( throw_if(true, std::runtime_error("whops!")), int )
+threw a different exception:
+  whops!
+
+assertion_macros.cpp(48) FATAL ERROR!
+  REQUIRE_NOTHROW( throw_if(true, std::runtime_error("whops!")) )
+threw exception:
+  whops!
+
+0.000226 s: exceptions-related macros for std::exception
+===============================================================================
+assertion_macros.cpp(55)
+TEST CASE:  WARN level of asserts don't fail the test case
+
+assertion_macros.cpp(56) WARNING!
+  WARN( 0 )
+with expansion:
+  WARN( 0 )
+
+assertion_macros.cpp(57) WARNING!
+  WARN_FALSE( 1 )
+with expansion:
+  WARN_FALSE( 1 )
+
+assertion_macros.cpp(58) WARNING!
+  WARN_THROWS( throw_if(false, 0) )
+didn't throw at all
+
+assertion_macros.cpp(59) WARNING!
+  WARN_THROWS_AS( throw_if(false, 0), bool )
+didn't throw at all
+
+assertion_macros.cpp(60) WARNING!
+  WARN_THROWS_AS( throw_if(true, 0), bool )
+threw a different exception:
+  0
+
+assertion_macros.cpp(61) WARNING!
+  WARN_NOTHROW( throw_if(true, 0) )
+threw exception:
+  0
+
+assertion_macros.cpp(63) WARNING!
+  WARN_EQ( 1, 0 )
+with expansion:
+  WARN_EQ( 1, 0 )
+
+assertion_macros.cpp(64) WARNING!
+  WARN_UNARY( 0 )
+with expansion:
+  WARN_UNARY( 0 )
+
+assertion_macros.cpp(65) WARNING!
+  WARN_UNARY_FALSE( 1 )
+with expansion:
+  WARN_UNARY_FALSE( 1 )
+
+assertion_macros.cpp(67) WARNING!
+  FAST_WARN_EQ( 1, 0 )
+with expansion:
+  FAST_WARN_EQ( 1, 0 )
+
+assertion_macros.cpp(68) WARNING!
+  FAST_WARN_UNARY( 0 )
+with expansion:
+  FAST_WARN_UNARY( 0 )
+
+assertion_macros.cpp(69) WARNING!
+  FAST_WARN_UNARY_FALSE( 1 )
+with expansion:
+  FAST_WARN_UNARY_FALSE( 1 )
+
+0.000481 s: WARN level of asserts don't fail the test case
+===============================================================================
+assertion_macros.cpp(72)
+TEST CASE:  CHECK level of asserts fail the test case but don't abort it
+
+assertion_macros.cpp(73) ERROR!
+  CHECK( 0 )
+with expansion:
+  CHECK( 0 )
+
+assertion_macros.cpp(74) ERROR!
+  CHECK_FALSE( 1 )
+with expansion:
+  CHECK_FALSE( 1 )
+
+assertion_macros.cpp(75) ERROR!
+  CHECK_THROWS( throw_if(false, 0) )
+didn't throw at all
+
+assertion_macros.cpp(76) ERROR!
+  CHECK_THROWS_AS( throw_if(false, 0), bool )
+didn't throw at all
+
+assertion_macros.cpp(77) ERROR!
+  CHECK_THROWS_AS( throw_if(true, 0), bool )
+threw a different exception:
+  0
+
+assertion_macros.cpp(78) ERROR!
+  CHECK_NOTHROW( throw_if(true, 0) )
+threw exception:
+  0
+
+assertion_macros.cpp(80) ERROR!
+  CHECK_EQ( 1, 0 )
+with expansion:
+  CHECK_EQ( 1, 0 )
+
+assertion_macros.cpp(81) ERROR!
+  CHECK_UNARY( 0 )
+with expansion:
+  CHECK_UNARY( 0 )
+
+assertion_macros.cpp(82) ERROR!
+  CHECK_UNARY_FALSE( 1 )
+with expansion:
+  CHECK_UNARY_FALSE( 1 )
+
+assertion_macros.cpp(84) ERROR!
+  FAST_CHECK_EQ( 1, 0 )
+with expansion:
+  FAST_CHECK_EQ( 1, 0 )
+
+assertion_macros.cpp(85) ERROR!
+  FAST_CHECK_UNARY( 0 )
+with expansion:
+  FAST_CHECK_UNARY( 0 )
+
+assertion_macros.cpp(86) ERROR!
+  FAST_CHECK_UNARY_FALSE( 1 )
+with expansion:
+  FAST_CHECK_UNARY_FALSE( 1 )
+
+assertion_macros.cpp(88) MESSAGE!
+  reached!
+
+0.000248 s: CHECK level of asserts fail the test case but don't abort it
+===============================================================================
+assertion_macros.cpp(91)
+TEST CASE:  REQUIRE level of asserts fail and abort the test case - 1
+
+assertion_macros.cpp(92) FATAL ERROR!
+  REQUIRE( 0 )
+with expansion:
+  REQUIRE( 0 )
+
+0.000115 s: REQUIRE level of asserts fail and abort the test case - 1
+===============================================================================
+assertion_macros.cpp(95)
+TEST CASE:  REQUIRE level of asserts fail and abort the test case - 2
+
+assertion_macros.cpp(96) FATAL ERROR!
+  REQUIRE_FALSE( 1 )
+with expansion:
+  REQUIRE_FALSE( 1 )
+
+0.000053 s: REQUIRE level of asserts fail and abort the test case - 2
+===============================================================================
+assertion_macros.cpp(99)
+TEST CASE:  REQUIRE level of asserts fail and abort the test case - 3
+
+assertion_macros.cpp(100) FATAL ERROR!
+  REQUIRE_THROWS( throw_if(false, 0) )
+didn't throw at all
+
+0.000048 s: REQUIRE level of asserts fail and abort the test case - 3
+===============================================================================
+assertion_macros.cpp(103)
+TEST CASE:  REQUIRE level of asserts fail and abort the test case - 4
+
+assertion_macros.cpp(104) FATAL ERROR!
+  REQUIRE_THROWS_AS( throw_if(false, 0), bool )
+didn't throw at all
+
+0.000050 s: REQUIRE level of asserts fail and abort the test case - 4
+===============================================================================
+assertion_macros.cpp(107)
+TEST CASE:  REQUIRE level of asserts fail and abort the test case - 5
+
+assertion_macros.cpp(108) FATAL ERROR!
+  REQUIRE_THROWS_AS( throw_if(true, 0), bool )
+threw a different exception:
+  0
+
+0.000086 s: REQUIRE level of asserts fail and abort the test case - 5
+===============================================================================
+assertion_macros.cpp(111)
+TEST CASE:  REQUIRE level of asserts fail and abort the test case - 6
+
+assertion_macros.cpp(112) FATAL ERROR!
+  REQUIRE_NOTHROW( throw_if(true, 0) )
+threw exception:
+  0
+
+0.000061 s: REQUIRE level of asserts fail and abort the test case - 6
+===============================================================================
+assertion_macros.cpp(115)
+TEST CASE:  REQUIRE level of asserts fail and abort the test case - 7
+
+assertion_macros.cpp(116) FATAL ERROR!
+  REQUIRE_EQ( 1, 0 )
+with expansion:
+  REQUIRE_EQ( 1, 0 )
+
+0.000050 s: REQUIRE level of asserts fail and abort the test case - 7
+===============================================================================
+assertion_macros.cpp(119)
+TEST CASE:  REQUIRE level of asserts fail and abort the test case - 8
+
+assertion_macros.cpp(120) FATAL ERROR!
+  REQUIRE_UNARY( 0 )
+with expansion:
+  REQUIRE_UNARY( 0 )
+
+0.000055 s: REQUIRE level of asserts fail and abort the test case - 8
+===============================================================================
+assertion_macros.cpp(123)
+TEST CASE:  REQUIRE level of asserts fail and abort the test case - 9
+
+assertion_macros.cpp(124) FATAL ERROR!
+  REQUIRE_UNARY_FALSE( 1 )
+with expansion:
+  REQUIRE_UNARY_FALSE( 1 )
+
+0.000050 s: REQUIRE level of asserts fail and abort the test case - 9
+===============================================================================
+assertion_macros.cpp(127)
+TEST CASE:  REQUIRE level of asserts fail and abort the test case - 10
+
+assertion_macros.cpp(128) FATAL ERROR!
+  FAST_REQUIRE_EQ( 1, 0 )
+with expansion:
+  FAST_REQUIRE_EQ( 1, 0 )
+
+0.000050 s: REQUIRE level of asserts fail and abort the test case - 10
+===============================================================================
+assertion_macros.cpp(131)
+TEST CASE:  REQUIRE level of asserts fail and abort the test case - 11
+
+assertion_macros.cpp(132) FATAL ERROR!
+  FAST_REQUIRE_UNARY( 0 )
+with expansion:
+  FAST_REQUIRE_UNARY( 0 )
+
+0.000047 s: REQUIRE level of asserts fail and abort the test case - 11
+===============================================================================
+assertion_macros.cpp(135)
+TEST CASE:  REQUIRE level of asserts fail and abort the test case - 12
+
+assertion_macros.cpp(136) FATAL ERROR!
+  FAST_REQUIRE_UNARY_FALSE( 1 )
+with expansion:
+  FAST_REQUIRE_UNARY_FALSE( 1 )
+
+0.000048 s: REQUIRE level of asserts fail and abort the test case - 12
+===============================================================================
+assertion_macros.cpp(140)
+TEST CASE:  all binary assertions
+
+assertion_macros.cpp(141) PASSED!
+  WARN_EQ( 1, 1 )
+with expansion:
+  WARN_EQ( 1, 1 )
+
+assertion_macros.cpp(142) PASSED!
+  CHECK_EQ( 1, 1 )
+with expansion:
+  CHECK_EQ( 1, 1 )
+
+assertion_macros.cpp(143) PASSED!
+  REQUIRE_EQ( 1, 1 )
+with expansion:
+  REQUIRE_EQ( 1, 1 )
+
+assertion_macros.cpp(144) PASSED!
+  WARN_NE( 1, 0 )
+with expansion:
+  WARN_NE( 1, 0 )
+
+assertion_macros.cpp(145) PASSED!
+  CHECK_NE( 1, 0 )
+with expansion:
+  CHECK_NE( 1, 0 )
+
+assertion_macros.cpp(146) PASSED!
+  REQUIRE_NE( 1, 0 )
+with expansion:
+  REQUIRE_NE( 1, 0 )
+
+assertion_macros.cpp(147) PASSED!
+  WARN_GT( 1, 0 )
+with expansion:
+  WARN_GT( 1, 0 )
+
+assertion_macros.cpp(148) PASSED!
+  CHECK_GT( 1, 0 )
+with expansion:
+  CHECK_GT( 1, 0 )
+
+assertion_macros.cpp(149) PASSED!
+  REQUIRE_GT( 1, 0 )
+with expansion:
+  REQUIRE_GT( 1, 0 )
+
+assertion_macros.cpp(150) PASSED!
+  WARN_LT( 0, 1 )
+with expansion:
+  WARN_LT( 0, 1 )
+
+assertion_macros.cpp(151) PASSED!
+  CHECK_LT( 0, 1 )
+with expansion:
+  CHECK_LT( 0, 1 )
+
+assertion_macros.cpp(152) PASSED!
+  REQUIRE_LT( 0, 1 )
+with expansion:
+  REQUIRE_LT( 0, 1 )
+
+assertion_macros.cpp(153) PASSED!
+  WARN_GE( 1, 1 )
+with expansion:
+  WARN_GE( 1, 1 )
+
+assertion_macros.cpp(154) PASSED!
+  CHECK_GE( 1, 1 )
+with expansion:
+  CHECK_GE( 1, 1 )
+
+assertion_macros.cpp(155) PASSED!
+  REQUIRE_GE( 1, 1 )
+with expansion:
+  REQUIRE_GE( 1, 1 )
+
+assertion_macros.cpp(156) PASSED!
+  WARN_LE( 1, 1 )
+with expansion:
+  WARN_LE( 1, 1 )
+
+assertion_macros.cpp(157) PASSED!
+  CHECK_LE( 1, 1 )
+with expansion:
+  CHECK_LE( 1, 1 )
+
+assertion_macros.cpp(158) PASSED!
+  REQUIRE_LE( 1, 1 )
+with expansion:
+  REQUIRE_LE( 1, 1 )
+
+assertion_macros.cpp(159) PASSED!
+  WARN_UNARY( 1 )
+with expansion:
+  WARN_UNARY( 1 )
+
+assertion_macros.cpp(160) PASSED!
+  CHECK_UNARY( 1 )
+with expansion:
+  CHECK_UNARY( 1 )
+
+assertion_macros.cpp(161) PASSED!
+  REQUIRE_UNARY( 1 )
+with expansion:
+  REQUIRE_UNARY( 1 )
+
+assertion_macros.cpp(162) PASSED!
+  WARN_UNARY_FALSE( 0 )
+with expansion:
+  WARN_UNARY_FALSE( 0 )
+
+assertion_macros.cpp(163) PASSED!
+  CHECK_UNARY_FALSE( 0 )
+with expansion:
+  CHECK_UNARY_FALSE( 0 )
+
+assertion_macros.cpp(164) PASSED!
+  REQUIRE_UNARY_FALSE( 0 )
+with expansion:
+  REQUIRE_UNARY_FALSE( 0 )
+
+assertion_macros.cpp(165) PASSED!
+  FAST_WARN_EQ( 1, 1 )
+with expansion:
+  FAST_WARN_EQ( 1, 1 )
+
+assertion_macros.cpp(166) PASSED!
+  FAST_CHECK_EQ( 1, 1 )
+with expansion:
+  FAST_CHECK_EQ( 1, 1 )
+
+assertion_macros.cpp(167) PASSED!
+  FAST_REQUIRE_EQ( 1, 1 )
+with expansion:
+  FAST_REQUIRE_EQ( 1, 1 )
+
+assertion_macros.cpp(168) PASSED!
+  FAST_WARN_NE( 1, 0 )
+with expansion:
+  FAST_WARN_NE( 1, 0 )
+
+assertion_macros.cpp(169) PASSED!
+  FAST_CHECK_NE( 1, 0 )
+with expansion:
+  FAST_CHECK_NE( 1, 0 )
+
+assertion_macros.cpp(170) PASSED!
+  FAST_REQUIRE_NE( 1, 0 )
+with expansion:
+  FAST_REQUIRE_NE( 1, 0 )
+
+assertion_macros.cpp(171) PASSED!
+  FAST_WARN_GT( 1, 0 )
+with expansion:
+  FAST_WARN_GT( 1, 0 )
+
+assertion_macros.cpp(172) PASSED!
+  FAST_CHECK_GT( 1, 0 )
+with expansion:
+  FAST_CHECK_GT( 1, 0 )
+
+assertion_macros.cpp(173) PASSED!
+  FAST_REQUIRE_GT( 1, 0 )
+with expansion:
+  FAST_REQUIRE_GT( 1, 0 )
+
+assertion_macros.cpp(174) PASSED!
+  FAST_WARN_LT( 0, 1 )
+with expansion:
+  FAST_WARN_LT( 0, 1 )
+
+assertion_macros.cpp(175) PASSED!
+  FAST_CHECK_LT( 0, 1 )
+with expansion:
+  FAST_CHECK_LT( 0, 1 )
+
+assertion_macros.cpp(176) PASSED!
+  FAST_REQUIRE_LT( 0, 1 )
+with expansion:
+  FAST_REQUIRE_LT( 0, 1 )
+
+assertion_macros.cpp(177) PASSED!
+  FAST_WARN_GE( 1, 1 )
+with expansion:
+  FAST_WARN_GE( 1, 1 )
+
+assertion_macros.cpp(178) PASSED!
+  FAST_CHECK_GE( 1, 1 )
+with expansion:
+  FAST_CHECK_GE( 1, 1 )
+
+assertion_macros.cpp(179) PASSED!
+  FAST_REQUIRE_GE( 1, 1 )
+with expansion:
+  FAST_REQUIRE_GE( 1, 1 )
+
+assertion_macros.cpp(180) PASSED!
+  FAST_WARN_LE( 1, 1 )
+with expansion:
+  FAST_WARN_LE( 1, 1 )
+
+assertion_macros.cpp(181) PASSED!
+  FAST_CHECK_LE( 1, 1 )
+with expansion:
+  FAST_CHECK_LE( 1, 1 )
+
+assertion_macros.cpp(182) PASSED!
+  FAST_REQUIRE_LE( 1, 1 )
+with expansion:
+  FAST_REQUIRE_LE( 1, 1 )
+
+assertion_macros.cpp(183) PASSED!
+  FAST_WARN_UNARY( 1 )
+with expansion:
+  FAST_WARN_UNARY( 1 )
+
+assertion_macros.cpp(184) PASSED!
+  FAST_CHECK_UNARY( 1 )
+with expansion:
+  FAST_CHECK_UNARY( 1 )
+
+assertion_macros.cpp(185) PASSED!
+  FAST_REQUIRE_UNARY( 1 )
+with expansion:
+  FAST_REQUIRE_UNARY( 1 )
+
+assertion_macros.cpp(186) PASSED!
+  FAST_WARN_UNARY_FALSE( 0 )
+with expansion:
+  FAST_WARN_UNARY_FALSE( 0 )
+
+assertion_macros.cpp(187) PASSED!
+  FAST_CHECK_UNARY_FALSE( 0 )
+with expansion:
+  FAST_CHECK_UNARY_FALSE( 0 )
+
+assertion_macros.cpp(188) PASSED!
+  FAST_REQUIRE_UNARY_FALSE( 0 )
+with expansion:
+  FAST_REQUIRE_UNARY_FALSE( 0 )
+
+0.000904 s: all binary assertions
+===============================================================================
+assertion_macros.cpp(208)
+TEST CASE:  some asserts used in a function called by a test case
+
+assertion_macros.cpp(194) PASSED!
+  CHECK( a == b )
+with expansion:
+  CHECK( 5 == 5 )
+
+assertion_macros.cpp(195) PASSED!
+  CHECK_FALSE( a != b )
+with expansion:
+  CHECK_FALSE( 5 != 5 )
+
+assertion_macros.cpp(196) PASSED!
+  CHECK_THROWS( throw_if(true, 0) )
+
+assertion_macros.cpp(197) PASSED!
+  CHECK_THROWS_AS( throw_if(true, 0), int )
+
+assertion_macros.cpp(198) PASSED!
+  CHECK_NOTHROW( throw_if(false, 0) )
+
+assertion_macros.cpp(200) PASSED!
+  CHECK_EQ( a, b )
+with expansion:
+  CHECK_EQ( 5, 5 )
+
+assertion_macros.cpp(201) PASSED!
+  CHECK_UNARY( a == b )
+with expansion:
+  CHECK_UNARY( true )
+
+assertion_macros.cpp(202) PASSED!
+  CHECK_UNARY_FALSE( a != b )
+with expansion:
+  CHECK_UNARY_FALSE( false )
+
+assertion_macros.cpp(203) PASSED!
+  FAST_CHECK_EQ( a, b )
+with expansion:
+  FAST_CHECK_EQ( 5, 5 )
+
+assertion_macros.cpp(204) PASSED!
+  FAST_CHECK_UNARY( a == b )
+with expansion:
+  FAST_CHECK_UNARY( true )
+
+assertion_macros.cpp(205) PASSED!
+  FAST_CHECK_UNARY_FALSE( a != b )
+with expansion:
+  FAST_CHECK_UNARY_FALSE( false )
+
+0.000272 s: some asserts used in a function called by a test case
+===============================================================================
+[doctest] test cases:     20 |      4 passed |     16 failed |      0 skipped
+[doctest] assertions:     88 |     54 passed |     34 failed |
+[doctest] Status: FAILURE!

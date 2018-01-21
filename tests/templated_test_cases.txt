@@ -1,0 +1,156 @@
+[doctest] doctest version is "1.2.5"
+[doctest] run with "--help" for options
+===============================================================================
+templated_test_cases.cpp(13)
+TEST CASE:  signed integers stuff<int>
+
+templated_test_cases.cpp(16) PASSED!
+  CHECK( var == -1 )
+with expansion:
+  CHECK( -1 == -1 )
+
+0.000409 s: signed integers stuff<int>
+===============================================================================
+templated_test_cases.cpp(13)
+TEST CASE:  signed integers stuff<short int>
+
+templated_test_cases.cpp(16) PASSED!
+  CHECK( var == -1 )
+with expansion:
+  CHECK( -1 == -1 )
+
+0.000057 s: signed integers stuff<short int>
+===============================================================================
+templated_test_cases.cpp(13)
+TEST CASE:  signed integers stuff<char>
+
+templated_test_cases.cpp(16) PASSED!
+  CHECK( var == -1 )
+with expansion:
+  CHECK( -1 == -1 )
+
+0.000053 s: signed integers stuff<char>
+===============================================================================
+templated_test_cases.cpp(22)
+TEST CASE:  vector stuff<std::vector<int>>
+
+templated_test_cases.cpp(24) ERROR!
+  CHECK( vec.size() == 20 )
+with expansion:
+  CHECK( 10 == 20 )
+
+0.000052 s: vector stuff<std::vector<int>>
+===============================================================================
+templated_test_cases.cpp(31)
+TEST CASE:  default construction<int>
+
+templated_test_cases.cpp(33) PASSED!
+  CHECK( doctest::Approx(var) == T() )
+with expansion:
+  CHECK( Approx( 0.0 ) == 0 )
+
+0.000090 s: default construction<int>
+===============================================================================
+templated_test_cases.cpp(31)
+TEST CASE:  default construction<short int>
+
+templated_test_cases.cpp(33) PASSED!
+  CHECK( doctest::Approx(var) == T() )
+with expansion:
+  CHECK( Approx( 0.0 ) == 0 )
+
+0.000065 s: default construction<short int>
+===============================================================================
+templated_test_cases.cpp(31)
+TEST CASE:  default construction<char>
+
+templated_test_cases.cpp(33) PASSED!
+  CHECK( doctest::Approx(var) == T() )
+with expansion:
+  CHECK( Approx( 0.0 ) == 0 )
+
+0.000063 s: default construction<char>
+===============================================================================
+templated_test_cases.cpp(31)
+TEST CASE:  default construction<double>
+
+templated_test_cases.cpp(33) PASSED!
+  CHECK( doctest::Approx(var) == T() )
+with expansion:
+  CHECK( Approx( 0.0 ) == 0.0 )
+
+0.000066 s: default construction<double>
+===============================================================================
+templated_test_cases.cpp(31)
+TEST CASE:  default construction<double>
+
+templated_test_cases.cpp(33) PASSED!
+  CHECK( doctest::Approx(var) == T() )
+with expansion:
+  CHECK( Approx( 0.0 ) == 0.0 )
+
+0.000076 s: default construction<double>
+===============================================================================
+templated_test_cases.cpp(56)
+TEST CASE:  multiple types<>
+
+templated_test_cases.cpp(62) PASSED!
+  CHECK( t1 == T1() )
+with expansion:
+  CHECK( false == false )
+
+templated_test_cases.cpp(63) ERROR!
+  CHECK( t2 != T2() )
+with expansion:
+  CHECK( 0 != 0 )
+
+0.000079 s: multiple types<>
+===============================================================================
+templated_test_cases.cpp(56)
+TEST CASE:  multiple types<>
+
+templated_test_cases.cpp(62) PASSED!
+  CHECK( t1 == T1() )
+with expansion:
+  CHECK( 0 == 0 )
+
+templated_test_cases.cpp(63) ERROR!
+  CHECK( t2 != T2() )
+with expansion:
+  CHECK( 0 != 0 )
+
+0.000078 s: multiple types<>
+===============================================================================
+templated_test_cases.cpp(56)
+TEST CASE:  multiple types<>
+
+templated_test_cases.cpp(62) PASSED!
+  CHECK( t1 == T1() )
+with expansion:
+  CHECK( 0 == 0 )
+
+templated_test_cases.cpp(63) ERROR!
+  CHECK( t2 != T2() )
+with expansion:
+  CHECK( 0 != 0 )
+
+0.000079 s: multiple types<>
+===============================================================================
+templated_test_cases.cpp(71)
+TEST CASE:  bad stringification of type pair<int_pair>
+
+templated_test_cases.cpp(77) PASSED!
+  CHECK( t1 == T1() )
+with expansion:
+  CHECK( 0 == 0 )
+
+templated_test_cases.cpp(78) ERROR!
+  CHECK( t2 != T2() )
+with expansion:
+  CHECK( 0 != 0 )
+
+0.000498 s: bad stringification of type pair<int_pair>
+===============================================================================
+[doctest] test cases:     13 |      8 passed |      5 failed |      0 skipped
+[doctest] assertions:     17 |     12 passed |      5 failed |
+[doctest] Status: FAILURE!
