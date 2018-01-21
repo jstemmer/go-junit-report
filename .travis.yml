@@ -1,12 +1,32 @@
 language: go
 
 go:
-  - tip
-  - 1.8
-  - 1.7
-  - 1.6
-  - 1.5
-  - 1.4.2
-  - 1.3.3
-  - 1.2.2
-  - 1.1.2
+  - master
+
+install:
+  - go get ./...
+  - go get -u golang.org/x/tools/cmd/goimports
+  - go get -u github.com/golang/lint/golint
+
+script:
+  - go vet ./...
+  - diff <(goimports -d .) <(printf "")
+  - diff <(golint ./...) <(printf "")
+
+after_success:
+  - ./build.sh doctest-junit-report
+
+deploy:
+  provider: releases
+  api-key: $GITHUB_TOKEN
+  skip_cleanup: true
+  file:
+    - "dist/darwin_386_doctest-junit-report.zip"
+    - "dist/darwin_64_doctest-junit-report.zip"
+    - "dist/linux_386_doctest-junit-report.zip"
+    - "dist/linux_64_doctest-junit-report.zip"
+    - "dist/windows_386_doctest-junit-report.zip"
+    - "dist/windows_64_doctest-junit-report.zip"
+  on:
+    all_branches: true
+    tags: true
