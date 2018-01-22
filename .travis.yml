@@ -12,8 +12,10 @@ script:
   - go vet ./...
   - diff <(goimports -d .) <(printf "")
   - diff <(golint ./...) <(printf "")
+  - go test -race -coverprofile=coverage.txt -covermode=atomic
 
 after_success:
+  - bash <(curl -s https://codecov.io/bash)
   - ./build.sh doctest-junit-report
 
 deploy:
