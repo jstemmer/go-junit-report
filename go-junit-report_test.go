@@ -9,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/jstemmer/go-junit-report/parser"
+	"github.com/rvelaz/go-junit-report/parser"
 )
 
 type TestCase struct {
@@ -734,6 +734,32 @@ var testCases = []TestCase{
 						},
 					},
 					CoveragePct: "99.8",
+				},
+			},
+		},
+	},
+	{
+		name:       "19-pass.txt",
+		reportName: "19-report.xml",
+		report: &parser.Report{
+			Packages: []parser.Package{
+				{
+					Name: "package/name",
+					Time: 160,
+					Tests: []*parser.Test{
+						{
+							Name:   "TestZ",
+							Time:   60,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:   "TestA",
+							Time:   100,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+					},
 				},
 			},
 		},
