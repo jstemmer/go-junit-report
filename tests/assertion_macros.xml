@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="20" failures="16" time="0.004122">
+	<properties></properties>
+	<testsuite tests="20" failures="16" time="0.004122" name="assertion_macros.cpp">
+		<testcase classname="assertion_macros.cpp" name="normal macros" time="0.000993">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+		<testcase classname="assertion_macros.cpp" name="expressions should be evaluated only once" time="0.000061"></testcase>
+		<testcase classname="assertion_macros.cpp" name="exceptions-related macros" time="0.000224">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+		<testcase classname="assertion_macros.cpp" name="exceptions-related macros for std::exception" time="0.000226">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+		<testcase classname="assertion_macros.cpp" name="WARN level of asserts don&#39;t fail the test case" time="0.000481"></testcase>
+		<testcase classname="assertion_macros.cpp" name="CHECK level of asserts fail the test case but don&#39;t abort it" time="0.000248">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+		<testcase classname="assertion_macros.cpp" name="REQUIRE level of asserts fail and abort the test case - 1" time="0.000115">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+		<testcase classname="assertion_macros.cpp" name="REQUIRE level of asserts fail and abort the test case - 2" time="0.000053">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+		<testcase classname="assertion_macros.cpp" name="REQUIRE level of asserts fail and abort the test case - 3" time="0.000048">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+		<testcase classname="assertion_macros.cpp" name="REQUIRE level of asserts fail and abort the test case - 4" time="0.000050">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+		<testcase classname="assertion_macros.cpp" name="REQUIRE level of asserts fail and abort the test case - 5" time="0.000086">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+		<testcase classname="assertion_macros.cpp" name="REQUIRE level of asserts fail and abort the test case - 6" time="0.000061">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+		<testcase classname="assertion_macros.cpp" name="REQUIRE level of asserts fail and abort the test case - 7" time="0.000050">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+		<testcase classname="assertion_macros.cpp" name="REQUIRE level of asserts fail and abort the test case - 8" time="0.000055">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+		<testcase classname="assertion_macros.cpp" name="REQUIRE level of asserts fail and abort the test case - 9" time="0.000050">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+		<testcase classname="assertion_macros.cpp" name="REQUIRE level of asserts fail and abort the test case - 10" time="0.000050">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+		<testcase classname="assertion_macros.cpp" name="REQUIRE level of asserts fail and abort the test case - 11" time="0.000047">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+		<testcase classname="assertion_macros.cpp" name="REQUIRE level of asserts fail and abort the test case - 12" time="0.000048">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+		<testcase classname="assertion_macros.cpp" name="all binary assertions" time="0.000904"></testcase>
+		<testcase classname="assertion_macros.cpp" name="some asserts used in a function called by a test case" time="0.000272"></testcase>
+	</testsuite>
+</testsuites>
