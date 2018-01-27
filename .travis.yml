@@ -7,12 +7,13 @@ install:
   - go get ./...
   - go get -u golang.org/x/tools/cmd/goimports
   - go get -u github.com/golang/lint/golint
+  - go get -u github.com/haya14busa/goverage
 
 script:
   - go vet ./...
   - diff <(goimports -d .) <(printf "")
   - diff <(golint ./...) <(printf "")
-  - go test -race -coverprofile=coverage.txt -covermode=atomic
+  - goverage -race -coverprofile=coverage.txt -covermode=atomic -v ./...
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
