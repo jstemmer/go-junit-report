@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="14" failures="9" time="0.002446">
+	<properties></properties>
+	<testsuite tests="3" failures="2" time="0.001246" name="test_cases_and_suites.cpp">
+		<testcase classname="test_cases_and_suites.cpp" name="an empty test that will succeed - not part of a test suite" time="0.000163"></testcase>
+		<testcase classname="test_cases_and_suites.cpp" name="should fail because of an exception" time="0.001008">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+		<testcase classname="test_cases_and_suites.cpp" name="fixtured test - not part of a test suite" time="0.000075">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+	</testsuite>
+	<testsuite tests="2" failures="2" time="0.000202" name="scoped test suite">
+		<testcase classname="test_cases_and_suites.cpp" name="part of scoped" time="0.000107">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+		<testcase classname="test_cases_and_suites.cpp" name="part of scoped 2" time="0.000095">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+	</testsuite>
+	<testsuite tests="1" failures="1" time="0.000071" name="some TS">
+		<testcase classname="test_cases_and_suites.cpp" name="part of some TS" time="0.000071">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+	</testsuite>
+	<testsuite tests="1" failures="1" time="0.000085" name="ts1">
+		<testcase classname="test_cases_and_suites.cpp" name="normal test in a test suite from a decorator" time="0.000085">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+	</testsuite>
+	<testsuite tests="1" failures="1" time="0.000086" name="skipped test cases">
+		<testcase classname="test_cases_and_suites.cpp" name="unskipped" time="0.000086">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+	</testsuite>
+	<testsuite tests="6" failures="2" time="0.000756" name="test suite with a description">
+		<testcase classname="test_cases_and_suites.cpp" name="fails - and its allowed" time="0.000095"></testcase>
+		<testcase classname="test_cases_and_suites.cpp" name="doesn&#39;t fail which is fine" time="0.000045"></testcase>
+		<testcase classname="test_cases_and_suites.cpp" name="fails as it should" time="0.000093"></testcase>
+		<testcase classname="test_cases_and_suites.cpp" name="doesn&#39;t fail but it should have" time="0.000058">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+		<testcase classname="test_cases_and_suites.cpp" name="fails 1 time as it should" time="0.000078"></testcase>
+		<testcase classname="test_cases_and_suites.cpp" name="fails more times as it should" time="0.000387">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+	</testsuite>
+</testsuites>

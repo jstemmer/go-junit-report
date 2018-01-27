@@ -40,18 +40,17 @@ type Test struct {
 }
 
 var (
-	passWords = []string{"PASSED!"}
-	failWords = []string{
-		"FATAL ERROR!",
-		"ERROR!",
-		"Should have failed but didn't",
-		"Test case exceeded time limit",
+	resultMap = map[string]Result{
+		// "PASSED!"                     PASS,  // Assertion result of "PASS" is weaker than "FAIL".
+		"marking it as not failed":      PASS,
+		"FATAL ERROR!":                  FAIL,
+		"ERROR!":                        FAIL,
+		"TEST CASE FAILED!":             FAIL,
+		"Marking it as failed!":         FAIL,
+		"marking it as failed!":         FAIL,
+		"Test case exceeded time limit": FAIL,
 	}
-	resultWords = strings.Join(append(passWords, failWords...), "|")
-)
-
-var (
-	regexResult    = regexp.MustCompile(`^.*(` + resultWords + `).*$`)
+	regexResult    = regexp.MustCompile(`^.*(` + strings.Join(keys(resultMap), "|") + `).*$`)
 	regexTestSuite = regexp.MustCompile(`^TEST SUITE: (.*)$`)
 	regexTestCase  = regexp.MustCompile(`^TEST CASE:  (.*)$`)
 	regexFileName  = regexp.MustCompile(`^(.*)\(.+\)$`)
@@ -158,12 +157,7 @@ func Parse(r io.Reader) (*Report, error) {
 			// Update test result.
 			s := findTestSuite(report.TestSuites, testSuite)
 			t := findTestCase(s.Tests, cur)
-			r := matches[1]
-			for _, v := range failWords {
-				if r == v {
-					t.Result = FAIL
-				}
-			}
+			t.Result = resultMap[matches[1]]
 		}
 	}
 
@@ -194,6 +188,16 @@ func findTestCase(tests []*Test, name string) *Test {
 		}
 	}
 	return nil
+}
+
+func keys(m map[string]Result) []string {
+	i := 0
+	ks := make([]string, len(m))
+	for k := range m {
+		ks[i] = k
+		i++
+	}
+	return ks
 }
 
 // Failures counts the number of failed tests in this report

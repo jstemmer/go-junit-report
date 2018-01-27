@@ -193,6 +193,146 @@ var testCases = []TestCase{
 				},
 			},
 		},
+	}, {
+		name:       "test_cases_and_suites.txt",
+		reportName: "test_cases_and_suites.xml",
+		report: &parser.Report{
+			TestSuites: []*parser.TestSuite{
+				{
+					Name: "test_cases_and_suites.cpp",
+					Time: 1246,
+					Tests: []*parser.Test{
+						{
+							Name:     "an empty test that will succeed - not part of a test suite",
+							Time:     163,
+							Result:   parser.PASS,
+							Output:   []string{},
+							Filename: "test_cases_and_suites.cpp",
+						},
+						{
+							Name:     "should fail because of an exception",
+							Time:     1008,
+							Result:   parser.FAIL,
+							Output:   []string{},
+							Filename: "test_cases_and_suites.cpp",
+						},
+						{
+							Name:     "fixtured test - not part of a test suite",
+							Time:     75,
+							Result:   parser.FAIL,
+							Output:   []string{},
+							Filename: "test_cases_and_suites.cpp",
+						},
+					},
+				},
+				{
+					Name: "scoped test suite",
+					Time: 202,
+					Tests: []*parser.Test{
+						{
+							Name:     "part of scoped",
+							Time:     107,
+							Result:   parser.FAIL,
+							Output:   []string{},
+							Filename: "test_cases_and_suites.cpp",
+						},
+						{
+							Name:     "part of scoped 2",
+							Time:     95,
+							Result:   parser.FAIL,
+							Output:   []string{},
+							Filename: "test_cases_and_suites.cpp",
+						},
+					},
+				},
+				{
+					Name: "some TS",
+					Time: 71,
+					Tests: []*parser.Test{
+						{
+							Name:     "part of some TS",
+							Time:     71,
+							Result:   parser.FAIL,
+							Output:   []string{},
+							Filename: "test_cases_and_suites.cpp",
+						},
+					},
+				},
+				{
+					Name: "ts1",
+					Time: 85,
+					Tests: []*parser.Test{
+						{
+							Name:     "normal test in a test suite from a decorator",
+							Time:     85,
+							Result:   parser.FAIL,
+							Output:   []string{},
+							Filename: "test_cases_and_suites.cpp",
+						},
+					},
+				}, {
+					Name: "skipped test cases",
+					Time: 86,
+					Tests: []*parser.Test{
+						{
+							Name:     "unskipped",
+							Time:     86,
+							Result:   parser.FAIL,
+							Output:   []string{},
+							Filename: "test_cases_and_suites.cpp",
+						},
+					},
+				},
+				{
+					Name: "test suite with a description",
+					Time: 756,
+					Tests: []*parser.Test{
+						{
+							Name:     "fails - and its allowed",
+							Time:     95,
+							Result:   parser.PASS,
+							Output:   []string{},
+							Filename: "test_cases_and_suites.cpp",
+						},
+						{
+							Name:     "doesn't fail which is fine",
+							Time:     45,
+							Result:   parser.PASS,
+							Output:   []string{},
+							Filename: "test_cases_and_suites.cpp",
+						},
+						{
+							Name:     "fails as it should",
+							Time:     93,
+							Result:   parser.PASS,
+							Output:   []string{},
+							Filename: "test_cases_and_suites.cpp",
+						},
+						{
+							Name:     "doesn't fail but it should have",
+							Time:     58,
+							Result:   parser.FAIL,
+							Output:   []string{},
+							Filename: "test_cases_and_suites.cpp",
+						},
+						{
+							Name:     "fails 1 time as it should",
+							Time:     78,
+							Result:   parser.PASS,
+							Output:   []string{},
+							Filename: "test_cases_and_suites.cpp",
+						},
+						{
+							Name:     "fails more times as it should",
+							Time:     387,
+							Result:   parser.FAIL,
+							Output:   []string{},
+							Filename: "test_cases_and_suites.cpp",
+						},
+					},
+				},
+			},
+		},
 	},
 }
 
