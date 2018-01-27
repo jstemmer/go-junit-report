@@ -368,6 +368,54 @@ var testCases = []TestCase{
 			},
 		},
 	},
+	{
+		name:       "coverage_maxout.txt",
+		reportName: "coverage_maxout.xml",
+		report: &parser.Report{
+			TestSuites: []*parser.TestSuite{
+				{
+					Name: "coverage_maxout.cpp",
+					Time: 641,
+					Tests: []*parser.Test{
+						{
+							Name:     "doctest internals",
+							Time:     641,
+							Result:   parser.FAIL,
+							Output:   []string{},
+							Filename: "coverage_maxout.cpp",
+						},
+					},
+				},
+				{
+					Name: "exception related",
+					Time: 865,
+					Tests: []*parser.Test{
+						{
+							Name:     "will end from a std::string exception",
+							Time:     718,
+							Result:   parser.FAIL,
+							Output:   []string{},
+							Filename: "coverage_maxout.cpp",
+						},
+						{
+							Name:     "will end from a const char* exception",
+							Time:     66,
+							Result:   parser.FAIL,
+							Output:   []string{},
+							Filename: "coverage_maxout.cpp",
+						},
+						{
+							Name:     "will end from an unknown exception",
+							Time:     81,
+							Result:   parser.FAIL,
+							Output:   []string{},
+							Filename: "coverage_maxout.cpp",
+						},
+					},
+				},
+			},
+		},
+	},
 }
 
 func TestParser(t *testing.T) {

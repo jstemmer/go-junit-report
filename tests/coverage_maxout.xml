@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="4" failures="4" time="0.001506">
+	<properties></properties>
+	<testsuite tests="1" failures="1" time="0.000641" name="coverage_maxout.cpp">
+		<testcase classname="coverage_maxout.cpp" name="doctest internals" time="0.000641">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+	</testsuite>
+	<testsuite tests="3" failures="3" time="0.000865" name="exception related">
+		<testcase classname="coverage_maxout.cpp" name="will end from a std::string exception" time="0.000718">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+		<testcase classname="coverage_maxout.cpp" name="will end from a const char* exception" time="0.000066">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+		<testcase classname="coverage_maxout.cpp" name="will end from an unknown exception" time="0.000081">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+	</testsuite>
+</testsuites>
