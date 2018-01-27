@@ -333,6 +333,40 @@ var testCases = []TestCase{
 				},
 			},
 		},
+	}, {
+		name:       "subcases.txt",
+		reportName: "subcases.xml",
+		report: &parser.Report{
+			TestSuites: []*parser.TestSuite{
+				{
+					Name: "subcases.cpp",
+					Time: 11024,
+					Tests: []*parser.Test{
+						{
+							Name:     "lots of nested subcases",
+							Time:     2737,
+							Result:   parser.FAIL,
+							Output:   []string{},
+							Filename: "subcases.cpp",
+						},
+						{
+							Name:     "subcases can be used in a separate function as well",
+							Time:     437,
+							Result:   parser.PASS,
+							Output:   []string{},
+							Filename: "subcases.cpp",
+						},
+						{
+							Name:     "vectors can be sized and resized",
+							Time:     7850,
+							Result:   parser.FAIL,
+							Output:   []string{},
+							Filename: "subcases.cpp",
+						},
+					},
+				},
+			},
+		},
 	},
 }
 

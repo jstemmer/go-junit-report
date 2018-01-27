@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="3" failures="2" time="0.011024">
+	<properties></properties>
+	<testsuite tests="3" failures="2" time="0.011024" name="subcases.cpp">
+		<testcase classname="subcases.cpp" name="lots of nested subcases" time="0.002737">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+		<testcase classname="subcases.cpp" name="subcases can be used in a separate function as well" time="0.000437"></testcase>
+		<testcase classname="subcases.cpp" name="vectors can be sized and resized" time="0.007850">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+	</testsuite>
+</testsuites>

@@ -52,7 +52,7 @@ var (
 	}
 	regexResult    = regexp.MustCompile(`^.*(` + strings.Join(keys(resultMap), "|") + `).*$`)
 	regexTestSuite = regexp.MustCompile(`^TEST SUITE: (.*)$`)
-	regexTestCase  = regexp.MustCompile(`^TEST CASE:  (.*)$`)
+	regexTestCase  = regexp.MustCompile(`^(TEST CASE:  |  Scenario: )(.*)$`)
 	regexFileName  = regexp.MustCompile(`^(.*)\(.+\)$`)
 	regexTime      = regexp.MustCompile(`^(\d+.\d{6}) s:.*`)
 )
@@ -114,7 +114,7 @@ func Parse(r io.Reader) (*Report, error) {
 
 			foundTestSuite = true
 
-		} else if matches := regexTestCase.FindStringSubmatch(line); len(matches) == 2 {
+		} else if matches := regexTestCase.FindStringSubmatch(line); len(matches) == 3 {
 			// If not found any TestSuite by this line, use filename as TestSuite.
 			if !foundTestSuite {
 				testSuite = filename
@@ -132,7 +132,7 @@ func Parse(r io.Reader) (*Report, error) {
 			}
 
 			// If not created TestCase by this line, create new TestCase.
-			cur = matches[1]
+			cur = matches[2]
 			t := findTestCase(s.Tests, cur)
 			if t == nil {
 				s.Tests = append(s.Tests, &Test{
