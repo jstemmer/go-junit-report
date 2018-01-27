@@ -9,8 +9,11 @@ expect junit xml reports (e.g. [Jenkins](http://jenkins-ci.org)).
 
 ## Installation
 
-Go version 1.1 or higher is required. Install or update using the `go get`
-command:
+You can get binary from github release page.
+
+-> [Release Page][release-link]
+
+or, use `go get`:
 
 ```bash
 go get -u github.com/ujiro99/doctest-junit-report
@@ -18,11 +21,11 @@ go get -u github.com/ujiro99/doctest-junit-report
 
 ## Usage
 
-doctest-junit-report reads the binary of doctest output from standard in and writes
+doctest-junit-report reads the output of doctest binary from standard in and writes
 junit compatible XML to standard out.
 
 ```bash
-${test_binary} -s -d 2>&1 | doctest-junit-report > report.xml
+${test_binary} -s -d | doctest-junit-report > report.xml
 ```
 
 [doctest]: https://github.com/onqtam/doctest
@@ -32,3 +35,4 @@ ${test_binary} -s -d 2>&1 | doctest-junit-report > report.xml
 [reoprt-link]: https://goreportcard.com/report/github.com/ujiro99/doctest-junit-report
 [codecov-badge]: https://codecov.io/gh/ujiro99/doctest-junit-report/branch/master/graph/badge.svg
 [codecov-link]: https://codecov.io/gh/ujiro99/doctest-junit-report
+[release-link]: https://github.com/ujiro99/doctest-junit-report/releases/latest
