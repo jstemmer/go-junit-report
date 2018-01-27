@@ -270,7 +270,8 @@ var testCases = []TestCase{
 							Filename: "test_cases_and_suites.cpp",
 						},
 					},
-				}, {
+				},
+				{
 					Name: "skipped test cases",
 					Time: 86,
 					Tests: []*parser.Test{
@@ -357,7 +358,7 @@ var testCases = []TestCase{
 							Filename: "subcases.cpp",
 						},
 						{
-							Name:     "vectors can be sized and resized",
+							Name:     "Scenario: vectors can be sized and resized",
 							Time:     7850,
 							Result:   parser.FAIL,
 							Output:   []string{},
@@ -367,8 +368,7 @@ var testCases = []TestCase{
 				},
 			},
 		},
-	},
-	{
+	}, {
 		name:       "coverage_maxout.txt",
 		reportName: "coverage_maxout.xml",
 		report: &parser.Report{
@@ -410,6 +410,192 @@ var testCases = []TestCase{
 							Result:   parser.FAIL,
 							Output:   []string{},
 							Filename: "coverage_maxout.cpp",
+						},
+					},
+				},
+			},
+		},
+	}, {
+		name:       "logging.txt",
+		reportName: "logging.xml",
+		report: &parser.Report{
+			TestSuites: []*parser.TestSuite{
+				{
+					Name: "logging.cpp",
+					Time: 1993,
+					Tests: []*parser.Test{
+						{
+							Name:     "logging the counter of a loop",
+							Time:     738,
+							Result:   parser.FAIL,
+							Output:   []string{},
+							Filename: "logging.cpp",
+						},
+						{
+							Name:     "a test case that will end from an exception",
+							Time:     752,
+							Result:   parser.FAIL,
+							Output:   []string{},
+							Filename: "logging.cpp",
+						},
+						{
+							Name:     "a test case that will end from an exception and should print the unprinted context",
+							Time:     109,
+							Result:   parser.FAIL,
+							Output:   []string{},
+							Filename: "logging.cpp",
+						},
+						{
+							Name:     "third party asserts can report failures to doctest",
+							Time:     231,
+							Result:   parser.FAIL,
+							Output:   []string{},
+							Filename: "logging.cpp",
+						},
+						{
+							Name:     "explicit failures 1",
+							Time:     95,
+							Result:   parser.FAIL,
+							Output:   []string{},
+							Filename: "logging.cpp",
+						},
+						{
+							Name:     "explicit failures 2",
+							Time:     68,
+							Result:   parser.FAIL,
+							Output:   []string{},
+							Filename: "logging.cpp",
+						},
+					},
+				},
+			},
+		},
+	}, {
+		name:       "stringification.txt",
+		reportName: "stringification.xml",
+		report: &parser.Report{
+			TestSuites: []*parser.TestSuite{
+				{
+					Name: "stringification.cpp",
+					Time: 2241,
+					Tests: []*parser.Test{
+						{
+							Name:     "all asserts should fail and show how the objects get stringified",
+							Time:     2175,
+							Result:   parser.FAIL,
+							Output:   []string{},
+							Filename: "stringification.cpp",
+						},
+						{
+							Name:     "a test case that registers an exception translator for int and then throws one",
+							Time:     66,
+							Result:   parser.FAIL,
+							Output:   []string{},
+							Filename: "stringification.cpp",
+						},
+					},
+				},
+			},
+		},
+	}, {
+		name:       "templated_test_cases.txt",
+		reportName: "templated_test_cases.xml",
+		report: &parser.Report{
+			TestSuites: []*parser.TestSuite{
+				{
+					Name: "templated_test_cases.cpp",
+					Time: 1665,
+					Tests: []*parser.Test{
+						{
+							Name:     "signed integers stuff<int>",
+							Time:     409,
+							Result:   parser.PASS,
+							Output:   []string{},
+							Filename: "templated_test_cases.cpp",
+						},
+						{
+							Name:     "signed integers stuff<short int>",
+							Time:     57,
+							Result:   parser.PASS,
+							Output:   []string{},
+							Filename: "templated_test_cases.cpp",
+						},
+						{
+							Name:     "signed integers stuff<char>",
+							Time:     53,
+							Result:   parser.PASS,
+							Output:   []string{},
+							Filename: "templated_test_cases.cpp",
+						},
+						{
+							Name:     "vector stuff<std::vector<int>>",
+							Time:     52,
+							Result:   parser.FAIL,
+							Output:   []string{},
+							Filename: "templated_test_cases.cpp",
+						},
+						{
+							Name:     "default construction<int>",
+							Time:     90,
+							Result:   parser.PASS,
+							Output:   []string{},
+							Filename: "templated_test_cases.cpp",
+						},
+						{
+							Name:     "default construction<short int>",
+							Time:     65,
+							Result:   parser.PASS,
+							Output:   []string{},
+							Filename: "templated_test_cases.cpp",
+						},
+						{
+							Name:     "default construction<char>",
+							Time:     63,
+							Result:   parser.PASS,
+							Output:   []string{},
+							Filename: "templated_test_cases.cpp",
+						},
+						{
+							Name:     "default construction<double>",
+							Time:     66,
+							Result:   parser.PASS,
+							Output:   []string{},
+							Filename: "templated_test_cases.cpp",
+						},
+						{
+							Name:     "default construction<double>",
+							Time:     76,
+							Result:   parser.PASS,
+							Output:   []string{},
+							Filename: "templated_test_cases.cpp",
+						},
+						{
+							Name:     "multiple types<>",
+							Time:     79,
+							Result:   parser.FAIL,
+							Output:   []string{},
+							Filename: "templated_test_cases.cpp",
+						},
+						{
+							Name:     "multiple types<>",
+							Time:     78,
+							Result:   parser.FAIL,
+							Output:   []string{},
+							Filename: "templated_test_cases.cpp",
+						},
+						{
+							Name:     "multiple types<>",
+							Time:     79,
+							Result:   parser.FAIL,
+							Output:   []string{},
+							Filename: "templated_test_cases.cpp",
+						},
+						{
+							Name:     "bad stringification of type pair<int_pair>",
+							Time:     498,
+							Result:   parser.FAIL,
+							Output:   []string{},
+							Filename: "templated_test_cases.cpp",
 						},
 					},
 				},

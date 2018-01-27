@@ -6,7 +6,7 @@
 			<failure message="Failed" type=""></failure>
 		</testcase>
 		<testcase classname="subcases.cpp" name="subcases can be used in a separate function as well" time="0.000437"></testcase>
-		<testcase classname="subcases.cpp" name="vectors can be sized and resized" time="0.007850">
+		<testcase classname="subcases.cpp" name="Scenario: vectors can be sized and resized" time="0.007850">
 			<failure message="Failed" type=""></failure>
 		</testcase>
 	</testsuite>

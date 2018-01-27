@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="6" failures="6" time="0.001993">
+	<properties></properties>
+	<testsuite tests="6" failures="6" time="0.001993" name="logging.cpp">
+		<testcase classname="logging.cpp" name="logging the counter of a loop" time="0.000738">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+		<testcase classname="logging.cpp" name="a test case that will end from an exception" time="0.000752">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+		<testcase classname="logging.cpp" name="a test case that will end from an exception and should print the unprinted context" time="0.000109">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+		<testcase classname="logging.cpp" name="third party asserts can report failures to doctest" time="0.000231">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+		<testcase classname="logging.cpp" name="explicit failures 1" time="0.000095">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+		<testcase classname="logging.cpp" name="explicit failures 2" time="0.000068">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+	</testsuite>
+</testsuites>

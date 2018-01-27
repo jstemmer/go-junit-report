@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" failures="2" time="0.002241">
+	<properties></properties>
+	<testsuite tests="2" failures="2" time="0.002241" name="stringification.cpp">
+		<testcase classname="stringification.cpp" name="all asserts should fail and show how the objects get stringified" time="0.002175">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+		<testcase classname="stringification.cpp" name="a test case that registers an exception translator for int and then throws one" time="0.000066">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+	</testsuite>
+</testsuites>

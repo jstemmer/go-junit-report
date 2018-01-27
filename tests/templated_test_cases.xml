@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="13" failures="5" time="0.001665">
+	<properties></properties>
+	<testsuite tests="13" failures="5" time="0.001665" name="templated_test_cases.cpp">
+		<testcase classname="templated_test_cases.cpp" name="signed integers stuff&lt;int&gt;" time="0.000409"></testcase>
+		<testcase classname="templated_test_cases.cpp" name="signed integers stuff&lt;short int&gt;" time="0.000057"></testcase>
+		<testcase classname="templated_test_cases.cpp" name="signed integers stuff&lt;char&gt;" time="0.000053"></testcase>
+		<testcase classname="templated_test_cases.cpp" name="vector stuff&lt;std::vector&lt;int&gt;&gt;" time="0.000052">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+		<testcase classname="templated_test_cases.cpp" name="default construction&lt;int&gt;" time="0.000090"></testcase>
+		<testcase classname="templated_test_cases.cpp" name="default construction&lt;short int&gt;" time="0.000065"></testcase>
+		<testcase classname="templated_test_cases.cpp" name="default construction&lt;char&gt;" time="0.000063"></testcase>
+		<testcase classname="templated_test_cases.cpp" name="default construction&lt;double&gt;" time="0.000066"></testcase>
+		<testcase classname="templated_test_cases.cpp" name="default construction&lt;double&gt;" time="0.000076"></testcase>
+		<testcase classname="templated_test_cases.cpp" name="multiple types&lt;&gt;" time="0.000079">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+		<testcase classname="templated_test_cases.cpp" name="multiple types&lt;&gt;" time="0.000078">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+		<testcase classname="templated_test_cases.cpp" name="multiple types&lt;&gt;" time="0.000079">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+		<testcase classname="templated_test_cases.cpp" name="bad stringification of type pair&lt;int_pair&gt;" time="0.000498">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+	</testsuite>
+</testsuites>
