@@ -98,37 +98,38 @@ func Parse(r io.Reader) (*Report, error) {
 			// The file name is written next to the separator.
 			nextToSeparator = true
 
-			if completedTestCase {
-				// If not found any TestSuite.Name by this line, use filename as TestSuite.Name.
-				// This TestSuite is for TestCases right under the file.
-				if !foundTestSuite {
-					testSuite = current.Filename
-				}
-				// consumed TestSuite name.
-				foundTestSuite = false
-
-				s := findTestSuite(report.TestSuites, testSuite)
-				if s == nil {
-					// If not created TestSuite of file, create new TestSuite.
-					s = &TestSuite{
-						Name:  testSuite,
-						Tests: make([]*Test, 0),
-					}
-					report.TestSuites = append(report.TestSuites, s)
-				}
-
-				s.Tests = append(s.Tests, current)
-				s.Time += current.Time
-
-				// prepares for next TestCase
-				current = &Test{
-					Name:     "",
-					Result:   PASS,
-					Filename: "",
-					Output:   make([]string, 0),
-				}
-				completedTestCase = false
+			if !completedTestCase {
+				continue
 			}
+
+			// If not found any TestSuite.Name by this line, use filename as TestSuite.Name.
+			// This TestSuite is for TestCases right under the file.
+			if !foundTestSuite {
+				testSuite = current.Filename
+			}
+
+			s := findTestSuite(report.TestSuites, testSuite)
+			if s == nil {
+				// If not created TestSuite, create new TestSuite.
+				s = &TestSuite{
+					Name:  testSuite,
+					Tests: make([]*Test, 0),
+				}
+				report.TestSuites = append(report.TestSuites, s)
+			}
+
+			s.Tests = append(s.Tests, current)
+			s.Time += current.Time
+
+			// prepares for next TestCase
+			current = &Test{
+				Name:     "",
+				Result:   PASS,
+				Filename: "",
+				Output:   make([]string, 0),
+			}
+			foundTestSuite = false
+			completedTestCase = false
 
 		} else if nextToSeparator {
 			nextToSeparator = false
