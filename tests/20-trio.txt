@@ -1,0 +1,13 @@
+=== RUN   FirstTest
+Message from first
+=== PAUSE FirstTest
+=== RUN   SecondTest
+Message from second
+=== PAUSE SecondTest
+=== CONT  FirstTest
+Supplemental from first
+=== RUN   ThirdTest
+Message from third
+--- FAIL: ThirdTest (0.01s)
+--- FAIL: FirstTest (2.00s)
+--- FAIL: SecondTest (1.00s)

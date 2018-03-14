@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+	<testsuite tests="3" failures="3" time="3.010" name="">
+		<properties>
+			<property name="go.version" value="1.0"></property>
+		</properties>
+		<testcase classname="" name="FirstTest" time="2.000">
+			<failure message="Failed" type="">Message from first&#xA;Supplemental from first</failure>
+		</testcase>
+		<testcase classname="" name="SecondTest" time="1.000">
+			<failure message="Failed" type="">Message from second</failure>
+		</testcase>
+		<testcase classname="" name="ThirdTest" time="0.010">
+			<failure message="Failed" type="">Message from third</failure>
+		</testcase>
+	</testsuite>
+</testsuites>
