@@ -4,6 +4,8 @@ Message from first
 === RUN   SecondTest
 Message from second
 === PAUSE SecondTest
+=== CONT  FirstTest
+Supplemental from first
 === RUN   ThirdTest
 Message from third
 --- FAIL: ThirdTest (0.01s)

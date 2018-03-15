@@ -777,7 +777,10 @@ var testCases = []TestCase{
 							Name:   "FirstTest",
 							Time:   2000,
 							Result: parser.FAIL,
-							Output: []string{"Message from first"},
+							Output: []string{
+								"Message from first",
+								"Supplemental from first",
+							},
 						},
 						{
 							Name:   "SecondTest",
@@ -791,7 +794,9 @@ var testCases = []TestCase{
 							Name:   "ThirdTest",
 							Time:   10,
 							Result: parser.FAIL,
-							Output: []string{"Message from third"},
+							Output: []string{
+								"Message from third",
+							},
 						},
 					},
 				},
