@@ -3,6 +3,7 @@ package parser
 import (
 	"bufio"
 	"io"
+	"strings"
 )
 
 // Result represents a test result.
@@ -46,7 +47,20 @@ type parser interface {
 // result line is missing.
 func Parse(r io.Reader, pkgName string) (*Report, error) {
 	reader := bufio.NewReader(r)
-	var p parser = newTextParser(pkgName)
+	var p parser
+	parserDetect := true
+
+	backlog := make([]string, 0)
+
+	clearBacklock := func() error {
+		for _, l := range backlog {
+			err := p.IngestLine(l)
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	}
 
 	// parse lines
 	for {
@@ -58,11 +72,37 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 		}
 
 		line := string(l)
+
+		if parserDetect {
+			if strings.HasPrefix(line, "{") {
+				p = newJsonlParser(pkgName)
+			} else if strings.HasPrefix(line, "=") {
+				p = newTextParser(pkgName)
+			} else {
+				backlog = append(backlog, line)
+				continue
+			}
+			parserDetect = false
+			err = clearBacklock()
+			if err != nil {
+				return nil, err
+			}
+		}
+
 		err = p.IngestLine(line)
 		if err != nil {
 			return nil, err
 		}
 	}
+
+	if p == nil { // we only have a backlog, let's assume text parser
+		p = newTextParser(pkgName)
+		err := clearBacklock()
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	return p.Report()
 }
 
