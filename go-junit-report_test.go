@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"runtime"
 	"strings"
 	"testing"
@@ -23,7 +24,7 @@ type TestCase struct {
 
 var testCases = []TestCase{
 	{
-		name:       "01-pass.txt",
+		name:       "01-pass",
 		reportName: "01-report.xml",
 		report: &parser.Report{
 			Packages: []parser.Package{
@@ -49,7 +50,7 @@ var testCases = []TestCase{
 		},
 	},
 	{
-		name:       "02-fail.txt",
+		name:       "02-fail",
 		reportName: "02-report.xml",
 		report: &parser.Report{
 			Packages: []parser.Package{
@@ -80,7 +81,7 @@ var testCases = []TestCase{
 		},
 	},
 	{
-		name:       "03-skip.txt",
+		name:       "03-skip",
 		reportName: "03-report.xml",
 		report: &parser.Report{
 			Packages: []parser.Package{
@@ -108,7 +109,7 @@ var testCases = []TestCase{
 		},
 	},
 	{
-		name:       "04-go_1_4.txt",
+		name:       "04-go_1_4",
 		reportName: "04-report.xml",
 		report: &parser.Report{
 			Packages: []parser.Package{
@@ -134,7 +135,7 @@ var testCases = []TestCase{
 		},
 	},
 	{
-		name:       "05-no_xml_header.txt",
+		name:       "05-no_xml_header",
 		reportName: "05-report.xml",
 		report: &parser.Report{
 			Packages: []parser.Package{
@@ -161,7 +162,7 @@ var testCases = []TestCase{
 		noXMLHeader: true,
 	},
 	{
-		name:       "06-mixed.txt",
+		name:       "06-mixed",
 		reportName: "06-report.xml",
 		report: &parser.Report{
 			Packages: []parser.Package{
@@ -211,7 +212,7 @@ var testCases = []TestCase{
 		noXMLHeader: true,
 	},
 	{
-		name:       "07-compiled_test.txt",
+		name:       "07-compiled_test",
 		reportName: "07-report.xml",
 		report: &parser.Report{
 			Packages: []parser.Package{
@@ -238,7 +239,7 @@ var testCases = []TestCase{
 		packageName: "test/package",
 	},
 	{
-		name:       "08-parallel.txt",
+		name:       "08-parallel",
 		reportName: "08-report.xml",
 		report: &parser.Report{
 			Packages: []parser.Package{
@@ -264,7 +265,7 @@ var testCases = []TestCase{
 		},
 	},
 	{
-		name:       "09-coverage.txt",
+		name:       "09-coverage",
 		reportName: "09-report.xml",
 		report: &parser.Report{
 			Packages: []parser.Package{
@@ -291,7 +292,7 @@ var testCases = []TestCase{
 		},
 	},
 	{
-		name:       "10-multipkg-coverage.txt",
+		name:       "10-multipkg-coverage",
 		reportName: "10-report.xml",
 		report: &parser.Report{
 			Packages: []parser.Package{
@@ -331,7 +332,7 @@ var testCases = []TestCase{
 		},
 	},
 	{
-		name:       "11-go_1_5.txt",
+		name:       "11-go_1_5",
 		reportName: "11-report.xml",
 		report: &parser.Report{
 			Packages: []parser.Package{
@@ -357,7 +358,7 @@ var testCases = []TestCase{
 		},
 	},
 	{
-		name:       "12-go_1_7.txt",
+		name:       "12-go_1_7",
 		reportName: "12-report.xml",
 		report: &parser.Report{
 			Packages: []parser.Package{
@@ -489,7 +490,7 @@ var testCases = []TestCase{
 		},
 	},
 	{
-		name:       "13-syntax-error.txt",
+		name:       "13-syntax-error",
 		reportName: "13-report.xml",
 		report: &parser.Report{
 			Packages: []parser.Package{
@@ -563,7 +564,7 @@ var testCases = []TestCase{
 		},
 	},
 	{
-		name:       "14-panic.txt",
+		name:       "14-panic",
 		reportName: "14-report.xml",
 		report: &parser.Report{
 			Packages: []parser.Package{
@@ -599,7 +600,7 @@ var testCases = []TestCase{
 		},
 	},
 	{
-		name:       "15-empty.txt",
+		name:       "15-empty",
 		reportName: "15-report.xml",
 		report: &parser.Report{
 			Packages: []parser.Package{
@@ -612,7 +613,7 @@ var testCases = []TestCase{
 		},
 	},
 	{
-		name:       "16-repeated-names.txt",
+		name:       "16-repeated-names",
 		reportName: "16-report.xml",
 		report: &parser.Report{
 			Packages: []parser.Package{
@@ -644,7 +645,7 @@ var testCases = []TestCase{
 		},
 	},
 	{
-		name:       "17-race.txt",
+		name:       "17-race",
 		reportName: "17-report.xml",
 		report: &parser.Report{
 			Packages: []parser.Package{
@@ -700,7 +701,7 @@ var testCases = []TestCase{
 		},
 	},
 	{
-		name:       "18-coverpkg.txt",
+		name:       "18-coverpkg",
 		reportName: "18-report.xml",
 		report: &parser.Report{
 			Packages: []parser.Package{
@@ -740,7 +741,7 @@ var testCases = []TestCase{
 		},
 	},
 	{
-		name:       "19-pass.txt",
+		name:       "19-pass",
 		reportName: "19-report.xml",
 		report: &parser.Report{
 			Packages: []parser.Package{
@@ -766,7 +767,7 @@ var testCases = []TestCase{
 		},
 	},
 	{
-		name:       "20-parallel.txt",
+		name:       "20-parallel",
 		reportName: "20-report.xml",
 		report: &parser.Report{
 			Packages: []parser.Package{
@@ -810,66 +811,75 @@ var testCases = []TestCase{
 }
 
 func TestParser(t *testing.T) {
-	for _, testCase := range testCases {
-		t.Logf("Running: %s", testCase.name)
+	extensions := []string{"txt", "jsonl"}
+	for _, ext := range extensions {
 
-		file, err := os.Open("tests/" + testCase.name)
-		if err != nil {
-			t.Fatal(err)
-		}
+		for _, testCase := range testCases {
+			fname := filepath.Join("tests", testCase.name+"."+ext)
 
-		report, err := parser.Parse(file, testCase.packageName)
-		if err != nil {
-			t.Fatalf("error parsing: %s", err)
-		}
+			if _, err := os.Stat(fname); os.IsNotExist(err) {
+				continue
+			}
+			t.Logf("Running: %s.%s", testCase.name, ext)
 
-		if report == nil {
-			t.Fatalf("Report == nil")
-		}
-
-		expected := testCase.report
-		if len(report.Packages) != len(expected.Packages) {
-			t.Fatalf("Report packages == %d, want %d", len(report.Packages), len(expected.Packages))
-		}
-
-		for i, pkg := range report.Packages {
-			expPkg := expected.Packages[i]
-
-			if pkg.Name != expPkg.Name {
-				t.Errorf("Package.Name == %s, want %s", pkg.Name, expPkg.Name)
+			file, err := os.Open(fname)
+			if err != nil {
+				t.Fatal(err)
 			}
 
-			if pkg.Time != expPkg.Time {
-				t.Errorf("Package.Time == %d, want %d", pkg.Time, expPkg.Time)
+			report, err := parser.Parse(file, testCase.packageName)
+			if err != nil {
+				t.Fatalf("error parsing: %s", err)
 			}
 
-			if len(pkg.Tests) != len(expPkg.Tests) {
-				t.Fatalf("Package Tests == %d, want %d", len(pkg.Tests), len(expPkg.Tests))
+			if report == nil {
+				t.Fatalf("Report == nil")
 			}
 
-			for j, test := range pkg.Tests {
-				expTest := expPkg.Tests[j]
-
-				if test.Name != expTest.Name {
-					t.Errorf("Test.Name == %s, want %s", test.Name, expTest.Name)
-				}
-
-				if test.Time != expTest.Time {
-					t.Errorf("Test.Time == %d, want %d", test.Time, expTest.Time)
-				}
-
-				if test.Result != expTest.Result {
-					t.Errorf("Test.Result == %d, want %d", test.Result, expTest.Result)
-				}
-
-				testOutput := strings.Join(test.Output, "\n")
-				expTestOutput := strings.Join(expTest.Output, "\n")
-				if testOutput != expTestOutput {
-					t.Errorf("Test.Output (%s) ==\n%s\n, want\n%s", test.Name, testOutput, expTestOutput)
-				}
+			expected := testCase.report
+			if len(report.Packages) != len(expected.Packages) {
+				t.Fatalf("Report packages == %d, want %d", len(report.Packages), len(expected.Packages))
 			}
-			if pkg.CoveragePct != expPkg.CoveragePct {
-				t.Errorf("Package.CoveragePct == %s, want %s", pkg.CoveragePct, expPkg.CoveragePct)
+
+			for i, pkg := range report.Packages {
+				expPkg := expected.Packages[i]
+
+				if pkg.Name != expPkg.Name {
+					t.Errorf("Package.Name == %s, want %s", pkg.Name, expPkg.Name)
+				}
+
+				if pkg.Time != expPkg.Time {
+					t.Errorf("Package.Time == %d, want %d", pkg.Time, expPkg.Time)
+				}
+
+				if len(pkg.Tests) != len(expPkg.Tests) {
+					t.Fatalf("Package Tests == %d, want %d", len(pkg.Tests), len(expPkg.Tests))
+				}
+
+				for j, test := range pkg.Tests {
+					expTest := expPkg.Tests[j]
+
+					if test.Name != expTest.Name {
+						t.Errorf("Test.Name == %s, want %s", test.Name, expTest.Name)
+					}
+
+					if test.Time != expTest.Time {
+						t.Errorf("Test.Time == %d, want %d", test.Time, expTest.Time)
+					}
+
+					if test.Result != expTest.Result {
+						t.Errorf("Test.Result == %d, want %d", test.Result, expTest.Result)
+					}
+
+					testOutput := strings.Join(test.Output, "\n")
+					expTestOutput := strings.Join(expTest.Output, "\n")
+					if testOutput != expTestOutput {
+						t.Errorf("Test.Output (%s) ==\n%s\n, want\n%s", test.Name, testOutput, expTestOutput)
+					}
+				}
+				if pkg.CoveragePct != expPkg.CoveragePct {
+					t.Errorf("Package.CoveragePct == %s, want %s", pkg.CoveragePct, expPkg.CoveragePct)
+				}
 			}
 		}
 	}
