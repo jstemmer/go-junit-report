@@ -47,37 +47,156 @@ var (
 	regexSummary  = regexp.MustCompile(`^(PASS|FAIL|SKIP)$`)
 )
 
+type parser interface {
+	IngestLine(string) error
+	Report() (*Report, error)
+}
+
+type textParser struct {
+	cur             string
+	capturedPackage string
+	tests           []*Test
+	report          *Report
+	testsTime       int
+	seenSummary     bool
+	coveragePct     string
+	packageCaptures map[string][]string
+	buffers         map[string][]string
+	pkgName         string
+}
+
+func newTextParser(pkgName string) parser {
+	return &textParser{
+		report:          &Report{make([]Package, 0)},
+		pkgName:         pkgName,
+		packageCaptures: make(map[string][]string),
+		buffers:         make(map[string][]string),
+	}
+}
+
+func (p *textParser) IngestLine(line string) error {
+	if strings.HasPrefix(line, "=== RUN ") {
+		// new test
+		p.cur = strings.TrimSpace(line[8:])
+		p.tests = append(p.tests, &Test{
+			Name:   p.cur,
+			Result: FAIL,
+			Output: make([]string, 0),
+		})
+
+		// clear the current build package, so output lines won't be added to that build
+		p.capturedPackage = ""
+		p.seenSummary = false
+	} else if strings.HasPrefix(line, "=== PAUSE ") {
+		return nil
+	} else if strings.HasPrefix(line, "=== CONT ") {
+		p.cur = strings.TrimSpace(line[8:])
+		return nil
+	} else if matches := regexResult.FindStringSubmatch(line); len(matches) == 6 {
+		if matches[5] != "" {
+			p.coveragePct = matches[5]
+		}
+		if strings.HasSuffix(matches[4], "failed]") {
+			// the build of the package failed, inject a dummy test into the package
+			// which indicate about the failure and contain the failure description.
+			p.tests = append(p.tests, &Test{
+				Name:   matches[4],
+				Result: FAIL,
+				Output: p.packageCaptures[matches[2]],
+			})
+		} else if matches[1] == "FAIL" && len(p.tests) == 0 && len(p.buffers[p.cur]) > 0 {
+			// This package didn't have any tests, but it failed with some
+			// output. Create a dummy test with the output.
+			p.tests = append(p.tests, &Test{
+				Name:   "Failure",
+				Result: FAIL,
+				Output: p.buffers[p.cur],
+			})
+			p.buffers[p.cur] = p.buffers[p.cur][0:0]
+		}
+
+		// all tests in this package are finished
+		p.report.Packages = append(p.report.Packages, Package{
+			Name:        matches[2],
+			Time:        parseTime(matches[3]),
+			Tests:       p.tests,
+			CoveragePct: p.coveragePct,
+		})
+
+		p.buffers[p.cur] = p.buffers[p.cur][0:0]
+		p.tests = make([]*Test, 0)
+		p.coveragePct = ""
+		p.cur = ""
+		p.testsTime = 0
+	} else if matches := regexStatus.FindStringSubmatch(line); len(matches) == 4 {
+		p.cur = matches[2]
+		test := findTest(p.tests, p.cur)
+		if test == nil {
+			return nil
+		}
+
+		// test status
+		if matches[1] == "PASS" {
+			test.Result = PASS
+		} else if matches[1] == "SKIP" {
+			test.Result = SKIP
+		} else {
+			test.Result = FAIL
+		}
+		test.Output = p.buffers[p.cur]
+
+		test.Name = matches[2]
+		testTime := parseTime(matches[3]) * 10
+		test.Time = testTime
+		p.testsTime += testTime
+	} else if matches := regexCoverage.FindStringSubmatch(line); len(matches) == 2 {
+		p.coveragePct = matches[1]
+	} else if matches := regexOutput.FindStringSubmatch(line); p.capturedPackage == "" && len(matches) == 3 {
+		// Sub-tests start with one or more series of 4-space indents, followed by a hard tab,
+		// followed by the test output
+		// Top-level tests start with a hard tab.
+		test := findTest(p.tests, p.cur)
+		if test == nil {
+			return nil
+		}
+		test.Output = append(test.Output, matches[2])
+	} else if strings.HasPrefix(line, "# ") {
+		// indicates a capture of build output of a package. set the current build package.
+		p.capturedPackage = line[2:]
+	} else if p.capturedPackage != "" {
+		// current line is build failure capture for the current built package
+		p.packageCaptures[p.capturedPackage] = append(p.packageCaptures[p.capturedPackage], line)
+	} else if regexSummary.MatchString(line) {
+		// don't store any output after the summary
+		p.seenSummary = true
+	} else if !p.seenSummary {
+		// buffer anything else that we didn't recognize
+		p.buffers[p.cur] = append(p.buffers[p.cur], line)
+	}
+
+	return nil
+}
+
+func (p *textParser) Report() (*Report, error) {
+	if len(p.tests) > 0 {
+		// no result line found
+		p.report.Packages = append(p.report.Packages, Package{
+			Name:        p.pkgName,
+			Time:        p.testsTime,
+			Tests:       p.tests,
+			CoveragePct: p.coveragePct,
+		})
+	}
+
+	return p.report, nil
+}
+
 // Parse parses go test output from reader r and returns a report with the
 // results. An optional pkgName can be given, which is used in case a package
 // result line is missing.
 func Parse(r io.Reader, pkgName string) (*Report, error) {
 	reader := bufio.NewReader(r)
-
-	report := &Report{make([]Package, 0)}
-
-	// keep track of tests we find
-	var tests []*Test
-
-	// sum of tests' time, use this if current test has no result line (when it is compiled test)
-	testsTime := 0
-
-	// current test
-	var cur string
-
-	// keep track if we've already seen a summary for the current test
-	var seenSummary bool
-
-	// coverage percentage report for current package
-	var coveragePct string
-
-	// stores mapping between package name and output of build failures
-	var packageCaptures = map[string][]string{}
-
-	// the name of the package which it's build failure output is being captured
-	var capturedPackage string
-
-	// capture any non-test output
-	var buffers = map[string][]string{}
+	var p parser = newTextParser(pkgName)
 
 	// parse lines
 	for {
@@ -89,118 +208,12 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 		}
 
 		line := string(l)
-
-		if strings.HasPrefix(line, "=== RUN ") {
-			// new test
-			cur = strings.TrimSpace(line[8:])
-			tests = append(tests, &Test{
-				Name:   cur,
-				Result: FAIL,
-				Output: make([]string, 0),
-			})
-
-			// clear the current build package, so output lines won't be added to that build
-			capturedPackage = ""
-			seenSummary = false
-		} else if strings.HasPrefix(line, "=== PAUSE ") {
-			continue
-		} else if strings.HasPrefix(line, "=== CONT ") {
-			cur = strings.TrimSpace(line[8:])
-			continue
-		} else if matches := regexResult.FindStringSubmatch(line); len(matches) == 6 {
-			if matches[5] != "" {
-				coveragePct = matches[5]
-			}
-			if strings.HasSuffix(matches[4], "failed]") {
-				// the build of the package failed, inject a dummy test into the package
-				// which indicate about the failure and contain the failure description.
-				tests = append(tests, &Test{
-					Name:   matches[4],
-					Result: FAIL,
-					Output: packageCaptures[matches[2]],
-				})
-			} else if matches[1] == "FAIL" && len(tests) == 0 && len(buffers[cur]) > 0 {
-				// This package didn't have any tests, but it failed with some
-				// output. Create a dummy test with the output.
-				tests = append(tests, &Test{
-					Name:   "Failure",
-					Result: FAIL,
-					Output: buffers[cur],
-				})
-				buffers[cur] = buffers[cur][0:0]
-			}
-
-			// all tests in this package are finished
-			report.Packages = append(report.Packages, Package{
-				Name:        matches[2],
-				Time:        parseTime(matches[3]),
-				Tests:       tests,
-				CoveragePct: coveragePct,
-			})
-
-			buffers[cur] = buffers[cur][0:0]
-			tests = make([]*Test, 0)
-			coveragePct = ""
-			cur = ""
-			testsTime = 0
-		} else if matches := regexStatus.FindStringSubmatch(line); len(matches) == 4 {
-			cur = matches[2]
-			test := findTest(tests, cur)
-			if test == nil {
-				continue
-			}
-
-			// test status
-			if matches[1] == "PASS" {
-				test.Result = PASS
-			} else if matches[1] == "SKIP" {
-				test.Result = SKIP
-			} else {
-				test.Result = FAIL
-			}
-			test.Output = buffers[cur]
-
-			test.Name = matches[2]
-			testTime := parseTime(matches[3]) * 10
-			test.Time = testTime
-			testsTime += testTime
-		} else if matches := regexCoverage.FindStringSubmatch(line); len(matches) == 2 {
-			coveragePct = matches[1]
-		} else if matches := regexOutput.FindStringSubmatch(line); capturedPackage == "" && len(matches) == 3 {
-			// Sub-tests start with one or more series of 4-space indents, followed by a hard tab,
-			// followed by the test output
-			// Top-level tests start with a hard tab.
-			test := findTest(tests, cur)
-			if test == nil {
-				continue
-			}
-			test.Output = append(test.Output, matches[2])
-		} else if strings.HasPrefix(line, "# ") {
-			// indicates a capture of build output of a package. set the current build package.
-			capturedPackage = line[2:]
-		} else if capturedPackage != "" {
-			// current line is build failure capture for the current built package
-			packageCaptures[capturedPackage] = append(packageCaptures[capturedPackage], line)
-		} else if regexSummary.MatchString(line) {
-			// don't store any output after the summary
-			seenSummary = true
-		} else if !seenSummary {
-			// buffer anything else that we didn't recognize
-			buffers[cur] = append(buffers[cur], line)
+		err = p.IngestLine(line)
+		if err != nil {
+			return nil, err
 		}
 	}
-
-	if len(tests) > 0 {
-		// no result line found
-		report.Packages = append(report.Packages, Package{
-			Name:        pkgName,
-			Time:        testsTime,
-			Tests:       tests,
-			CoveragePct: coveragePct,
-		})
-	}
-
-	return report, nil
+	return p.Report()
 }
 
 func parseTime(time string) int {
