@@ -766,12 +766,12 @@ var testCases = []TestCase{
 		},
 	},
 	{
-		name:       "20-trio.txt",
+		name:       "20-parallel.txt",
 		reportName: "20-report.xml",
 		report: &parser.Report{
 			Packages: []parser.Package{
 				{
-					Name: "",
+					Name: "pkg/parallel",
 					Time: 3010,
 					Tests: []*parser.Test{
 						{
@@ -781,6 +781,7 @@ var testCases = []TestCase{
 							Output: []string{
 								"Message from first",
 								"Supplemental from first",
+								"parallel_test.go:14: FirstTest error",
 							},
 						},
 						{
@@ -789,6 +790,7 @@ var testCases = []TestCase{
 							Result: parser.FAIL,
 							Output: []string{
 								"Message from second",
+								"parallel_test.go:23: SecondTest error",
 							},
 						},
 						{
@@ -797,6 +799,7 @@ var testCases = []TestCase{
 							Result: parser.FAIL,
 							Output: []string{
 								"Message from third",
+								"parallel_test.go:32: ThirdTest error",
 							},
 						},
 					},

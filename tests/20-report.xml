@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-	<testsuite tests="3" failures="3" time="3.010" name="">
+	<testsuite tests="3" failures="3" time="3.010" name="pkg/parallel">
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
-		<testcase classname="" name="FirstTest" time="2.000">
-			<failure message="Failed" type="">Message from first&#xA;Supplemental from first</failure>
+		<testcase classname="parallel" name="FirstTest" time="2.000">
+			<failure message="Failed" type="">Message from first&#xA;Supplemental from first&#xA;parallel_test.go:14: FirstTest error</failure>
 		</testcase>
-		<testcase classname="" name="SecondTest" time="1.000">
-			<failure message="Failed" type="">Message from second</failure>
+		<testcase classname="parallel" name="SecondTest" time="1.000">
+			<failure message="Failed" type="">Message from second&#xA;parallel_test.go:23: SecondTest error</failure>
 		</testcase>
-		<testcase classname="" name="ThirdTest" time="0.010">
-			<failure message="Failed" type="">Message from third</failure>
+		<testcase classname="parallel" name="ThirdTest" time="0.010">
+			<failure message="Failed" type="">Message from third&#xA;parallel_test.go:32: ThirdTest error</failure>
 		</testcase>
 	</testsuite>
 </testsuites>
