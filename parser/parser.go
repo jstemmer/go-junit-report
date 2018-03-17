@@ -77,7 +77,7 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 	var capturedPackage string
 
 	// capture any non-test output
-	var buffer []string
+	var buffers = map[string][]string{}
 
 	// parse lines
 	for {
@@ -102,6 +102,11 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 			// clear the current build package, so output lines won't be added to that build
 			capturedPackage = ""
 			seenSummary = false
+		} else if strings.HasPrefix(line, "=== PAUSE ") {
+			continue
+		} else if strings.HasPrefix(line, "=== CONT ") {
+			cur = strings.TrimSpace(line[8:])
+			continue
 		} else if matches := regexResult.FindStringSubmatch(line); len(matches) == 6 {
 			if matches[5] != "" {
 				coveragePct = matches[5]
@@ -114,15 +119,15 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 					Result: FAIL,
 					Output: packageCaptures[matches[2]],
 				})
-			} else if matches[1] == "FAIL" && len(tests) == 0 && len(buffer) > 0 {
+			} else if matches[1] == "FAIL" && len(tests) == 0 && len(buffers[cur]) > 0 {
 				// This package didn't have any tests, but it failed with some
 				// output. Create a dummy test with the output.
 				tests = append(tests, &Test{
 					Name:   "Failure",
 					Result: FAIL,
-					Output: buffer,
+					Output: buffers[cur],
 				})
-				buffer = buffer[0:0]
+				buffers[cur] = buffers[cur][0:0]
 			}
 
 			// all tests in this package are finished
@@ -133,7 +138,7 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 				CoveragePct: coveragePct,
 			})
 
-			buffer = buffer[0:0]
+			buffers[cur] = buffers[cur][0:0]
 			tests = make([]*Test, 0)
 			coveragePct = ""
 			cur = ""
@@ -153,7 +158,7 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 			} else {
 				test.Result = FAIL
 			}
-			test.Output = buffer
+			test.Output = buffers[cur]
 
 			test.Name = matches[2]
 			testTime := parseTime(matches[3]) * 10
@@ -181,7 +186,7 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 			seenSummary = true
 		} else if !seenSummary {
 			// buffer anything else that we didn't recognize
-			buffer = append(buffer, line)
+			buffers[cur] = append(buffers[cur], line)
 		}
 	}
 

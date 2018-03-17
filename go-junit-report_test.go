@@ -765,6 +765,45 @@ var testCases = []TestCase{
 			},
 		},
 	},
+	{
+		name:       "20-trio.txt",
+		reportName: "20-report.xml",
+		report: &parser.Report{
+			Packages: []parser.Package{
+				{
+					Name: "",
+					Time: 3010,
+					Tests: []*parser.Test{
+						{
+							Name:   "FirstTest",
+							Time:   2000,
+							Result: parser.FAIL,
+							Output: []string{
+								"Message from first",
+								"Supplemental from first",
+							},
+						},
+						{
+							Name:   "SecondTest",
+							Time:   1000,
+							Result: parser.FAIL,
+							Output: []string{
+								"Message from second",
+							},
+						},
+						{
+							Name:   "ThirdTest",
+							Time:   10,
+							Result: parser.FAIL,
+							Output: []string{
+								"Message from third",
+							},
+						},
+					},
+				},
+			},
+		},
+	},
 }
 
 func TestParser(t *testing.T) {
