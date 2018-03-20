@@ -1,0 +1,8 @@
+{"Action":"output","Package":"package/panic","Output":"panic: init\n"}
+{"Action":"output","Package":"package/panic","Output":"stacktrace\n"}
+{"Action":"output","Package":"package/panic","Output":"FAIL    package/panic  0.003s\n"}
+{"Action":"fail","Package":"package/panic","Elapsed":0.003}
+{"Action":"output","Package":"package/panic2","Output":"panic: init\n"}
+{"Action":"output","Package":"package/panic2","Output":"stacktrace\n"}
+{"Action":"output","Package":"package/panic2","Output":"FAIL    package/panic2  0.003s\n"}
+{"Action":"fail","Package":"package/panic2","Elapsed":0.003}

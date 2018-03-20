@@ -1,0 +1,17 @@
+{"Action":"output","Package":"package1/foo","Output":"=== RUN TestA\n"}
+{"Action":"output","Package":"package1/foo","Test":"TestA","Output":"--- PASS: TestA (0.10 seconds)\n"}
+{"Action":"output","Package":"package1/foo","Test":"TestA","Output":"=== RUN TestB\n"}
+{"Action":"pass","Package":"package1/foo","Test":"TestA","Elapsed":0.1}
+{"Action":"output","Package":"package1/foo","Test":"TestB","Output":"--- PASS: TestB (0.30 seconds)\n"}
+{"Action":"pass","Package":"package1/foo","Test":"TestB","Elapsed":0.3}
+{"Action":"output","Package":"package1/foo","Output":"PASS\n"}
+{"Action":"output","Package":"package1/foo","Output":"coverage: 10% of statements in fmt, encoding/xml\n"}
+{"Action":"output","Package":"package1/foo","Output":"ok  \tpackage1/foo 0.400s  coverage: 10.0% of statements in fmt, encoding/xml\n"}
+{"Action":"pass","Package":"package1/foo","Elapsed":0.4}
+{"Action":"output","Package":"package2/bar","Output":"=== RUN TestC\n"}
+{"Action":"output","Package":"package2/bar","Test":"TestC","Output":"--- PASS: TestC (4.20 seconds)\n"}
+{"Action":"pass","Package":"package2/bar","Test":"TestC","Elapsed":4.2}
+{"Action":"output","Package":"package2/bar","Output":"PASS\n"}
+{"Action":"output","Package":"package2/bar","Output":"coverage: 99.8% of statements in fmt, encoding/xml\n"}
+{"Action":"output","Package":"package2/bar","Output":"ok  \tpackage2/bar 4.200s  coverage: 99.8% of statements in fmt, encoding/xml\n"}
+{"Action":"pass","Package":"package2/bar","Elapsed":4.2}

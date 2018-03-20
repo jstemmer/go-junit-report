@@ -1,0 +1,22 @@
+# package/name/failing1
+failing1/failing_test.go:15: undefined: x
+# package/name/failing2
+failing2/another_failing_test.go:20: undefined: y
+# package/name/setupfailing1
+setupfailing1/failing_test.go:4: cannot find package "other/package" in any of:
+	/path/vendor (vendor tree)
+	/path/go/root (from $GOROOT)
+	/path/go/path (from $GOPATH)
+{"Action":"run","Package":"package/name/passing1","Test":"TestA"}
+{"Action":"output","Package":"package/name/passing1","Output":"=== RUN TestA\n"}
+{"Action":"output","Package":"package/name/passing1","Test":"TestA","Output":"--- PASS: TestA (0.10 seconds)\n"}
+{"Action":"pass","Package":"package/name/passing1","Test":"TestA","Elapsed":0.1}
+{"Action":"pass","Package":"package/name/passing1","Elapsed":0.1}
+{"Action":"run","Package":"package/name/passing2","Test":"TestB"}
+{"Action":"output","Package":"package/name/passing2","Output":"=== RUN TestB\n"}
+{"Action":"output","Package":"package/name/passing2","Test":"TestB","Output":"--- PASS: TestB (0.10 seconds)\n"}
+{"Action":"pass","Package":"package/name/passing2","Test":"TestB","Elapsed":0.1}
+{"Action":"pass","Package":"package/name/passing2","Elapsed":0.1}
+FAIL    package/name/failing1 [build failed]
+FAIL    package/name/failing2 [build failed]
+FAIL    package/name/setupfailing1 [setup failed]

@@ -1,0 +1,9 @@
+{"Action":"output","Package":"package/name","Output":"=== RUN TestOne\n"}
+{"Action":"output","Package":"package/name","Test":"TestOne","Output":"--- PASS: TestOne (0.06s)\n"}
+{"Action":"output","Package":"package/name","Test":"TestOne","Output":"=== RUN TestTwo\n"}
+{"Action":"pass","Package":"package/name","Test":"TestOne","Elapsed":0.06}
+{"Action":"output","Package":"package/name","Test":"TestTwo","Output":"--- PASS: TestTwo (0.10s)\n"}
+{"Action":"pass","Package":"package/name","Test":"TestTwo","Elapsed":0.1}
+{"Action":"output","Package":"package/name","Output":"PASS\n"}
+{"Action":"output","Package":"package/name","Output":"ok  \tpackage/name\t0.160s"}
+{"Action":"pass","Package":"package/name","Elapsed":0.16}

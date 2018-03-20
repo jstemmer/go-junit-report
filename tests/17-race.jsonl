@@ -1,0 +1,43 @@
+{"Action":"run","Package":"race_test","Test":"TestRace"}
+{"Action":"output","Package":"race_test","Test":"TestRace","Output":"=== RUN   TestRace\n"}
+{"Action":"output","Package":"race_test","Test":"TestRace","Output":"test output\n"}
+{"Action":"output","Package":"race_test","Test":"TestRace","Output":"2 0xc4200153d0\n"}
+{"Action":"output","Package":"race_test","Test":"TestRace","Output":"==================\n"}
+{"Action":"output","Package":"race_test","Test":"TestRace","Output":"WARNING: DATA RACE\n"}
+{"Action":"output","Package":"race_test","Test":"TestRace","Output":"Write at 0x00c4200153d0 by goroutine 7:\n"}
+{"Action":"output","Package":"race_test","Test":"TestRace","Output":"  race_test.TestRace.func1()\n"}
+{"Action":"output","Package":"race_test","Test":"TestRace","Output":"      race_test.go:13 +0x3b\n"}
+{"Action":"output","Package":"race_test","Test":"TestRace","Output":"\n"}
+{"Action":"output","Package":"race_test","Test":"TestRace","Output":"Previous write at 0x00c4200153d0 by goroutine 6:\n"}
+{"Action":"output","Package":"race_test","Test":"TestRace","Output":"  race_test.TestRace()\n"}
+{"Action":"output","Package":"race_test","Test":"TestRace","Output":"      race_test.go:15 +0x136\n"}
+{"Action":"output","Package":"race_test","Test":"TestRace","Output":"  testing.tRunner()\n"}
+{"Action":"output","Package":"race_test","Test":"TestRace","Output":"      /usr/local/Cellar/go/1.8.3/libexec/src/testing/testing.go:657 +0x107\n"}
+{"Action":"output","Package":"race_test","Test":"TestRace","Output":"\n"}
+{"Action":"output","Package":"race_test","Test":"TestRace","Output":"Goroutine 7 (running) created at:\n"}
+{"Action":"output","Package":"race_test","Test":"TestRace","Output":"  race_test.TestRace()\n"}
+{"Action":"output","Package":"race_test","Test":"TestRace","Output":"      race_test.go:14 +0x125\n"}
+{"Action":"output","Package":"race_test","Test":"TestRace","Output":"  testing.tRunner()\n"}
+{"Action":"output","Package":"race_test","Test":"TestRace","Output":"      /usr/local/Cellar/go/1.8.3/libexec/src/testing/testing.go:657 +0x107\n"}
+{"Action":"output","Package":"race_test","Test":"TestRace","Output":"\n"}
+{"Action":"output","Package":"race_test","Test":"TestRace","Output":"Goroutine 6 (running) created at:\n"}
+{"Action":"output","Package":"race_test","Test":"TestRace","Output":"  testing.(*T).Run()\n"}
+{"Action":"output","Package":"race_test","Test":"TestRace","Output":"      /usr/local/Cellar/go/1.8.3/libexec/src/testing/testing.go:697 +0x543\n"}
+{"Action":"output","Package":"race_test","Test":"TestRace","Output":"  testing.runTests.func1()\n"}
+{"Action":"output","Package":"race_test","Test":"TestRace","Output":"      /usr/local/Cellar/go/1.8.3/libexec/src/testing/testing.go:882 +0xaa\n"}
+{"Action":"output","Package":"race_test","Test":"TestRace","Output":"  testing.tRunner()\n"}
+{"Action":"output","Package":"race_test","Test":"TestRace","Output":"      /usr/local/Cellar/go/1.8.3/libexec/src/testing/testing.go:657 +0x107\n"}
+{"Action":"output","Package":"race_test","Test":"TestRace","Output":"  testing.runTests()\n"}
+{"Action":"output","Package":"race_test","Test":"TestRace","Output":"      /usr/local/Cellar/go/1.8.3/libexec/src/testing/testing.go:888 +0x4e0\n"}
+{"Action":"output","Package":"race_test","Test":"TestRace","Output":"  testing.(*M).Run()\n"}
+{"Action":"output","Package":"race_test","Test":"TestRace","Output":"      /usr/local/Cellar/go/1.8.3/libexec/src/testing/testing.go:822 +0x1c3\n"}
+{"Action":"output","Package":"race_test","Test":"TestRace","Output":"  main.main()\n"}
+{"Action":"output","Package":"race_test","Test":"TestRace","Output":"      _test/_testmain.go:52 +0x20f\n"}
+{"Action":"output","Package":"race_test","Test":"TestRace","Output":"==================\n"}
+{"Action":"output","Package":"race_test","Test":"TestRace","Output":"--- FAIL: TestRace (0.00s)\n"}
+{"Action":"output","Package":"race_test","Test":"TestRace","Output":"\ttesting.go:610: race detected during execution of test\n"}
+{"Action":"fail","Package":"race_test","Test":"TestRace"}
+{"Action":"output","Package":"race_test","Output":"FAIL\n"}
+{"Action":"output","Package":"race_test","Output":"exit status 1\n"}
+{"Action":"output","Package":"race_test","Output":"FAIL\trace_test\t0.015s"}
+{"Action":"fail","Package":"race_test","Elapsed":0.015}

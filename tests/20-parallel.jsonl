@@ -1,0 +1,29 @@
+{"Action":"run","Package":"pkg/parallel","Test":"FirstTest"}
+{"Action":"output","Package":"pkg/parallel","Test":"FirstTest","Output":"=== RUN   FirstTest\n"}
+{"Action":"output","Package":"pkg/parallel","Test":"FirstTest","Output":"Message from first\n"}
+{"Action":"output","Package":"pkg/parallel","Test":"FirstTest","Output":"=== PAUSE FirstTest\n"}
+{"Action":"pause","Package":"pkg/parallel","Test":"FirstTest"}
+{"Action":"run","Package":"pkg/parallel","Test":"SecondTest"}
+{"Action":"output","Package":"pkg/parallel","Test":"SecondTest","Output":"=== RUN   SecondTest\n"}
+{"Action":"output","Package":"pkg/parallel","Test":"SecondTest","Output":"Message from second\n"}
+{"Action":"output","Package":"pkg/parallel","Test":"SecondTest","Output":"=== PAUSE SecondTest\n"}
+{"Action":"pause","Package":"pkg/parallel","Test":"SecondTest"}
+{"Action":"cont","Package":"pkg/parallel","Test":"FirstTest"}
+{"Action":"output","Package":"pkg/parallel","Test":"FirstTest","Output":"=== CONT  FirstTest\n"}
+{"Action":"output","Package":"pkg/parallel","Test":"FirstTest","Output":"Supplemental from first\n"}
+{"Action":"run","Package":"pkg/parallel","Test":"ThirdTest"}
+{"Action":"output","Package":"pkg/parallel","Test":"ThirdTest","Output":"=== RUN   ThirdTest\n"}
+{"Action":"output","Package":"pkg/parallel","Test":"ThirdTest","Output":"Message from third\n"}
+{"Action":"output","Package":"pkg/parallel","Test":"ThirdTest","Output":"--- FAIL: ThirdTest (0.01s)\n"}
+{"Action":"output","Package":"pkg/parallel","Test":"ThirdTest","Output":"\tparallel_test.go:32: ThirdTest error\n"}
+{"Action":"fail","Package":"pkg/parallel","Test":"ThirdTest","Elapsed":0.01}
+{"Action":"output","Package":"pkg/parallel","Test":"FirstTest","Output":"--- FAIL: FirstTest (2.00s)\n"}
+{"Action":"output","Package":"pkg/parallel","Test":"FirstTest","Output":"\tparallel_test.go:14: FirstTest error\n"}
+{"Action":"fail","Package":"pkg/parallel","Test":"FirstTest","Elapsed":2.0}
+{"Action":"output","Package":"pkg/parallel","Test":"SecondTest","Output":"--- FAIL: SecondTest (1.00s)\n"}
+{"Action":"output","Package":"pkg/parallel","Test":"SecondTest","Output":"\tparallel_test.go:23: SecondTest error\n"}
+{"Action":"fail","Package":"pkg/parallel","Test":"SecondTest","Elapsed":1.0}
+{"Action":"output","Package":"pkg/parallel","Output":"FAIL\n"}
+{"Action":"output","Package":"pkg/parallel","Output":"exit status 1\n"}
+{"Action":"output","Package":"pkg/parallel","Output":"FAIL\tpkg/parallel\t3.010s\n"}
+{"Action":"fail","Package":"pkg/parallel","Elapsed":3.01}

@@ -1,0 +1,14 @@
+{"Action":"output","Package":"package/name","Output":"=== RUN TestOne\n"}
+{"Action":"output","Package":"package/name","Test":"TestOne","Output":"--- FAIL: TestOne (0.02 seconds)\n"}
+{"Action":"output","Package":"package/name","Test":"TestOne","Output":"\tfile_test.go:11: Error message\n"}
+{"Action":"output","Package":"package/name","Test":"TestOne","Output":"\tfile_test.go:11: Longer\n"}
+{"Action":"output","Package":"package/name","Test":"TestOne","Output":"\t\terror\n"}
+{"Action":"output","Package":"package/name","Test":"TestOne","Output":"\t\tmessage.\n"}
+{"Action":"output","Package":"package/name","Test":"TestOne","Output":"=== RUN TestTwo\n"}
+{"Action":"fail","Package":"package/name","Test":"TestOne","Elapsed":0.02}
+{"Action":"output","Package":"package/name","Test":"TestTwo","Output":"--- PASS: TestTwo (0.13 seconds)\n"}
+{"Action":"pass","Package":"package/name","Test":"TestTwo","Elapsed":0.13}
+{"Action":"output","Package":"package/name","Output":"FAIL\n"}
+{"Action":"output","Package":"package/name","Output":"exit status 1\n"}
+{"Action":"output","Package":"package/name","Output":"FAIL\tpackage/name 0.151s\n"}
+{"Action":"fail","Package":"package/name","Elapsed":0.151}

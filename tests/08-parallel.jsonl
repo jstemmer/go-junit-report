@@ -1,0 +1,13 @@
+{"Action":"output","Package":"github.com/dmitris/test-go-junit-report","Output":"=== RUN TestDoFoo\n"}
+{"Action":"output","Package":"github.com/dmitris/test-go-junit-report","Output":"=== RUN TestDoFoo2\n"}
+{"Action":"output","Package":"github.com/dmitris/test-go-junit-report","Test":"TestDoFoo","Output":"--- PASS: TestDoFoo (0.27s)\n"}
+{"Action":"output","Package":"github.com/dmitris/test-go-junit-report","Test":"TestDoFoo","Output":"\tcov_test.go:10: DoFoo log 1\n"}
+{"Action":"output","Package":"github.com/dmitris/test-go-junit-report","Test":"TestDoFoo","Output":"\tcov_test.go:10: DoFoo log 2\n"}
+{"Action":"pass","Package":"github.com/dmitris/test-go-junit-report","Test":"TestDoFoo","Elapsed":0.27}
+{"Action":"output","Package":"github.com/dmitris/test-go-junit-report","Test":"TestDoFoo2","Output":"--- PASS: TestDoFoo2 (0.16s)\n"}
+{"Action":"output","Package":"github.com/dmitris/test-go-junit-report","Test":"TestDoFoo2","Output":"\tcov_test.go:21: DoFoo2 log 1\n"}
+{"Action":"output","Package":"github.com/dmitris/test-go-junit-report","Test":"TestDoFoo2","Output":"\tcov_test.go:21: DoFoo2 log 2\n"}
+{"Action":"pass","Package":"github.com/dmitris/test-go-junit-report","Test":"TestDoFoo2","Elapsed":0.16}
+{"Action":"output","Package":"github.com/dmitris/test-go-junit-report","Output":"PASS\n"}
+{"Action":"output","Package":"github.com/dmitris/test-go-junit-report","Output":"ok  \tgithub.com/dmitris/test-go-junit-report\t0.440s\n"}
+{"Action":"pass","Package":"github.com/dmitris/test-go-junit-report","Elapsed":0.44}

@@ -1,0 +1,4 @@
+{"Action":"output","Package":"package/empty","Output":"testing: warning: no tests to run\n"}
+{"Action":"output","Package":"package/empty","Output":"PASS\n"}
+{"Action":"output","Package":"package/empty","Output":"ok  \tpackage/empty\t0.001s\n"}
+{"Action":"pass","Package":"package/empty","Elapsed":0.001}
