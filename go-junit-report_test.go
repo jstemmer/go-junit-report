@@ -2,9 +2,11 @@ package main
 
 import (
 	"bytes"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
+	"regexp"
 	"runtime"
 	"strings"
 	"testing"
@@ -12,6 +14,8 @@ import (
 	"github.com/jstemmer/go-junit-report/formatter"
 	"github.com/jstemmer/go-junit-report/parser"
 )
+
+var matchTest = flag.String("match", "", "only test testdata matching this pattern")
 
 type TestCase struct {
 	name        string
@@ -830,7 +834,11 @@ var testCases = []TestCase{
 }
 
 func TestParser(t *testing.T) {
+	matchRegex := compileMatch(t)
 	for _, testCase := range testCases {
+		if !matchRegex.MatchString(testCase.name) {
+			continue
+		}
 		t.Logf("Test %s", testCase.name)
 
 		file, err := os.Open("testdata/" + testCase.name)
@@ -904,7 +912,12 @@ func TestVersionFlag(t *testing.T) {
 }
 
 func testJUnitFormatter(t *testing.T, goVersion string) {
+	match := compileMatch(t)
 	for _, testCase := range testCases {
+		if !match.MatchString(testCase.name) {
+			continue
+		}
+
 		report, err := loadTestReport(testCase.reportName, goVersion)
 		if err != nil {
 			t.Fatal(err)
@@ -937,4 +950,12 @@ func loadTestReport(name, goVersion string) (string, error) {
 	report := strings.Replace(string(contents), `value="1.0"`, fmt.Sprintf(`value="%s"`, goVersion), -1)
 
 	return report, nil
+}
+
+func compileMatch(t *testing.T) *regexp.Regexp {
+	rx, err := regexp.Compile(*matchTest)
+	if err != nil {
+		t.Fatalf("Error compiling -match flag %q: %v", *matchTest, err)
+	}
+	return rx
 }
