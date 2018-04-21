@@ -811,9 +811,9 @@ var testCases = []TestCase{
 
 func TestParser(t *testing.T) {
 	for _, testCase := range testCases {
-		t.Logf("Running: %s", testCase.name)
+		t.Logf("Test %s", testCase.name)
 
-		file, err := os.Open("tests/" + testCase.name)
+		file, err := os.Open("testdata/" + testCase.name)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -903,7 +903,7 @@ func testJUnitFormatter(t *testing.T, goVersion string) {
 }
 
 func loadTestReport(name, goVersion string) (string, error) {
-	contents, err := ioutil.ReadFile("tests/" + name)
+	contents, err := ioutil.ReadFile("testdata/" + name)
 	if err != nil {
 		return "", err
 	}
