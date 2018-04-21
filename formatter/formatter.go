@@ -7,6 +7,7 @@ import (
 	"io"
 	"runtime"
 	"strings"
+	"time"
 
 	"github.com/jstemmer/go-junit-report/parser"
 )
@@ -67,7 +68,7 @@ func JUnitReportXML(report *parser.Report, noXMLHeader bool, goVersion string, w
 		ts := JUnitTestSuite{
 			Tests:      len(pkg.Tests),
 			Failures:   0,
-			Time:       formatTime(pkg.Time),
+			Time:       formatTime(pkg.Duration),
 			Name:       pkg.Name,
 			Properties: []JUnitProperty{},
 			TestCases:  []JUnitTestCase{},
@@ -93,7 +94,7 @@ func JUnitReportXML(report *parser.Report, noXMLHeader bool, goVersion string, w
 			testCase := JUnitTestCase{
 				Classname: classname,
 				Name:      test.Name,
-				Time:      formatTime(test.Time),
+				Time:      formatTime(test.Duration),
 				Failure:   nil,
 			}
 
@@ -135,6 +136,6 @@ func JUnitReportXML(report *parser.Report, noXMLHeader bool, goVersion string, w
 	return nil
 }
 
-func formatTime(time int) string {
-	return fmt.Sprintf("%.3f", float64(time)/1000.0)
+func formatTime(d time.Duration) string {
+	return fmt.Sprintf("%.3f", d.Seconds())
 }

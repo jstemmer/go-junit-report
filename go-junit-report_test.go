@@ -10,6 +10,7 @@ import (
 	"runtime"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/jstemmer/go-junit-report/formatter"
 	"github.com/jstemmer/go-junit-report/parser"
@@ -32,20 +33,23 @@ var testCases = []TestCase{
 		report: &parser.Report{
 			Packages: []parser.Package{
 				{
-					Name: "package/name",
-					Time: 160,
+					Name:     "package/name",
+					Duration: 160 * time.Millisecond,
+					Time:     160,
 					Tests: []*parser.Test{
 						{
-							Name:   "TestZ",
-							Time:   60,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestZ",
+							Duration: 60 * time.Millisecond,
+							Time:     60,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 						{
-							Name:   "TestA",
-							Time:   100,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestA",
+							Duration: 100 * time.Millisecond,
+							Time:     100,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 					},
 				},
@@ -58,13 +62,15 @@ var testCases = []TestCase{
 		report: &parser.Report{
 			Packages: []parser.Package{
 				{
-					Name: "package/name",
-					Time: 151,
+					Name:     "package/name",
+					Duration: 151 * time.Millisecond,
+					Time:     151,
 					Tests: []*parser.Test{
 						{
-							Name:   "TestOne",
-							Time:   20,
-							Result: parser.FAIL,
+							Name:     "TestOne",
+							Duration: 20 * time.Millisecond,
+							Time:     20,
+							Result:   parser.FAIL,
 							Output: []string{
 								"file_test.go:11: Error message",
 								"file_test.go:11: Longer",
@@ -73,10 +79,11 @@ var testCases = []TestCase{
 							},
 						},
 						{
-							Name:   "TestTwo",
-							Time:   130,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestTwo",
+							Duration: 130 * time.Millisecond,
+							Time:     130,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 					},
 				},
@@ -89,22 +96,25 @@ var testCases = []TestCase{
 		report: &parser.Report{
 			Packages: []parser.Package{
 				{
-					Name: "package/name",
-					Time: 150,
+					Name:     "package/name",
+					Duration: 150 * time.Millisecond,
+					Time:     150,
 					Tests: []*parser.Test{
 						{
-							Name:   "TestOne",
-							Time:   20,
-							Result: parser.SKIP,
+							Name:     "TestOne",
+							Duration: 20 * time.Millisecond,
+							Time:     20,
+							Result:   parser.SKIP,
 							Output: []string{
 								"file_test.go:11: Skip message",
 							},
 						},
 						{
-							Name:   "TestTwo",
-							Time:   130,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestTwo",
+							Duration: 130 * time.Millisecond,
+							Time:     130,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 					},
 				},
@@ -117,20 +127,23 @@ var testCases = []TestCase{
 		report: &parser.Report{
 			Packages: []parser.Package{
 				{
-					Name: "package/name",
-					Time: 160,
+					Name:     "package/name",
+					Duration: 160 * time.Millisecond,
+					Time:     160,
 					Tests: []*parser.Test{
 						{
-							Name:   "TestOne",
-							Time:   60,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestOne",
+							Duration: 60 * time.Millisecond,
+							Time:     60,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 						{
-							Name:   "TestTwo",
-							Time:   100,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestTwo",
+							Duration: 100 * time.Millisecond,
+							Time:     100,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 					},
 				},
@@ -143,20 +156,23 @@ var testCases = []TestCase{
 		report: &parser.Report{
 			Packages: []parser.Package{
 				{
-					Name: "package/name",
-					Time: 160,
+					Name:     "package/name",
+					Duration: 160 * time.Millisecond,
+					Time:     160,
 					Tests: []*parser.Test{
 						{
-							Name:   "TestOne",
-							Time:   60,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestOne",
+							Duration: 60 * time.Millisecond,
+							Time:     60,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 						{
-							Name:   "TestTwo",
-							Time:   100,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestTwo",
+							Duration: 100 * time.Millisecond,
+							Time:     100,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 					},
 				},
@@ -170,31 +186,36 @@ var testCases = []TestCase{
 		report: &parser.Report{
 			Packages: []parser.Package{
 				{
-					Name: "package/name1",
-					Time: 160,
+					Name:     "package/name1",
+					Duration: 160 * time.Millisecond,
+					Time:     160,
 					Tests: []*parser.Test{
 						{
-							Name:   "TestOne",
-							Time:   60,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestOne",
+							Duration: 60 * time.Millisecond,
+							Time:     60,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 						{
-							Name:   "TestTwo",
-							Time:   100,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestTwo",
+							Duration: 100 * time.Millisecond,
+							Time:     100,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 					},
 				},
 				{
-					Name: "package/name2",
-					Time: 151,
+					Name:     "package/name2",
+					Duration: 151 * time.Millisecond,
+					Time:     151,
 					Tests: []*parser.Test{
 						{
-							Name:   "TestOne",
-							Time:   20,
-							Result: parser.FAIL,
+							Name:     "TestOne",
+							Duration: 20 * time.Millisecond,
+							Time:     20,
+							Result:   parser.FAIL,
 							Output: []string{
 								"file_test.go:11: Error message",
 								"file_test.go:11: Longer",
@@ -203,10 +224,11 @@ var testCases = []TestCase{
 							},
 						},
 						{
-							Name:   "TestTwo",
-							Time:   130,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestTwo",
+							Duration: 130 * time.Millisecond,
+							Time:     130,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 					},
 				},
@@ -220,20 +242,23 @@ var testCases = []TestCase{
 		report: &parser.Report{
 			Packages: []parser.Package{
 				{
-					Name: "test/package",
-					Time: 160,
+					Name:     "test/package",
+					Duration: 160 * time.Millisecond,
+					Time:     160,
 					Tests: []*parser.Test{
 						{
-							Name:   "TestOne",
-							Time:   60,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestOne",
+							Duration: 60 * time.Millisecond,
+							Time:     60,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 						{
-							Name:   "TestTwo",
-							Time:   100,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestTwo",
+							Duration: 100 * time.Millisecond,
+							Time:     100,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 					},
 				},
@@ -247,20 +272,23 @@ var testCases = []TestCase{
 		report: &parser.Report{
 			Packages: []parser.Package{
 				{
-					Name: "github.com/dmitris/test-go-junit-report",
-					Time: 440,
+					Name:     "github.com/dmitris/test-go-junit-report",
+					Duration: 440 * time.Millisecond,
+					Time:     440,
 					Tests: []*parser.Test{
 						{
-							Name:   "TestDoFoo",
-							Time:   270,
-							Result: parser.PASS,
-							Output: []string{"cov_test.go:10: DoFoo log 1", "cov_test.go:10: DoFoo log 2"},
+							Name:     "TestDoFoo",
+							Duration: 270 * time.Millisecond,
+							Time:     270,
+							Result:   parser.PASS,
+							Output:   []string{"cov_test.go:10: DoFoo log 1", "cov_test.go:10: DoFoo log 2"},
 						},
 						{
-							Name:   "TestDoFoo2",
-							Time:   160,
-							Result: parser.PASS,
-							Output: []string{"cov_test.go:21: DoFoo2 log 1", "cov_test.go:21: DoFoo2 log 2"},
+							Name:     "TestDoFoo2",
+							Duration: 160 * time.Millisecond,
+							Time:     160,
+							Result:   parser.PASS,
+							Output:   []string{"cov_test.go:21: DoFoo2 log 1", "cov_test.go:21: DoFoo2 log 2"},
 						},
 					},
 				},
@@ -273,20 +301,23 @@ var testCases = []TestCase{
 		report: &parser.Report{
 			Packages: []parser.Package{
 				{
-					Name: "package/name",
-					Time: 160,
+					Name:     "package/name",
+					Duration: 160 * time.Millisecond,
+					Time:     160,
 					Tests: []*parser.Test{
 						{
-							Name:   "TestZ",
-							Time:   60,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestZ",
+							Duration: 60 * time.Millisecond,
+							Time:     60,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 						{
-							Name:   "TestA",
-							Time:   100,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestA",
+							Duration: 100 * time.Millisecond,
+							Time:     100,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 					},
 					CoveragePct: "13.37",
@@ -300,33 +331,38 @@ var testCases = []TestCase{
 		report: &parser.Report{
 			Packages: []parser.Package{
 				{
-					Name: "package1/foo",
-					Time: 400,
+					Name:     "package1/foo",
+					Duration: 400 * time.Millisecond,
+					Time:     400,
 					Tests: []*parser.Test{
 						{
-							Name:   "TestA",
-							Time:   100,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestA",
+							Duration: 100 * time.Millisecond,
+							Time:     100,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 						{
-							Name:   "TestB",
-							Time:   300,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestB",
+							Duration: 300 * time.Millisecond,
+							Time:     300,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 					},
 					CoveragePct: "10.0",
 				},
 				{
-					Name: "package2/bar",
-					Time: 4200,
+					Name:     "package2/bar",
+					Duration: 4200 * time.Millisecond,
+					Time:     4200,
 					Tests: []*parser.Test{
 						{
-							Name:   "TestC",
-							Time:   4200,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestC",
+							Duration: 4200 * time.Millisecond,
+							Time:     4200,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 					},
 					CoveragePct: "99.8",
@@ -340,20 +376,23 @@ var testCases = []TestCase{
 		report: &parser.Report{
 			Packages: []parser.Package{
 				{
-					Name: "package/name",
-					Time: 50,
+					Name:     "package/name",
+					Duration: 50 * time.Millisecond,
+					Time:     50,
 					Tests: []*parser.Test{
 						{
-							Name:   "TestOne",
-							Time:   20,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestOne",
+							Duration: 20 * time.Millisecond,
+							Time:     20,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 						{
-							Name:   "TestTwo",
-							Time:   30,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestTwo",
+							Duration: 30 * time.Millisecond,
+							Time:     30,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 					},
 				},
@@ -366,91 +405,106 @@ var testCases = []TestCase{
 		report: &parser.Report{
 			Packages: []parser.Package{
 				{
-					Name: "package/name",
-					Time: 50,
+					Name:     "package/name",
+					Duration: 50 * time.Millisecond,
+					Time:     50,
 					Tests: []*parser.Test{
 						{
-							Name:   "TestOne",
-							Time:   10,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestOne",
+							Duration: 10 * time.Millisecond,
+							Time:     10,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 						{
-							Name:   "TestOne/Child",
-							Time:   20,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestOne/Child",
+							Duration: 20 * time.Millisecond,
+							Time:     20,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 						{
-							Name:   "TestOne/Child#01",
-							Time:   30,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestOne/Child#01",
+							Duration: 30 * time.Millisecond,
+							Time:     30,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 						{
-							Name:   "TestOne/Child=02",
-							Time:   40,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestOne/Child=02",
+							Duration: 40 * time.Millisecond,
+							Time:     40,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 						{
-							Name:   "TestTwo",
-							Time:   10,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestTwo",
+							Duration: 10 * time.Millisecond,
+							Time:     10,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 						{
-							Name:   "TestTwo/Child",
-							Time:   20,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestTwo/Child",
+							Duration: 20 * time.Millisecond,
+							Time:     20,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 						{
-							Name:   "TestTwo/Child#01",
-							Time:   30,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestTwo/Child#01",
+							Duration: 30 * time.Millisecond,
+							Time:     30,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 						{
-							Name:   "TestTwo/Child=02",
-							Time:   40,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestTwo/Child=02",
+							Duration: 40 * time.Millisecond,
+							Time:     40,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 						{
-							Name:   "TestThree",
-							Time:   10,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestThree",
+							Duration: 10 * time.Millisecond,
+							Time:     10,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 						{
-							Name:   "TestThree/a#1",
-							Time:   20,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestThree/a#1",
+							Duration: 20 * time.Millisecond,
+							Time:     20,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 						{
-							Name:   "TestThree/a#1/b#1",
-							Time:   30,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestThree/a#1/b#1",
+							Duration: 30 * time.Millisecond,
+							Time:     30,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 						{
-							Name:   "TestThree/a#1/b#1/c#1",
-							Time:   40,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestThree/a#1/b#1/c#1",
+							Duration: 40 * time.Millisecond,
+							Time:     40,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 						{
-							Name:   "TestFour",
-							Time:   20,
-							Result: parser.FAIL,
-							Output: []string{},
+							Name:     "TestFour",
+							Duration: 20 * time.Millisecond,
+							Time:     20,
+							Result:   parser.FAIL,
+							Output:   []string{},
 						},
 						{
-							Name:   "TestFour/#00",
-							Time:   0,
-							Result: parser.FAIL,
+							Name:     "TestFour/#00",
+							Duration: 0,
+							Time:     0,
+							Result:   parser.FAIL,
 							Output: []string{
 								"example.go:12: Expected abc  OBTAINED:",
 								"	xyz",
@@ -458,31 +512,35 @@ var testCases = []TestCase{
 							},
 						},
 						{
-							Name:   "TestFour/#01",
-							Time:   0,
-							Result: parser.SKIP,
+							Name:     "TestFour/#01",
+							Duration: 0,
+							Time:     0,
+							Result:   parser.SKIP,
 							Output: []string{
 								"example.go:1234: Not supported yet.",
 							},
 						},
 						{
-							Name:   "TestFour/#02",
-							Time:   0,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestFour/#02",
+							Duration: 0,
+							Time:     0,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 						{
-							Name:   "TestFive",
-							Time:   0,
-							Result: parser.SKIP,
+							Name:     "TestFive",
+							Duration: 0,
+							Time:     0,
+							Result:   parser.SKIP,
 							Output: []string{
 								"example.go:1392: Not supported yet.",
 							},
 						},
 						{
-							Name:   "TestSix",
-							Time:   0,
-							Result: parser.FAIL,
+							Name:     "TestSix",
+							Duration: 0,
+							Time:     0,
+							Result:   parser.FAIL,
 							Output: []string{
 								"example.go:371: This should not fail!",
 							},
@@ -498,26 +556,30 @@ var testCases = []TestCase{
 		report: &parser.Report{
 			Packages: []parser.Package{
 				{
-					Name: "package/name/passing1",
-					Time: 100,
+					Name:     "package/name/passing1",
+					Duration: 100 * time.Millisecond,
+					Time:     100,
 					Tests: []*parser.Test{
 						{
-							Name:   "TestA",
-							Time:   100,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestA",
+							Duration: 100 * time.Millisecond,
+							Time:     100,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 					},
 				},
 				{
-					Name: "package/name/passing2",
-					Time: 100,
+					Name:     "package/name/passing2",
+					Duration: 100 * time.Millisecond,
+					Time:     100,
 					Tests: []*parser.Test{
 						{
-							Name:   "TestB",
-							Time:   100,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestB",
+							Duration: 100 * time.Millisecond,
+							Time:     100,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 					},
 				},
@@ -525,9 +587,10 @@ var testCases = []TestCase{
 					Name: "package/name/failing1",
 					Tests: []*parser.Test{
 						{
-							Name:   "[build failed]",
-							Time:   0,
-							Result: parser.FAIL,
+							Name:     "[build failed]",
+							Duration: 0,
+							Time:     0,
+							Result:   parser.FAIL,
 							Output: []string{
 								"failing1/failing_test.go:15: undefined: x",
 							},
@@ -538,9 +601,10 @@ var testCases = []TestCase{
 					Name: "package/name/failing2",
 					Tests: []*parser.Test{
 						{
-							Name:   "[build failed]",
-							Time:   0,
-							Result: parser.FAIL,
+							Name:     "[build failed]",
+							Duration: 0,
+							Time:     0,
+							Result:   parser.FAIL,
 							Output: []string{
 								"failing2/another_failing_test.go:20: undefined: y",
 							},
@@ -551,9 +615,10 @@ var testCases = []TestCase{
 					Name: "package/name/setupfailing1",
 					Tests: []*parser.Test{
 						{
-							Name:   "[setup failed]",
-							Time:   0,
-							Result: parser.FAIL,
+							Name:     "[setup failed]",
+							Duration: 0,
+							Time:     0,
+							Result:   parser.FAIL,
 							Output: []string{
 								"setupfailing1/failing_test.go:4: cannot find package \"other/package\" in any of:",
 								"\t/path/vendor (vendor tree)",
@@ -572,8 +637,9 @@ var testCases = []TestCase{
 		report: &parser.Report{
 			Packages: []parser.Package{
 				{
-					Name: "package/panic",
-					Time: 3,
+					Name:     "package/panic",
+					Duration: 3 * time.Millisecond,
+					Time:     3,
 					Tests: []*parser.Test{
 						{
 							Name:   "Failure",
@@ -586,8 +652,9 @@ var testCases = []TestCase{
 					},
 				},
 				{
-					Name: "package/panic2",
-					Time: 3,
+					Name:     "package/panic2",
+					Duration: 3 * time.Millisecond,
+					Time:     3,
 					Tests: []*parser.Test{
 						{
 							Name:   "Failure",
@@ -608,9 +675,10 @@ var testCases = []TestCase{
 		report: &parser.Report{
 			Packages: []parser.Package{
 				{
-					Name:  "package/empty",
-					Time:  1,
-					Tests: []*parser.Test{},
+					Name:     "package/empty",
+					Duration: 1 * time.Millisecond,
+					Time:     1,
+					Tests:    []*parser.Test{},
 				},
 			},
 		},
@@ -621,26 +689,30 @@ var testCases = []TestCase{
 		report: &parser.Report{
 			Packages: []parser.Package{
 				{
-					Name: "package/repeated-names",
-					Time: 1,
+					Name:     "package/repeated-names",
+					Duration: 1 * time.Millisecond,
+					Time:     1,
 					Tests: []*parser.Test{
 						{
-							Name:   "TestRepeat",
-							Time:   0,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestRepeat",
+							Duration: 0,
+							Time:     0,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 						{
-							Name:   "TestRepeat",
-							Time:   0,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestRepeat",
+							Duration: 0,
+							Time:     0,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 						{
-							Name:   "TestRepeat",
-							Time:   0,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestRepeat",
+							Duration: 0,
+							Time:     0,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 					},
 				},
@@ -653,13 +725,15 @@ var testCases = []TestCase{
 		report: &parser.Report{
 			Packages: []parser.Package{
 				{
-					Name: "race_test",
-					Time: 15,
+					Name:     "race_test",
+					Duration: 15 * time.Millisecond,
+					Time:     15,
 					Tests: []*parser.Test{
 						{
-							Name:   "TestRace",
-							Time:   0,
-							Result: parser.FAIL,
+							Name:     "TestRace",
+							Duration: 0,
+							Time:     0,
+							Result:   parser.FAIL,
 							Output: []string{
 								"test output",
 								"2 0xc4200153d0",
@@ -709,33 +783,38 @@ var testCases = []TestCase{
 		report: &parser.Report{
 			Packages: []parser.Package{
 				{
-					Name: "package1/foo",
-					Time: 400,
+					Name:     "package1/foo",
+					Duration: 400 * time.Millisecond,
+					Time:     400,
 					Tests: []*parser.Test{
 						{
-							Name:   "TestA",
-							Time:   100,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestA",
+							Duration: 100 * time.Millisecond,
+							Time:     100,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 						{
-							Name:   "TestB",
-							Time:   300,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestB",
+							Duration: 300 * time.Millisecond,
+							Time:     300,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 					},
 					CoveragePct: "10.0",
 				},
 				{
-					Name: "package2/bar",
-					Time: 4200,
+					Name:     "package2/bar",
+					Duration: 4200 * time.Millisecond,
+					Time:     4200,
 					Tests: []*parser.Test{
 						{
-							Name:   "TestC",
-							Time:   4200,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestC",
+							Duration: 4200 * time.Millisecond,
+							Time:     4200,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 					},
 					CoveragePct: "99.8",
@@ -749,20 +828,23 @@ var testCases = []TestCase{
 		report: &parser.Report{
 			Packages: []parser.Package{
 				{
-					Name: "package/name",
-					Time: 160,
+					Name:     "package/name",
+					Duration: 160 * time.Millisecond,
+					Time:     160,
 					Tests: []*parser.Test{
 						{
-							Name:   "TestZ",
-							Time:   60,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestZ",
+							Duration: 60 * time.Millisecond,
+							Time:     60,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 						{
-							Name:   "TestA",
-							Time:   100,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestA",
+							Duration: 100 * time.Millisecond,
+							Time:     100,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 					},
 				},
@@ -775,13 +857,15 @@ var testCases = []TestCase{
 		report: &parser.Report{
 			Packages: []parser.Package{
 				{
-					Name: "pkg/parallel",
-					Time: 3010,
+					Name:     "pkg/parallel",
+					Duration: 3010 * time.Millisecond,
+					Time:     3010,
 					Tests: []*parser.Test{
 						{
-							Name:   "FirstTest",
-							Time:   2000,
-							Result: parser.FAIL,
+							Name:     "FirstTest",
+							Duration: 2 * time.Second,
+							Time:     2000,
+							Result:   parser.FAIL,
 							Output: []string{
 								"Message from first",
 								"Supplemental from first",
@@ -789,18 +873,20 @@ var testCases = []TestCase{
 							},
 						},
 						{
-							Name:   "SecondTest",
-							Time:   1000,
-							Result: parser.FAIL,
+							Name:     "SecondTest",
+							Duration: 1 * time.Second,
+							Time:     1000,
+							Result:   parser.FAIL,
 							Output: []string{
 								"Message from second",
 								"parallel_test.go:23: SecondTest error",
 							},
 						},
 						{
-							Name:   "ThirdTest",
-							Time:   10,
-							Result: parser.FAIL,
+							Name:     "ThirdTest",
+							Duration: 10 * time.Millisecond,
+							Time:     10,
+							Result:   parser.FAIL,
 							Output: []string{
 								"Message from third",
 								"parallel_test.go:32: ThirdTest error",
@@ -817,14 +903,16 @@ var testCases = []TestCase{
 		report: &parser.Report{
 			Packages: []parser.Package{
 				{
-					Name: "package/one",
-					Time: 0,
+					Name:     "package/one",
+					Duration: 0,
+					Time:     0,
 					Tests: []*parser.Test{
 						{
-							Name:   "TestOne",
-							Time:   0,
-							Result: parser.PASS,
-							Output: []string{},
+							Name:     "TestOne",
+							Duration: 0,
+							Time:     0,
+							Result:   parser.PASS,
+							Output:   []string{},
 						},
 					},
 				},
@@ -867,6 +955,11 @@ func TestParser(t *testing.T) {
 				t.Errorf("Package.Name == %s, want %s", pkg.Name, expPkg.Name)
 			}
 
+			if pkg.Duration != expPkg.Duration {
+				t.Errorf("Package.Duration == %s, want %s", pkg.Duration, expPkg.Duration)
+			}
+
+			// pkg.Time is deprecated
 			if pkg.Time != expPkg.Time {
 				t.Errorf("Package.Time == %d, want %d", pkg.Time, expPkg.Time)
 			}
@@ -882,6 +975,11 @@ func TestParser(t *testing.T) {
 					t.Errorf("Test.Name == %s, want %s", test.Name, expTest.Name)
 				}
 
+				if test.Duration != expTest.Duration {
+					t.Errorf("Test.Duration == %s, want %s", test.Duration, expTest.Duration)
+				}
+
+				// test.Time is deprecated
 				if test.Time != expTest.Time {
 					t.Errorf("Test.Time == %d, want %d", test.Time, expTest.Time)
 				}
@@ -930,7 +1028,7 @@ func testJUnitFormatter(t *testing.T, goVersion string) {
 		}
 
 		if string(junitReport.Bytes()) != report {
-			t.Fatalf("Fail: %s Report xml ==\n%s, want\n%s", testCase.name, string(junitReport.Bytes()), report)
+			t.Errorf("Fail: %s Report xml ==\n%s, want\n%s", testCase.name, string(junitReport.Bytes()), report)
 		}
 	}
 }

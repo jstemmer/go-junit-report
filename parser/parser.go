@@ -4,8 +4,8 @@ import (
 	"bufio"
 	"io"
 	"regexp"
-	"strconv"
 	"strings"
+	"time"
 )
 
 // Result represents a test result.
@@ -26,17 +26,23 @@ type Report struct {
 // Package contains the test results of a single package.
 type Package struct {
 	Name        string
-	Time        int
+	Duration    time.Duration
 	Tests       []*Test
 	CoveragePct string
+
+	// Time is deprecated, use Duration instead.
+	Time int // in milliseconds
 }
 
 // Test contains the results of a single test.
 type Test struct {
-	Name   string
-	Time   int
-	Result Result
-	Output []string
+	Name     string
+	Duration time.Duration
+	Result   Result
+	Output   []string
+
+	// Time is deprecated, use Duration instead.
+	Time int // in milliseconds
 }
 
 var (
@@ -59,7 +65,7 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 	var tests []*Test
 
 	// sum of tests' time, use this if current test has no result line (when it is compiled test)
-	testsTime := 0
+	var testsTime time.Duration
 
 	// current test
 	var cur string
@@ -133,9 +139,11 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 			// all tests in this package are finished
 			report.Packages = append(report.Packages, Package{
 				Name:        matches[2],
-				Time:        parseTime(matches[3]),
+				Duration:    parseSeconds(matches[3]),
 				Tests:       tests,
 				CoveragePct: coveragePct,
+
+				Time: int(parseSeconds(matches[3]) / time.Millisecond), // deprecated
 			})
 
 			buffers[cur] = buffers[cur][0:0]
@@ -161,9 +169,10 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 			test.Output = buffers[cur]
 
 			test.Name = matches[2]
-			testTime := parseTime(matches[3]) * 10
-			test.Time = testTime
-			testsTime += testTime
+			test.Duration = parseSeconds(matches[3])
+			testsTime += test.Duration
+
+			test.Time = int(test.Duration / time.Millisecond) // deprecated
 		} else if matches := regexCoverage.FindStringSubmatch(line); len(matches) == 2 {
 			coveragePct = matches[1]
 		} else if matches := regexOutput.FindStringSubmatch(line); capturedPackage == "" && len(matches) == 3 {
@@ -194,7 +203,8 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 		// no result line found
 		report.Packages = append(report.Packages, Package{
 			Name:        pkgName,
-			Time:        testsTime,
+			Duration:    testsTime,
+			Time:        int(testsTime / time.Millisecond),
 			Tests:       tests,
 			CoveragePct: coveragePct,
 		})
@@ -203,12 +213,13 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 	return report, nil
 }
 
-func parseTime(time string) int {
-	t, err := strconv.Atoi(strings.Replace(time, ".", "", -1))
-	if err != nil {
-		return 0
+func parseSeconds(t string) time.Duration {
+	if t == "" {
+		return time.Duration(0)
 	}
-	return t
+	// ignore error
+	d, _ := time.ParseDuration(t + "s")
+	return d
 }
 
 func findTest(tests []*Test, name string) *Test {
