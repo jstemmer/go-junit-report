@@ -807,6 +807,26 @@ var testCases = []TestCase{
 			},
 		},
 	},
+	{
+		name:       "21-cached.txt",
+		reportName: "21-report.xml",
+		report: &parser.Report{
+			Packages: []parser.Package{
+				{
+					Name: "package/one",
+					Time: 0,
+					Tests: []*parser.Test{
+						{
+							Name:   "TestOne",
+							Time:   0,
+							Result: parser.PASS,
+							Output: []string{},
+						},
+					},
+				},
+			},
+		},
+	},
 }
 
 func TestParser(t *testing.T) {
