@@ -123,6 +123,15 @@ var tests = []struct {
 			{Type: "coverage", CovPct: 99.8},
 			{Type: "summary", Result: "ok", Name: "package2/bar", Duration: 4200 * time.Millisecond, CovPct: 99.8},
 		}},
+	{"11-go_1_5.txt",
+		[]Event{
+			{Type: "run_test", Id: 1, Name: "TestOne"},
+			{Type: "end_test", Id: 1, Name: "TestOne", Result: "PASS", Duration: 20 * time.Millisecond},
+			{Type: "run_test", Id: 2, Name: "TestTwo"},
+			{Type: "end_test", Id: 2, Name: "TestTwo", Result: "PASS", Duration: 30 * time.Millisecond},
+			{Type: "status", Result: "PASS"},
+			{Type: "summary", Result: "ok", Name: "package/name", Duration: 50 * time.Millisecond},
+		}},
 }
 
 func TestParse(t *testing.T) {
