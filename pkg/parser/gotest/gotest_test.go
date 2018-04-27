@@ -77,6 +77,27 @@ var tests = []struct {
 			{Type: "output", Data: "exit status 1", Indent: 0},
 			{Type: "summary", Result: "FAIL", Name: "package/name2", Duration: 151 * time.Millisecond},
 		}},
+	{"07-compiled_test.txt",
+		[]Event{
+			{Type: "run_test", Id: 1, Name: "TestOne"},
+			{Type: "end_test", Id: 1, Name: "TestOne", Result: "PASS", Duration: 60 * time.Millisecond},
+			{Type: "run_test", Id: 2, Name: "TestTwo"},
+			{Type: "end_test", Id: 2, Name: "TestTwo", Result: "PASS", Duration: 100 * time.Millisecond},
+			{Type: "status", Result: "PASS"},
+		}},
+	{"08-parallel.txt",
+		[]Event{
+			{Type: "run_test", Id: 1, Name: "TestDoFoo"},
+			{Type: "run_test", Id: 2, Name: "TestDoFoo2"},
+			{Type: "end_test", Id: 1, Name: "TestDoFoo", Result: "PASS", Duration: 270 * time.Millisecond},
+			{Type: "output", Data: "cov_test.go:10: DoFoo log 1", Indent: 1},
+			{Type: "output", Data: "cov_test.go:10: DoFoo log 2", Indent: 1},
+			{Type: "end_test", Id: 2, Name: "TestDoFoo2", Result: "PASS", Duration: 160 * time.Millisecond},
+			{Type: "output", Data: "cov_test.go:21: DoFoo2 log 1", Indent: 1},
+			{Type: "output", Data: "cov_test.go:21: DoFoo2 log 2", Indent: 1},
+			{Type: "status", Result: "PASS"},
+			{Type: "summary", Result: "ok", Name: "package/name", Duration: 440 * time.Millisecond},
+		}},
 }
 
 func TestParse(t *testing.T) {

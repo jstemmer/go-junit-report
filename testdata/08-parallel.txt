@@ -7,4 +7,4 @@
 	cov_test.go:21: DoFoo2 log 1
 	cov_test.go:21: DoFoo2 log 2
 PASS
-ok  	github.com/dmitris/test-go-junit-report	0.440s
+ok  	package/name	0.440s
