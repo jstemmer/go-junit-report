@@ -47,6 +47,36 @@ var tests = []struct {
 			{Type: "status", Result: "PASS"},
 			{Type: "summary", Result: "ok", Name: "package/name", Duration: 150 * time.Millisecond},
 		}},
+	{"04-go_1_4.txt",
+		[]Event{
+			{Type: "run_test", Id: 1, Name: "TestOne"},
+			{Type: "end_test", Id: 1, Name: "TestOne", Result: "PASS", Duration: 60 * time.Millisecond},
+			{Type: "run_test", Id: 2, Name: "TestTwo"},
+			{Type: "end_test", Id: 2, Name: "TestTwo", Result: "PASS", Duration: 100 * time.Millisecond},
+			{Type: "status", Result: "PASS"},
+			{Type: "summary", Result: "ok", Name: "package/name", Duration: 160 * time.Millisecond},
+		}},
+	// Test 05 is skipped, because it was actually testing XML output
+	{"06-mixed.txt",
+		[]Event{
+			{Type: "run_test", Id: 1, Name: "TestOne"},
+			{Type: "end_test", Id: 1, Name: "TestOne", Result: "PASS", Duration: 60 * time.Millisecond},
+			{Type: "run_test", Id: 2, Name: "TestTwo"},
+			{Type: "end_test", Id: 2, Name: "TestTwo", Result: "PASS", Duration: 100 * time.Millisecond},
+			{Type: "status", Result: "PASS"},
+			{Type: "summary", Result: "ok", Name: "package/name1", Duration: 160 * time.Millisecond},
+			{Type: "run_test", Id: 3, Name: "TestOne"},
+			{Type: "end_test", Id: 3, Name: "TestOne", Result: "FAIL", Duration: 20 * time.Millisecond},
+			{Type: "output", Data: "file_test.go:11: Error message", Indent: 1},
+			{Type: "output", Data: "file_test.go:11: Longer", Indent: 1},
+			{Type: "output", Data: "error", Indent: 2},
+			{Type: "output", Data: "message.", Indent: 2},
+			{Type: "run_test", Id: 4, Name: "TestTwo"},
+			{Type: "end_test", Id: 4, Name: "TestTwo", Result: "PASS", Duration: 130 * time.Millisecond},
+			{Type: "status", Result: "FAIL"},
+			{Type: "output", Data: "exit status 1", Indent: 0},
+			{Type: "summary", Result: "FAIL", Name: "package/name2", Duration: 151 * time.Millisecond},
+		}},
 }
 
 func TestParse(t *testing.T) {
