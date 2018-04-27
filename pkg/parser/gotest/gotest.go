@@ -29,7 +29,7 @@ var (
 	regexSummary = regexp.MustCompile(`^(ok|FAIL)\s+([^ ]+)\s+` +
 		`(?:(\d+\.\d+)s|\(cached\)|(\[\w+ failed]))` +
 		`(?:\s+coverage:\s+(\d+\.\d+)%\sof\sstatements(?:\sin\s.+)?)?$`)
-	regexCoverage = regexp.MustCompile(`^coverage:\s+(\d+\.\d+)%\s+of\s+statements(?:\sin\s.+)?$`)
+	regexCoverage = regexp.MustCompile(`^coverage:\s+(\d+|\d+\.\d+)%\s+of\s+statements(?:\sin\s.+)?$`)
 )
 
 // Parse parses Go test output from the given io.Reader r.
@@ -62,7 +62,7 @@ func (p *parser) parseLine(line string) {
 	} else if matches := regexStatus.FindStringSubmatch(line); len(matches) == 2 {
 		p.status(matches[1])
 	} else if matches := regexSummary.FindStringSubmatch(line); len(matches) == 6 {
-		p.summary(matches[1], matches[2], matches[3])
+		p.summary(matches[1], matches[2], matches[3], matches[5])
 	} else if matches := regexCoverage.FindStringSubmatch(line); len(matches) == 2 {
 		p.coverage(matches[1])
 	} else {
@@ -110,21 +110,20 @@ func (p *parser) status(result string) {
 	})
 }
 
-func (p *parser) summary(result, name, duration string) {
+func (p *parser) summary(result, name, duration, covpct string) {
 	p.add(Event{
 		Type:     "summary",
 		Result:   result,
 		Name:     name,
 		Duration: parseSeconds(duration),
+		CovPct:   parseCoverage(covpct),
 	})
 }
 
 func (p *parser) coverage(percent string) {
-	// ignore error
-	pct, _ := strconv.ParseFloat(percent, 64)
 	p.add(Event{
 		Type:   "coverage",
-		CovPct: pct,
+		CovPct: parseCoverage(percent),
 	})
 }
 
@@ -148,4 +147,13 @@ func parseSeconds(s string) time.Duration {
 	// ignore error
 	d, _ := time.ParseDuration(s + "s")
 	return d
+}
+
+func parseCoverage(percent string) float64 {
+	if percent == "" {
+		return 0
+	}
+	// ignore error
+	pct, _ := strconv.ParseFloat(percent, 64)
+	return pct
 }

@@ -108,6 +108,21 @@ var tests = []struct {
 			{Type: "coverage", CovPct: 13.37},
 			{Type: "summary", Result: "ok", Name: "package/name", Duration: 160 * time.Millisecond},
 		}},
+	{"10-multipkg-coverage.txt",
+		[]Event{
+			{Type: "run_test", Id: 1, Name: "TestA"},
+			{Type: "end_test", Id: 1, Name: "TestA", Result: "PASS", Duration: 100 * time.Millisecond},
+			{Type: "run_test", Id: 2, Name: "TestB"},
+			{Type: "end_test", Id: 2, Name: "TestB", Result: "PASS", Duration: 300 * time.Millisecond},
+			{Type: "status", Result: "PASS"},
+			{Type: "coverage", CovPct: 10},
+			{Type: "summary", Result: "ok", Name: "package1/foo", Duration: 400 * time.Millisecond, CovPct: 10},
+			{Type: "run_test", Id: 3, Name: "TestC"},
+			{Type: "end_test", Id: 3, Name: "TestC", Result: "PASS", Duration: 4200 * time.Millisecond},
+			{Type: "status", Result: "PASS"},
+			{Type: "coverage", CovPct: 99.8},
+			{Type: "summary", Result: "ok", Name: "package2/bar", Duration: 4200 * time.Millisecond, CovPct: 99.8},
+		}},
 }
 
 func TestParse(t *testing.T) {
