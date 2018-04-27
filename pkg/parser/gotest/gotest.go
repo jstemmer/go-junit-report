@@ -5,6 +5,7 @@ import (
 	"bufio"
 	"io"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -18,6 +19,7 @@ type Event struct {
 	Duration time.Duration
 	Data     string
 	Indent   int
+	CovPct   float64
 	Hints    map[string]string
 }
 
@@ -27,6 +29,7 @@ var (
 	regexSummary = regexp.MustCompile(`^(ok|FAIL)\s+([^ ]+)\s+` +
 		`(?:(\d+\.\d+)s|\(cached\)|(\[\w+ failed]))` +
 		`(?:\s+coverage:\s+(\d+\.\d+)%\sof\sstatements(?:\sin\s.+)?)?$`)
+	regexCoverage = regexp.MustCompile(`^coverage:\s+(\d+\.\d+)%\s+of\s+statements(?:\sin\s.+)?$`)
 )
 
 // Parse parses Go test output from the given io.Reader r.
@@ -60,6 +63,8 @@ func (p *parser) parseLine(line string) {
 		p.status(matches[1])
 	} else if matches := regexSummary.FindStringSubmatch(line); len(matches) == 6 {
 		p.summary(matches[1], matches[2], matches[3])
+	} else if matches := regexCoverage.FindStringSubmatch(line); len(matches) == 2 {
+		p.coverage(matches[1])
 	} else {
 		p.output(line)
 	}
@@ -111,6 +116,15 @@ func (p *parser) summary(result, name, duration string) {
 		Result:   result,
 		Name:     name,
 		Duration: parseSeconds(duration),
+	})
+}
+
+func (p *parser) coverage(percent string) {
+	// ignore error
+	pct, _ := strconv.ParseFloat(percent, 64)
+	p.add(Event{
+		Type:   "coverage",
+		CovPct: pct,
 	})
 }
 
