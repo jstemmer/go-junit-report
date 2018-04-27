@@ -115,10 +115,15 @@ func (p *parser) summary(result, name, duration string) {
 }
 
 func (p *parser) output(line string) {
+	// TODO: Count indentations, however don't assume every tab is an indentation
+	var indent int
+	for indent = 0; strings.HasPrefix(line, "\t"); indent++ {
+		line = line[1:]
+	}
 	p.add(Event{
 		Type:   "output",
 		Data:   line,
-		Indent: 0, // TODO
+		Indent: indent,
 	})
 }
 
