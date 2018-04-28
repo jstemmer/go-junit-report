@@ -62,7 +62,7 @@ func (p *parser) parseLine(line string) {
 	} else if matches := regexStatus.FindStringSubmatch(line); len(matches) == 2 {
 		p.status(matches[1])
 	} else if matches := regexSummary.FindStringSubmatch(line); len(matches) == 6 {
-		p.summary(matches[1], matches[2], matches[3], matches[5])
+		p.summary(matches[1], matches[2], matches[3], matches[4], matches[5])
 	} else if matches := regexCoverage.FindStringSubmatch(line); len(matches) == 2 {
 		p.coverage(matches[1])
 	} else {
@@ -112,12 +112,13 @@ func (p *parser) status(result string) {
 	})
 }
 
-func (p *parser) summary(result, name, duration, covpct string) {
+func (p *parser) summary(result, name, duration, failure, covpct string) {
 	p.add(Event{
 		Type:     "summary",
 		Result:   result,
 		Name:     name,
 		Duration: parseSeconds(duration),
+		Data:     failure,
 		CovPct:   parseCoverage(covpct),
 	})
 }

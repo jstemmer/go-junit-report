@@ -179,24 +179,54 @@ var tests = []struct {
 			{Type: "status", Result: "FAIL"},
 			{Type: "summary", Result: "FAIL", Name: "package/name", Duration: 50 * time.Millisecond},
 		}},
+	{"13-syntax-error.txt",
+		[]Event{
+			{Type: "output", Data: "# package/name/failing1"},
+			{Type: "output", Data: "failing1/failing_test.go:15: undefined: x"},
+			{Type: "output", Data: "# package/name/failing2"},
+			{Type: "output", Data: "failing2/another_failing_test.go:20: undefined: y"},
+			{Type: "output", Data: "# package/name/setupfailing1"},
+			{Type: "output", Data: "setupfailing1/failing_test.go:4: cannot find package \"other/package\" in any of:"},
+			{Type: "output", Data: "	/path/vendor (vendor tree)"},
+			{Type: "output", Data: "	/path/go/root (from $GOROOT)"},
+			{Type: "output", Data: "	/path/go/path (from $GOPATH)"},
+			{Type: "run_test", Id: 1, Name: "TestA"},
+			{Type: "end_test", Id: 1, Name: "TestA", Result: "PASS", Duration: 100 * time.Millisecond},
+			{Type: "status", Result: "PASS"},
+			{Type: "summary", Result: "ok", Name: "package/name/passing1", Duration: 100 * time.Millisecond},
+			{Type: "run_test", Id: 2, Name: "TestB"},
+			{Type: "end_test", Id: 2, Name: "TestB", Result: "PASS", Duration: 100 * time.Millisecond},
+			{Type: "status", Result: "PASS"},
+			{Type: "summary", Result: "ok", Name: "package/name/passing2", Duration: 100 * time.Millisecond},
+			{Type: "summary", Result:"FAIL", Name:"package/name/failing1", Data:"[build failed]"},
+			{Type: "summary", Result:"FAIL", Name:"package/name/failing2", Data:"[build failed]"},
+			{Type: "summary", Result:"FAIL", Name:"package/name/setupfailing1", Data:"[setup failed]"},
+		}},
 }
 
 func TestParse(t *testing.T) {
 	for _, test := range tests {
-		f, err := os.Open(testdataRoot + test.in)
-		if err != nil {
-			t.Errorf("error reading %s: %v", test.in, err)
-			continue
-		}
-		actual, err := Parse(f)
-		f.Close()
-		if err != nil {
-			t.Errorf("Parse(%s) error: %v", test.in, err)
-			continue
-		}
+		t.Run(test.in, func(t *testing.T) {
+			testParse(t, test.in, test.expected)
+		})
+	}
+}
 
-		if diff := cmp.Diff(actual, test.expected); diff != "" {
-			t.Errorf("Parse %s returned unexpected events, diff (-got, +want):\n%v", test.in, diff)
-		}
+func testParse(t *testing.T, file string, expected []Event) {
+	f, err := os.Open(testdataRoot + file)
+	if err != nil {
+		t.Errorf("error reading %s: %v", file, err)
+		return
+	}
+	defer f.Close()
+
+	actual, err := Parse(f)
+	if err != nil {
+		t.Errorf("Parse(%s) error: %v", file, err)
+		return
+	}
+
+	if diff := cmp.Diff(actual, expected); diff != "" {
+		t.Errorf("Parse %s returned unexpected events, diff (-got, +want):\n%v", file, diff)
 	}
 }
