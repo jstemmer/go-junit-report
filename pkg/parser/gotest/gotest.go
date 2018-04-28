@@ -55,9 +55,11 @@ type parser struct {
 
 func (p *parser) parseLine(line string) {
 	if strings.HasPrefix(line, "=== RUN ") {
-		p.runTest(line[8:])
+		p.runTest(strings.TrimSpace(line[8:]))
 	} else if strings.HasPrefix(line, "=== PAUSE ") {
+		p.pauseTest(strings.TrimSpace(line[10:]))
 	} else if strings.HasPrefix(line, "=== CONT ") {
+		p.contTest(strings.TrimSpace(line[9:]))
 	} else if matches := regexEndTest.FindStringSubmatch(line); len(matches) == 5 {
 		p.endTest(line, matches[1], matches[2], matches[3], matches[4])
 	} else if matches := regexStatus.FindStringSubmatch(line); len(matches) == 2 {
@@ -82,6 +84,7 @@ func (p *parser) findTest(name string) int {
 			return p.events[i].Id
 		}
 	}
+	fmt.Printf("could not find test %q\n", name)
 	return -1
 }
 
@@ -90,7 +93,23 @@ func (p *parser) runTest(name string) {
 	p.add(Event{
 		Type: "run_test",
 		Id:   p.id,
-		Name: strings.TrimSpace(name),
+		Name: name,
+	})
+}
+
+func (p *parser) pauseTest(name string) {
+	p.add(Event{
+		Type: "pause_test",
+		Id:   p.findTest(name),
+		Name: name,
+	})
+}
+
+func (p *parser) contTest(name string) {
+	p.add(Event{
+		Type: "cont_test",
+		Id:   p.findTest(name),
+		Name: name,
 	})
 }
 
