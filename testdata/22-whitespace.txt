@@ -1,0 +1,88 @@
+=== RUN   TestFlat
+printf 1
+printf 2
+--- PASS: TestFlat (0.00s)
+	whitespace_test.go:9: log 1
+	whitespace_test.go:10: log 2
+=== RUN   TestWithSpace
+no-space
+ one-space
+  two-space
+    four-space
+        eight-space
+no-space
+--- PASS: TestWithSpace (0.00s)
+	whitespace_test.go:16: no-space
+	whitespace_test.go:17:  one-space
+	whitespace_test.go:18:   two-space
+	whitespace_test.go:19:     four-space
+	whitespace_test.go:20:         eight-space
+	whitespace_test.go:21: no-space
+=== RUN   TestWithTab
+no-tab
+	one-tab
+		two-tab
+--- PASS: TestWithTab (0.00s)
+	whitespace_test.go:31: no-tab
+	whitespace_test.go:32: 	one-tab
+	whitespace_test.go:33: 		two-tab
+=== RUN   TestWithNewlinesFlat
+no-newline
+one-newline
+one-newline
+two-newlines
+two-newlines
+two-newlines
+--- PASS: TestWithNewlinesFlat (0.00s)
+	whitespace_test.go:40: no-newline
+	whitespace_test.go:41: one-newline
+		one-newline
+	whitespace_test.go:42: two-newlines
+		two-newlines
+		two-newlines
+=== RUN   TestSubTests
+=== RUN   TestSubTests/TestFlat
+printf 1
+printf 2
+=== RUN   TestSubTests/TestWithSpace
+no-space
+ one-space
+  two-space
+    four-space
+        eight-space
+no-space
+=== RUN   TestSubTests/TestWithTab
+no-tab
+	one-tab
+		two-tab
+=== RUN   TestSubTests/TestWithNewlinesFlat
+no-newline
+one-newline
+one-newline
+two-newlines
+two-newlines
+two-newlines
+--- PASS: TestSubTests (0.00s)
+    --- PASS: TestSubTests/TestFlat (0.00s)
+    	whitespace_test.go:9: log 1
+    	whitespace_test.go:10: log 2
+    --- PASS: TestSubTests/TestWithSpace (0.00s)
+    	whitespace_test.go:16: no-space
+    	whitespace_test.go:17:  one-space
+    	whitespace_test.go:18:   two-space
+    	whitespace_test.go:19:     four-space
+    	whitespace_test.go:20:         eight-space
+    	whitespace_test.go:21: no-space
+    --- PASS: TestSubTests/TestWithTab (0.00s)
+    	whitespace_test.go:31: no-tab
+    	whitespace_test.go:32: 	one-tab
+    	whitespace_test.go:33: 		two-tab
+    --- PASS: TestSubTests/TestWithNewlinesFlat (0.00s)
+    	whitespace_test.go:40: no-newline
+    	whitespace_test.go:41: one-newline
+    		one-newline
+    	whitespace_test.go:42: two-newlines
+    		two-newlines
+    		two-newlines
+PASS
+ok  	github.com/jstemmer/test/whitespace	0.001s

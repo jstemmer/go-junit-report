@@ -128,10 +128,9 @@ func (p *parser) coverage(percent string) {
 }
 
 func (p *parser) output(line string) {
-	// TODO: Count indentations, however don't assume every tab is an indentation
 	var indent int
-	for indent = 0; strings.HasPrefix(line, "\t"); indent++ {
-		line = line[1:]
+	for indent = 0; strings.HasPrefix(line, "    "); indent++ {
+		line = line[4:]
 	}
 	p.add(Event{
 		Type:   "output",
