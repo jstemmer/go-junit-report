@@ -84,7 +84,6 @@ func (p *parser) findTest(name string) int {
 			return p.events[i].Id
 		}
 	}
-	fmt.Printf("could not find test %q\n", name)
 	return -1
 }
 
