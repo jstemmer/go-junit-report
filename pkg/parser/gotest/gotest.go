@@ -24,7 +24,7 @@ type Event struct {
 }
 
 var (
-	regexEndTest = regexp.MustCompile(`--- (PASS|FAIL|SKIP): ([^ ]+) \((\d+\.\d+)(?: seconds|s)\)`)
+	regexEndTest = regexp.MustCompile(`((?:    )*)--- (PASS|FAIL|SKIP): ([^ ]+) \((\d+\.\d+)(?: seconds|s)\)`)
 	regexStatus  = regexp.MustCompile(`^(PASS|FAIL|SKIP)$`)
 	regexSummary = regexp.MustCompile(`^(ok|FAIL)\s+([^ ]+)\s+` +
 		`(?:(\d+\.\d+)s|\(cached\)|(\[\w+ failed]))` +
@@ -57,8 +57,8 @@ func (p *parser) parseLine(line string) {
 		p.runTest(line[8:])
 	} else if strings.HasPrefix(line, "=== PAUSE ") {
 	} else if strings.HasPrefix(line, "=== CONT ") {
-	} else if matches := regexEndTest.FindStringSubmatch(line); len(matches) == 4 {
-		p.endTest(matches[1], matches[2], matches[3])
+	} else if matches := regexEndTest.FindStringSubmatch(line); len(matches) == 5 {
+		p.endTest(matches[1], matches[2], matches[3], matches[4])
 	} else if matches := regexStatus.FindStringSubmatch(line); len(matches) == 2 {
 		p.status(matches[1])
 	} else if matches := regexSummary.FindStringSubmatch(line); len(matches) == 6 {
@@ -93,12 +93,14 @@ func (p *parser) runTest(name string) {
 	})
 }
 
-func (p *parser) endTest(result, name, duration string) {
+func (p *parser) endTest(indent, result, name, duration string) {
+	_, n := stripIndent(indent)
 	p.add(Event{
 		Type:     "end_test",
 		Id:       p.findTest(name),
 		Name:     name,
 		Result:   result,
+		Indent:   n,
 		Duration: parseSeconds(duration),
 	})
 }
@@ -128,13 +130,10 @@ func (p *parser) coverage(percent string) {
 }
 
 func (p *parser) output(line string) {
-	var indent int
-	for indent = 0; strings.HasPrefix(line, "    "); indent++ {
-		line = line[4:]
-	}
+	l, indent := stripIndent(line)
 	p.add(Event{
 		Type:   "output",
-		Data:   line,
+		Data:   l,
 		Indent: indent,
 	})
 }
@@ -155,4 +154,12 @@ func parseCoverage(percent string) float64 {
 	// ignore error
 	pct, _ := strconv.ParseFloat(percent, 64)
 	return pct
+}
+
+func stripIndent(line string) (string, int) {
+	var indent int
+	for indent = 0; strings.HasPrefix(line, "    "); indent++ {
+		line = line[4:]
+	}
+	return line, indent
 }
