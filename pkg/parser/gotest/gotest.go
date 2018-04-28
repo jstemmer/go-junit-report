@@ -28,7 +28,7 @@ var (
 	regexEndTest = regexp.MustCompile(`((?:    )*)--- (PASS|FAIL|SKIP): ([^ ]+) \((\d+\.\d+)(?: seconds|s)\)`)
 	regexStatus  = regexp.MustCompile(`^(PASS|FAIL|SKIP)$`)
 	regexSummary = regexp.MustCompile(`^(ok|FAIL)\s+([^ ]+)\s+` +
-		`(?:(\d+\.\d+)s|\(cached\)|(\[\w+ failed]))` +
+		`(?:(\d+\.\d+)s|(\(cached\)|\[\w+ failed]))` +
 		`(?:\s+coverage:\s+(\d+\.\d+)%\sof\sstatements(?:\sin\s(.+))?)?$`)
 	regexCoverage = regexp.MustCompile(`^coverage:\s+(\d+|\d+\.\d+)%\s+of\s+statements(?:\sin\s(.+))?$`)
 )
@@ -135,13 +135,13 @@ func (p *parser) status(result string) {
 	})
 }
 
-func (p *parser) summary(result, name, duration, failure, covpct, packages string) {
+func (p *parser) summary(result, name, duration, data, covpct, packages string) {
 	p.add(Event{
 		Type:        "summary",
 		Result:      result,
 		Name:        name,
 		Duration:    parseSeconds(duration),
-		Data:        failure,
+		Data:        data,
 		CovPct:      parseCoverage(covpct),
 		CovPackages: parsePackages(packages),
 	})

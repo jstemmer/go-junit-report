@@ -320,7 +320,12 @@ var tests = []struct {
 			{Type: "summary", Result: "FAIL", Name: "pkg/parallel", Duration: 3010 * time.Millisecond},
 		}},
 	{"21-cached",
-		[]Event{}},
+		[]Event{
+			{Type: "run_test", Id: 1, Name: "TestOne"},
+			{Type: "end_test", Id: 1, Name: "TestOne", Result: "PASS"},
+			{Type: "status", Result: "PASS"},
+			{Type: "summary", Result: "ok", Name: "package/one", Data: "(cached)"},
+		}},
 	{"22-whitespace",
 		[]Event{}},
 }
