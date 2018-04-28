@@ -2,6 +2,7 @@ package gotest
 
 import (
 	"os"
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -14,7 +15,7 @@ var tests = []struct {
 	in       string
 	expected []Event
 }{
-	{"01-pass.txt",
+	{"01-pass",
 		[]Event{
 			{Type: "run_test", Id: 1, Name: "TestZ"},
 			{Type: "end_test", Id: 1, Name: "TestZ", Result: "PASS", Duration: 60 * time.Millisecond},
@@ -23,7 +24,7 @@ var tests = []struct {
 			{Type: "status", Result: "PASS"},
 			{Type: "summary", Result: "ok", Name: "package/name", Duration: 160 * time.Millisecond},
 		}},
-	{"02-fail.txt",
+	{"02-fail",
 		[]Event{
 			{Type: "run_test", Id: 1, Name: "TestOne"},
 			{Type: "end_test", Id: 1, Name: "TestOne", Result: "FAIL", Duration: 20 * time.Millisecond},
@@ -37,7 +38,7 @@ var tests = []struct {
 			{Type: "output", Data: "exit status 1", Indent: 0},
 			{Type: "summary", Result: "FAIL", Name: "package/name", Duration: 151 * time.Millisecond},
 		}},
-	{"03-skip.txt",
+	{"03-skip",
 		[]Event{
 			{Type: "run_test", Id: 1, Name: "TestOne"},
 			{Type: "end_test", Id: 1, Name: "TestOne", Result: "SKIP", Duration: 20 * time.Millisecond},
@@ -47,7 +48,7 @@ var tests = []struct {
 			{Type: "status", Result: "PASS"},
 			{Type: "summary", Result: "ok", Name: "package/name", Duration: 150 * time.Millisecond},
 		}},
-	{"04-go_1_4.txt",
+	{"04-go_1_4",
 		[]Event{
 			{Type: "run_test", Id: 1, Name: "TestOne"},
 			{Type: "end_test", Id: 1, Name: "TestOne", Result: "PASS", Duration: 60 * time.Millisecond},
@@ -57,7 +58,7 @@ var tests = []struct {
 			{Type: "summary", Result: "ok", Name: "package/name", Duration: 160 * time.Millisecond},
 		}},
 	// Test 05 is skipped, because it was actually testing XML output
-	{"06-mixed.txt",
+	{"06-mixed",
 		[]Event{
 			{Type: "run_test", Id: 1, Name: "TestOne"},
 			{Type: "end_test", Id: 1, Name: "TestOne", Result: "PASS", Duration: 60 * time.Millisecond},
@@ -77,7 +78,7 @@ var tests = []struct {
 			{Type: "output", Data: "exit status 1", Indent: 0},
 			{Type: "summary", Result: "FAIL", Name: "package/name2", Duration: 151 * time.Millisecond},
 		}},
-	{"07-compiled_test.txt",
+	{"07-compiled_test",
 		[]Event{
 			{Type: "run_test", Id: 1, Name: "TestOne"},
 			{Type: "end_test", Id: 1, Name: "TestOne", Result: "PASS", Duration: 60 * time.Millisecond},
@@ -85,7 +86,7 @@ var tests = []struct {
 			{Type: "end_test", Id: 2, Name: "TestTwo", Result: "PASS", Duration: 100 * time.Millisecond},
 			{Type: "status", Result: "PASS"},
 		}},
-	{"08-parallel.txt",
+	{"08-parallel",
 		[]Event{
 			{Type: "run_test", Id: 1, Name: "TestDoFoo"},
 			{Type: "run_test", Id: 2, Name: "TestDoFoo2"},
@@ -98,7 +99,7 @@ var tests = []struct {
 			{Type: "status", Result: "PASS"},
 			{Type: "summary", Result: "ok", Name: "package/name", Duration: 440 * time.Millisecond},
 		}},
-	{"09-coverage.txt",
+	{"09-coverage",
 		[]Event{
 			{Type: "run_test", Id: 1, Name: "TestZ"},
 			{Type: "end_test", Id: 1, Name: "TestZ", Result: "PASS", Duration: 60 * time.Millisecond},
@@ -108,7 +109,7 @@ var tests = []struct {
 			{Type: "coverage", CovPct: 13.37},
 			{Type: "summary", Result: "ok", Name: "package/name", Duration: 160 * time.Millisecond},
 		}},
-	{"10-multipkg-coverage.txt",
+	{"10-multipkg-coverage",
 		[]Event{
 			{Type: "run_test", Id: 1, Name: "TestA"},
 			{Type: "end_test", Id: 1, Name: "TestA", Result: "PASS", Duration: 100 * time.Millisecond},
@@ -123,7 +124,7 @@ var tests = []struct {
 			{Type: "coverage", CovPct: 99.8},
 			{Type: "summary", Result: "ok", Name: "package2/bar", Duration: 4200 * time.Millisecond, CovPct: 99.8},
 		}},
-	{"11-go_1_5.txt",
+	{"11-go_1_5",
 		[]Event{
 			{Type: "run_test", Id: 1, Name: "TestOne"},
 			{Type: "end_test", Id: 1, Name: "TestOne", Result: "PASS", Duration: 20 * time.Millisecond},
@@ -132,7 +133,7 @@ var tests = []struct {
 			{Type: "status", Result: "PASS"},
 			{Type: "summary", Result: "ok", Name: "package/name", Duration: 50 * time.Millisecond},
 		}},
-	{"12-go_1_7.txt",
+	{"12-go_1_7",
 		[]Event{
 			{Type: "run_test", Id: 1, Name: "TestOne"},
 			{Type: "run_test", Id: 2, Name: "TestOne/Child"},
@@ -179,7 +180,7 @@ var tests = []struct {
 			{Type: "status", Result: "FAIL"},
 			{Type: "summary", Result: "FAIL", Name: "package/name", Duration: 50 * time.Millisecond},
 		}},
-	{"13-syntax-error.txt",
+	{"13-syntax-error",
 		[]Event{
 			{Type: "output", Data: "# package/name/failing1"},
 			{Type: "output", Data: "failing1/failing_test.go:15: undefined: x"},
@@ -198,10 +199,42 @@ var tests = []struct {
 			{Type: "end_test", Id: 2, Name: "TestB", Result: "PASS", Duration: 100 * time.Millisecond},
 			{Type: "status", Result: "PASS"},
 			{Type: "summary", Result: "ok", Name: "package/name/passing2", Duration: 100 * time.Millisecond},
-			{Type: "summary", Result:"FAIL", Name:"package/name/failing1", Data:"[build failed]"},
-			{Type: "summary", Result:"FAIL", Name:"package/name/failing2", Data:"[build failed]"},
-			{Type: "summary", Result:"FAIL", Name:"package/name/setupfailing1", Data:"[setup failed]"},
+			{Type: "summary", Result: "FAIL", Name: "package/name/failing1", Data: "[build failed]"},
+			{Type: "summary", Result: "FAIL", Name: "package/name/failing2", Data: "[build failed]"},
+			{Type: "summary", Result: "FAIL", Name: "package/name/setupfailing1", Data: "[setup failed]"},
 		}},
+	{"14-panic",
+		[]Event{
+			{Type: "output", Data: "panic: init"},
+			{Type: "output", Data: "stacktrace"},
+			{Type: "summary", Result: "FAIL", Name: "package/panic", Duration: 3 * time.Millisecond},
+			{Type: "output", Data: "panic: init"},
+			{Type: "output", Data: "stacktrace"},
+			{Type: "summary", Result: "FAIL", Name: "package/panic2", Duration: 3 * time.Millisecond},
+		}},
+	{"15-empty",
+		[]Event{
+			{Type: "output", Data: "testing: warning: no tests to run"},
+			{Type: "status", Result: "PASS"},
+			{Type: "summary", Result: "ok", Name: "package/empty", Duration: 1 * time.Millisecond},
+		}},
+	{"16-repeated-names",
+		[]Event{
+			{Type: "run_test", Id: 1, Name: "TestRepeat"},
+			{Type: "end_test", Id: 1, Name: "TestRepeat", Result: "PASS"},
+			{Type: "run_test", Id: 2, Name: "TestRepeat"},
+			{Type: "end_test", Id: 2, Name: "TestRepeat", Result: "PASS"},
+			{Type: "run_test", Id: 3, Name: "TestRepeat"},
+			{Type: "end_test", Id: 3, Name: "TestRepeat", Result: "PASS"},
+			{Type: "status", Result: "PASS"},
+			{Type: "summary", Result: "ok", Name: "package/repeated-names", Duration: 1 * time.Millisecond},
+		}},
+	{"17-race", []Event{}},
+	{"18-coverpkg", []Event{}},
+	{"19-pass", []Event{}},
+	{"20-parallel", []Event{}},
+	{"21-cached", []Event{}},
+	{"22-whitespace", []Event{}},
 }
 
 func TestParse(t *testing.T) {
@@ -212,21 +245,25 @@ func TestParse(t *testing.T) {
 	}
 }
 
-func testParse(t *testing.T, file string, expected []Event) {
-	f, err := os.Open(testdataRoot + file)
+func testParse(t *testing.T, name string, expected []Event) {
+	if len(expected) == 0 {
+		t.SkipNow()
+		return
+	}
+	f, err := os.Open(filepath.Join(testdataRoot, name+".txt"))
 	if err != nil {
-		t.Errorf("error reading %s: %v", file, err)
+		t.Errorf("error reading %s: %v", name, err)
 		return
 	}
 	defer f.Close()
 
 	actual, err := Parse(f)
 	if err != nil {
-		t.Errorf("Parse(%s) error: %v", file, err)
+		t.Errorf("Parse(%s) error: %v", name, err)
 		return
 	}
 
 	if diff := cmp.Diff(actual, expected); diff != "" {
-		t.Errorf("Parse %s returned unexpected events, diff (-got, +want):\n%v", file, diff)
+		t.Errorf("Parse %s returned unexpected events, diff (-got, +want):\n%v", name, diff)
 	}
 }
