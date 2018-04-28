@@ -3,6 +3,7 @@ package gotest
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"regexp"
 	"strconv"
@@ -58,7 +59,7 @@ func (p *parser) parseLine(line string) {
 	} else if strings.HasPrefix(line, "=== PAUSE ") {
 	} else if strings.HasPrefix(line, "=== CONT ") {
 	} else if matches := regexEndTest.FindStringSubmatch(line); len(matches) == 5 {
-		p.endTest(matches[1], matches[2], matches[3], matches[4])
+		p.endTest(line, matches[1], matches[2], matches[3], matches[4])
 	} else if matches := regexStatus.FindStringSubmatch(line); len(matches) == 2 {
 		p.status(matches[1])
 	} else if matches := regexSummary.FindStringSubmatch(line); len(matches) == 7 {
@@ -93,7 +94,10 @@ func (p *parser) runTest(name string) {
 	})
 }
 
-func (p *parser) endTest(indent, result, name, duration string) {
+func (p *parser) endTest(line, indent, result, name, duration string) {
+	if idx := strings.Index(line, fmt.Sprintf("%s--- %s:", indent, result)); idx > 0 {
+		p.output(line[:idx])
+	}
 	_, n := stripIndent(indent)
 	p.add(Event{
 		Type:     "end_test",
