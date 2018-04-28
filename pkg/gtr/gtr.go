@@ -41,6 +41,7 @@ type Package struct {
 	Name     string
 	Duration time.Duration
 	Coverage float64
+	Output   []string
 
 	Tests []Test
 }
@@ -60,10 +61,12 @@ func FromEvents(events []gotest.Event) Report {
 		case "run_test":
 			report.CreateTest(ev.Id, ev.Name)
 		case "end_test":
-			report.UpdateTest(ev.Id, ev.Result, ev.Duration)
+			report.EndTest(ev.Id, ev.Result, ev.Duration)
 		case "status": // ignore for now
 		case "summary":
 			report.CreatePackage(ev.Name, ev.Duration)
+		case "output":
+			report.AppendOutput(ev.Data)
 		default:
 			fmt.Printf("unhandled event type: %v\n", ev.Type)
 		}
@@ -76,6 +79,10 @@ type ReportBuilder struct {
 	packages []Package
 	ids      []int
 	tests    map[int]Test
+
+	// state
+	output []string
+	last   int // last test id // TODO: stack?
 }
 
 func NewReportBuilder() *ReportBuilder {
@@ -98,13 +105,17 @@ func (b *ReportBuilder) Build() Report {
 func (b *ReportBuilder) CreateTest(id int, name string) {
 	b.ids = append(b.ids, id)
 	b.tests[id] = Test{Name: name}
+
+	b.last = id
 }
 
-func (b *ReportBuilder) UpdateTest(id int, result string, duration time.Duration) {
+func (b *ReportBuilder) EndTest(id int, result string, duration time.Duration) {
 	t := b.tests[id]
 	t.Result = parseResult(result)
 	t.Duration = duration
 	b.tests[id] = t
+
+	b.last = id
 }
 
 func (b *ReportBuilder) CreatePackage(name string, duration time.Duration) {
@@ -116,9 +127,22 @@ func (b *ReportBuilder) CreatePackage(name string, duration time.Duration) {
 		Name:     name,
 		Duration: duration,
 		Tests:    tests,
+		Output:   b.output,
 	})
+
 	b.ids = nil
 	b.tests = make(map[int]Test)
+	b.output = nil
+}
+
+func (b *ReportBuilder) AppendOutput(line string) {
+	if b.last <= 0 {
+		b.output = append(b.output, line)
+		return
+	}
+	t := b.tests[b.last]
+	t.Output = append(t.Output, line)
+	b.tests[b.last] = t
 }
 
 func parseResult(r string) Result {

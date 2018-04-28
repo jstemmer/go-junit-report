@@ -15,6 +15,11 @@ func TestFromEvents(t *testing.T) {
 		{Type: "end_test", Id: 1, Name: "TestOne", Result: "PASS", Duration: 1 * time.Millisecond},
 		{Type: "status", Result: "PASS"},
 		{Type: "summary", Result: "ok", Name: "package/name", Duration: 1 * time.Millisecond},
+		{Type: "run_test", Id: 2, Name: "TestOne"},
+		{Type: "output", Data: "\tfile_test.go:10: error"},
+		{Type: "end_test", Id: 2, Name: "TestOne", Result: "FAIL", Duration: 1 * time.Millisecond},
+		{Type: "status", Result: "FAIL"},
+		{Type: "summary", Result: "FAIL", Name: "package/name2", Duration: 1 * time.Millisecond},
 	}
 	expected := Report{
 		Packages: []Package{
@@ -26,6 +31,20 @@ func TestFromEvents(t *testing.T) {
 						Name:     "TestOne",
 						Duration: 1 * time.Millisecond,
 						Result:   PASS,
+					},
+				},
+			},
+			{
+				Name:     "package/name2",
+				Duration: 1 * time.Millisecond,
+				Tests: []Test{
+					{
+						Name:     "TestOne",
+						Duration: 1 * time.Millisecond,
+						Result:   FAIL,
+						Output: []string{
+							"\tfile_test.go:10: error",
+						},
 					},
 				},
 			},
