@@ -13,14 +13,14 @@ import (
 type Event struct {
 	Type string
 
-	Id       int
-	Name     string
-	Result   string
-	Duration time.Duration
-	Data     string
-	Indent   int
-	CovPct   float64
-	Hints    map[string]string
+	Id          int
+	Name        string
+	Result      string
+	Duration    time.Duration
+	Data        string
+	Indent      int
+	CovPct      float64
+	CovPackages []string
 }
 
 var (
@@ -28,8 +28,8 @@ var (
 	regexStatus  = regexp.MustCompile(`^(PASS|FAIL|SKIP)$`)
 	regexSummary = regexp.MustCompile(`^(ok|FAIL)\s+([^ ]+)\s+` +
 		`(?:(\d+\.\d+)s|\(cached\)|(\[\w+ failed]))` +
-		`(?:\s+coverage:\s+(\d+\.\d+)%\sof\sstatements(?:\sin\s.+)?)?$`)
-	regexCoverage = regexp.MustCompile(`^coverage:\s+(\d+|\d+\.\d+)%\s+of\s+statements(?:\sin\s.+)?$`)
+		`(?:\s+coverage:\s+(\d+\.\d+)%\sof\sstatements(?:\sin\s(.+))?)?$`)
+	regexCoverage = regexp.MustCompile(`^coverage:\s+(\d+|\d+\.\d+)%\s+of\s+statements(?:\sin\s(.+))?$`)
 )
 
 // Parse parses Go test output from the given io.Reader r.
@@ -61,10 +61,10 @@ func (p *parser) parseLine(line string) {
 		p.endTest(matches[1], matches[2], matches[3], matches[4])
 	} else if matches := regexStatus.FindStringSubmatch(line); len(matches) == 2 {
 		p.status(matches[1])
-	} else if matches := regexSummary.FindStringSubmatch(line); len(matches) == 6 {
-		p.summary(matches[1], matches[2], matches[3], matches[4], matches[5])
-	} else if matches := regexCoverage.FindStringSubmatch(line); len(matches) == 2 {
-		p.coverage(matches[1])
+	} else if matches := regexSummary.FindStringSubmatch(line); len(matches) == 7 {
+		p.summary(matches[1], matches[2], matches[3], matches[4], matches[5], matches[6])
+	} else if matches := regexCoverage.FindStringSubmatch(line); len(matches) == 3 {
+		p.coverage(matches[1], matches[2])
 	} else {
 		p.output(line)
 	}
@@ -112,21 +112,23 @@ func (p *parser) status(result string) {
 	})
 }
 
-func (p *parser) summary(result, name, duration, failure, covpct string) {
+func (p *parser) summary(result, name, duration, failure, covpct, packages string) {
 	p.add(Event{
-		Type:     "summary",
-		Result:   result,
-		Name:     name,
-		Duration: parseSeconds(duration),
-		Data:     failure,
-		CovPct:   parseCoverage(covpct),
+		Type:        "summary",
+		Result:      result,
+		Name:        name,
+		Duration:    parseSeconds(duration),
+		Data:        failure,
+		CovPct:      parseCoverage(covpct),
+		CovPackages: parsePackages(packages),
 	})
 }
 
-func (p *parser) coverage(percent string) {
+func (p *parser) coverage(percent, packages string) {
 	p.add(Event{
-		Type:   "coverage",
-		CovPct: parseCoverage(percent),
+		Type:        "coverage",
+		CovPct:      parseCoverage(percent),
+		CovPackages: parsePackages(packages),
 	})
 }
 
@@ -153,6 +155,13 @@ func parseCoverage(percent string) float64 {
 	// ignore error
 	pct, _ := strconv.ParseFloat(percent, 64)
 	return pct
+}
+
+func parsePackages(pkgList string) []string {
+	if len(pkgList) == 0 {
+		return nil
+	}
+	return strings.Split(pkgList, ", ")
 }
 
 func stripIndent(line string) (string, int) {
