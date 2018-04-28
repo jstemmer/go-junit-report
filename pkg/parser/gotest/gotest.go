@@ -131,11 +131,9 @@ func (p *parser) coverage(percent string) {
 }
 
 func (p *parser) output(line string) {
-	l, indent := stripIndent(line)
 	p.add(Event{
-		Type:   "output",
-		Data:   l,
-		Indent: indent,
+		Type: "output",
+		Data: line,
 	})
 }
 
