@@ -12,12 +12,15 @@ import (
 func TestFromEvents(t *testing.T) {
 	events := []gtop.Event{
 		{Type: "run_test", Id: 1, Name: "TestOne"},
+		{Type: "output", Data: "\tHello"},
 		{Type: "end_test", Id: 1, Name: "TestOne", Result: "PASS", Duration: 1 * time.Millisecond},
 		{Type: "status", Result: "PASS"},
+		{Type: "run_test", Id: 2, Name: "TestSkip"},
+		{Type: "end_test", Id: 2, Name: "TestSkip", Result: "SKIP", Duration: 1 * time.Millisecond},
 		{Type: "summary", Result: "ok", Name: "package/name", Duration: 1 * time.Millisecond},
-		{Type: "run_test", Id: 2, Name: "TestOne"},
+		{Type: "run_test", Id: 3, Name: "TestOne"},
 		{Type: "output", Data: "\tfile_test.go:10: error"},
-		{Type: "end_test", Id: 2, Name: "TestOne", Result: "FAIL", Duration: 1 * time.Millisecond},
+		{Type: "end_test", Id: 3, Name: "TestOne", Result: "FAIL", Duration: 1 * time.Millisecond},
 		{Type: "status", Result: "FAIL"},
 		{Type: "summary", Result: "FAIL", Name: "package/name2", Duration: 1 * time.Millisecond},
 	}
@@ -31,6 +34,14 @@ func TestFromEvents(t *testing.T) {
 						Name:     "TestOne",
 						Duration: 1 * time.Millisecond,
 						Result:   PASS,
+						Output: []string{
+							"\tHello", // TODO: strip tabs?
+						},
+					},
+					{
+						Name:     "TestSkip",
+						Duration: 1 * time.Millisecond,
+						Result:   SKIP,
 					},
 				},
 			},
