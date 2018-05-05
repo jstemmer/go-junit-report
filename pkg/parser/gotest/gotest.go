@@ -14,7 +14,6 @@ import (
 type Event struct {
 	Type string
 
-	Id          int
 	Name        string
 	Result      string
 	Duration    time.Duration
@@ -49,7 +48,6 @@ func Parse(r io.Reader) ([]Event, error) {
 }
 
 type parser struct {
-	id     int
 	events []Event
 }
 
@@ -77,39 +75,16 @@ func (p *parser) add(event Event) {
 	p.events = append(p.events, event)
 }
 
-func (p *parser) findTest(name string) int {
-	for i := len(p.events) - 1; i >= 0; i-- {
-		// TODO: should we only consider tests that haven't ended yet?
-		if p.events[i].Type == "run_test" && p.events[i].Name == name {
-			return p.events[i].Id
-		}
-	}
-	return -1
-}
-
 func (p *parser) runTest(name string) {
-	p.id += 1
-	p.add(Event{
-		Type: "run_test",
-		Id:   p.id,
-		Name: name,
-	})
+	p.add(Event{Type: "run_test", Name: name})
 }
 
 func (p *parser) pauseTest(name string) {
-	p.add(Event{
-		Type: "pause_test",
-		Id:   p.findTest(name),
-		Name: name,
-	})
+	p.add(Event{Type: "pause_test", Name: name})
 }
 
 func (p *parser) contTest(name string) {
-	p.add(Event{
-		Type: "cont_test",
-		Id:   p.findTest(name),
-		Name: name,
-	})
+	p.add(Event{Type: "cont_test", Name: name})
 }
 
 func (p *parser) endTest(line, indent, result, name, duration string) {
@@ -119,7 +94,6 @@ func (p *parser) endTest(line, indent, result, name, duration string) {
 	_, n := stripIndent(indent)
 	p.add(Event{
 		Type:     "end_test",
-		Id:       p.findTest(name),
 		Name:     name,
 		Result:   result,
 		Indent:   n,
@@ -128,10 +102,7 @@ func (p *parser) endTest(line, indent, result, name, duration string) {
 }
 
 func (p *parser) status(result string) {
-	p.add(Event{
-		Type:   "status",
-		Result: result,
-	})
+	p.add(Event{Type: "status", Result: result})
 }
 
 func (p *parser) summary(result, name, duration, data, covpct, packages string) {
@@ -155,10 +126,7 @@ func (p *parser) coverage(percent, packages string) {
 }
 
 func (p *parser) output(line string) {
-	p.add(Event{
-		Type: "output",
-		Data: line,
-	})
+	p.add(Event{Type: "output", Data: line})
 }
 
 func parseSeconds(s string) time.Duration {
