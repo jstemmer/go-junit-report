@@ -15,6 +15,17 @@ command:
 go get -u github.com/jstemmer/go-junit-report
 ```
 
+## Contribution
+
+Create an Issue and discuss the fix or feature, then fork the package.
+Clone to github.com/jstemmer/go-junit-report.  This is necessary because go import uses this path.
+Fix or implement feature. Test and then commit change.
+Specify #Issue and describe change in the commit message.
+Create Pull Request. It can be merged by owner or administrator then.
+
+## Run Tests
+go test
+
 ## Usage
 
 go-junit-report reads the `go test` verbose output from standard in and writes
@@ -23,6 +34,12 @@ junit compatible XML to standard out.
 ```bash
 go test -v 2>&1 | go-junit-report > report.xml
 ```
+
+Note that it also can parse benchmark output with `-bench` flag:
+```bash
+ go test -bench . -benchmem -count 100
+ ```
+will return the average mean benchmark time as the test case time.
 
 [travis-badge]: https://travis-ci.org/jstemmer/go-junit-report.svg
 [travis-link]: https://travis-ci.org/jstemmer/go-junit-report

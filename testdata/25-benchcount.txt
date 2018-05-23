@@ -1,0 +1,12 @@
+BenchmarkNew-8   	 5000000	       350 ns/op	      80 B/op	       3 allocs/op
+BenchmarkNew-8   	 5000000	       357 ns/op	      80 B/op	       3 allocs/op
+BenchmarkNew-8   	 5000000	       354 ns/op	      80 B/op	       3 allocs/op
+BenchmarkNew-8   	 5000000	       358 ns/op	      80 B/op	       3 allocs/op
+BenchmarkNew-8   	 5000000	       345 ns/op	      80 B/op	       3 allocs/op
+BenchmarkFew-8   	 5000000	       100 ns/op	      20 B/op	       1 allocs/op
+BenchmarkFew-8   	 5000000	       105 ns/op	      20 B/op	       1 allocs/op
+BenchmarkFew-8   	 5000000	       102 ns/op	      20 B/op	       1 allocs/op
+BenchmarkFew-8   	 5000000	       102 ns/op	      20 B/op	       1 allocs/op
+BenchmarkFew-8   	 5000000	       102 ns/op	      20 B/op	       1 allocs/op
+PASS
+ok  	pkg/count	14.211s

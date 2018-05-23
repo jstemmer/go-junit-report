@@ -1,0 +1,7 @@
+goos: darwin
+goarch: amd64
+pkg: code.internal/state
+BenchmarkParse-8                     2000000	       604 ns/op
+BenchmarkReadingList-8               1000000	      1425 ns/op
+PASS
+ok package/basic	3.212s

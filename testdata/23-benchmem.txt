@@ -1,0 +1,7 @@
+goos: darwin
+goarch: amd64
+pkg: code.internal/state
+BenchmarkIpsHistoryInsert-8 30000	52568 ns/op	24879 B/op	494 allocs/op
+BenchmarkIpsHistoryLookup-8 100000	15208 ns/op	7369 B/op	143 allocs/op
+PASS
+ok package/one	9.415s

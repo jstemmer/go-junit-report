@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"io"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -28,6 +29,7 @@ type Package struct {
 	Name        string
 	Duration    time.Duration
 	Tests       []*Test
+	Benchmarks  []*Benchmark
 	CoveragePct string
 
 	// Time is deprecated, use Duration instead.
@@ -45,12 +47,27 @@ type Test struct {
 	Time int // in milliseconds
 }
 
+// Benchmark contains the results of a single benchmark.
+type Benchmark struct {
+	Name     string
+	Duration time.Duration
+	// number of B/op
+	Bytes int
+	// number of allocs/op
+	Allocs int
+	// number of times this benchmark has been seen (for averaging).
+	Count  int
+	Output []string
+}
+
 var (
 	regexStatus   = regexp.MustCompile(`--- (PASS|FAIL|SKIP): (.+) \((\d+\.\d+)(?: seconds|s)\)`)
 	regexCoverage = regexp.MustCompile(`^coverage:\s+(\d+\.\d+)%\s+of\s+statements(?:\sin\s.+)?$`)
 	regexResult   = regexp.MustCompile(`^(ok|FAIL)\s+([^ ]+)\s+(?:(\d+\.\d+)s|\(cached\)|(\[\w+ failed]))(?:\s+coverage:\s+(\d+\.\d+)%\sof\sstatements(?:\sin\s.+)?)?$`)
-	regexOutput   = regexp.MustCompile(`(    )*\t(.*)`)
-	regexSummary  = regexp.MustCompile(`^(PASS|FAIL|SKIP)$`)
+	// regexBenchmark captures 3-5 groups: benchmark name, number of times ran, ns/op (with or without decimal), B/op (optional), and allocs/op (optional).
+	regexBenchmark = regexp.MustCompile(`^(Benchmark\w+)-\d\s+(\d+)\s+((\d+|\d+\.\d+)\sns/op)(\s+\d+\sB/op)?(\s+\d+\sallocs/op)?`)
+	regexOutput    = regexp.MustCompile(`(    )*\t(.*)`)
+	regexSummary   = regexp.MustCompile(`^(PASS|FAIL|SKIP)$`)
 )
 
 // Parse parses go test output from reader r and returns a report with the
@@ -64,10 +81,13 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 	// keep track of tests we find
 	var tests []*Test
 
+	// keep track of benchmarks we find
+	var benchmarks []*Benchmark
+
 	// sum of tests' time, use this if current test has no result line (when it is compiled test)
 	var testsTime time.Duration
 
-	// current test
+	// current test or benchmark
 	var cur string
 
 	// keep track if we've already seen a summary for the current test
@@ -108,6 +128,60 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 			// clear the current build package, so output lines won't be added to that build
 			capturedPackage = ""
 			seenSummary = false
+		} else if strings.HasPrefix(line, "Benchmark") {
+			// parse benchmarking info
+			matches := regexBenchmark.FindStringSubmatch(line)
+			if len(matches) < 1 {
+				continue
+			}
+			var name string
+			var duration time.Duration
+			var bytes int
+			var allocs int
+
+			for _, field := range matches[1:] {
+				field = strings.TrimSpace(field)
+				if strings.HasPrefix(field, "Benchmark") {
+					name = field
+				}
+				if strings.HasSuffix(field, " ns/op") {
+					durString := strings.TrimSuffix(field, " ns/op")
+					duration = parseNanoseconds(durString)
+				}
+				if strings.HasSuffix(field, " B/op") {
+					b, _ := strconv.Atoi(strings.TrimSuffix(field, " B/op"))
+					bytes = b
+				}
+				if strings.HasSuffix(field, " allocs/op") {
+					a, _ := strconv.Atoi(strings.TrimSuffix(field, " allocs/op"))
+					allocs = a
+				}
+			}
+
+			var duplicate bool
+			// check if duplicate benchmark
+			for _, bench := range benchmarks {
+				if bench.Name == name {
+					duplicate = true
+					bench.Count++
+					bench.Duration += duration
+					bench.Bytes += bytes
+					bench.Allocs += allocs
+				}
+			}
+
+			if len(benchmarks) < 1 || duplicate == false {
+				// the first time this benchmark has been seen
+				benchmarks = append(benchmarks, &Benchmark{
+					Name:     name,
+					Duration: duration,
+					Bytes:    bytes,
+					Allocs:   allocs,
+					Count:    1,
+				},
+				)
+			}
+
 		} else if strings.HasPrefix(line, "=== PAUSE ") {
 			continue
 		} else if strings.HasPrefix(line, "=== CONT ") {
@@ -137,10 +211,21 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 			}
 
 			// all tests in this package are finished
+
+			for _, bench := range benchmarks {
+				if bench.Count > 1 {
+					bench.Allocs = bench.Allocs / bench.Count
+					bench.Bytes = bench.Bytes / bench.Count
+					newDuration := bench.Duration / time.Duration(bench.Count)
+					bench.Duration = newDuration
+				}
+			}
+
 			report.Packages = append(report.Packages, Package{
 				Name:        matches[2],
 				Duration:    parseSeconds(matches[3]),
 				Tests:       tests,
+				Benchmarks:  benchmarks,
 				CoveragePct: coveragePct,
 
 				Time: int(parseSeconds(matches[3]) / time.Millisecond), // deprecated
@@ -206,6 +291,7 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 			Duration:    testsTime,
 			Time:        int(testsTime / time.Millisecond),
 			Tests:       tests,
+			Benchmarks:  benchmarks,
 			CoveragePct: coveragePct,
 		})
 	}
@@ -219,6 +305,16 @@ func parseSeconds(t string) time.Duration {
 	}
 	// ignore error
 	d, _ := time.ParseDuration(t + "s")
+	return d
+}
+
+func parseNanoseconds(t string) time.Duration {
+	// note: if input < 1 ns precision, result will be 0s.
+	if t == "" {
+		return time.Duration(0)
+	}
+	// ignore error
+	d, _ := time.ParseDuration(t + "ns")
 	return d
 }
 

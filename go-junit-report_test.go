@@ -919,6 +919,246 @@ var testCases = []TestCase{
 			},
 		},
 	},
+	{
+		name:       "22-bench.txt",
+		reportName: "22-report.xml",
+		report: &parser.Report{
+			Packages: []parser.Package{
+				{
+					Name:     "package/basic",
+					Duration: 3212 * time.Millisecond,
+					Time:     3212,
+					Benchmarks: []*parser.Benchmark{
+						{
+							Name:     "BenchmarkParse",
+							Duration: 604 * time.Nanosecond,
+						},
+						{
+							Name:     "BenchmarkReadingList",
+							Duration: 1425 * time.Nanosecond,
+						},
+					},
+				},
+			},
+		},
+	},
+	{
+		name:       "23-benchmem.txt",
+		reportName: "23-report.xml",
+		report: &parser.Report{
+			Packages: []parser.Package{
+				{
+					Name:     "package/one",
+					Duration: 9415 * time.Millisecond,
+					Time:     9415,
+					Benchmarks: []*parser.Benchmark{
+						{
+							Name:     "BenchmarkIpsHistoryInsert",
+							Duration: 52568 * time.Nanosecond,
+							Bytes:    24879,
+							Allocs:   494,
+							Output:   []string{},
+						},
+						{
+							Name:     "BenchmarkIpsHistoryLookup",
+							Duration: 15208 * time.Nanosecond,
+							Bytes:    7369,
+							Allocs:   143,
+							Output:   []string{},
+						},
+					},
+				},
+			},
+		},
+	},
+	{
+		name:       "24-benchtests.txt",
+		reportName: "24-report.xml",
+		report: &parser.Report{
+			Packages: []parser.Package{
+				{
+					Name:     "package3/baz",
+					Duration: 1382 * time.Millisecond,
+					Time:     1382,
+					Tests: []*parser.Test{
+						{
+							Name:     "TestNew",
+							Duration: 0,
+							Time:     0,
+							Result:   parser.PASS,
+							Output:   []string{},
+						},
+						{
+							Name:     "TestNew/no",
+							Duration: 0,
+							Time:     0,
+							Result:   parser.PASS,
+							Output:   []string{},
+						},
+						{
+							Name:     "TestNew/normal",
+							Duration: 0,
+							Time:     0,
+							Result:   parser.PASS,
+							Output:   []string{},
+						},
+						{
+							Name:     "TestWriteThis",
+							Duration: 0,
+							Time:     0,
+							Result:   parser.PASS,
+							Output:   []string{},
+						},
+					},
+					Benchmarks: []*parser.Benchmark{
+						{
+							Name:     "BenchmarkDeepMerge",
+							Duration: 2611 * time.Nanosecond,
+							Bytes:    1110,
+							Allocs:   16,
+							Output:   []string{},
+						},
+						{
+							Name:     "BenchmarkNext",
+							Duration: 100 * time.Nanosecond,
+							Bytes:    100,
+							Allocs:   1,
+							Output:   []string{},
+						},
+					},
+				},
+			},
+		},
+	},
+	{
+		name:       "25-benchcount.txt",
+		reportName: "25-report.xml",
+		report: &parser.Report{
+			Packages: []parser.Package{
+				{
+					Name:     "pkg/count",
+					Duration: 14211 * time.Millisecond,
+					Time:     14211,
+					Benchmarks: []*parser.Benchmark{
+						{
+							Name:     "BenchmarkNew",
+							Duration: 352 * time.Nanosecond,
+							Bytes:    80,
+							Allocs:   3,
+							Count:    5,
+							Output:   []string{},
+						},
+						{
+							Name:     "BenchmarkFew",
+							Duration: 102 * time.Nanosecond,
+							Bytes:    20,
+							Allocs:   1,
+							Count:    5,
+							Output:   []string{},
+						},
+					},
+				},
+			},
+		},
+	},
+	{
+		name:       "26-testbenchmultiple.txt",
+		reportName: "26-report.xml",
+		report: &parser.Report{
+			Packages: []parser.Package{
+				{
+					Name:     "multiple/repeating",
+					Duration: 14211 * time.Millisecond,
+					Time:     14211,
+					Tests: []*parser.Test{
+						{
+							Name:     "TestRepeat",
+							Duration: 0,
+							Time:     0,
+							Result:   parser.PASS,
+							Output:   []string{},
+						},
+						{
+							Name:     "TestRepeat",
+							Duration: 0,
+							Time:     0,
+							Result:   parser.PASS,
+							Output:   []string{},
+						},
+						{
+							Name:     "TestRepeat",
+							Duration: 0,
+							Time:     0,
+							Result:   parser.PASS,
+							Output:   []string{},
+						},
+						{
+							Name:     "TestRepeat",
+							Duration: 0,
+							Time:     0,
+							Result:   parser.PASS,
+							Output:   []string{},
+						},
+						{
+							Name:     "TestRepeat",
+							Duration: 0,
+							Time:     0,
+							Result:   parser.PASS,
+							Output:   []string{},
+						},
+					},
+					Benchmarks: []*parser.Benchmark{
+						{
+							Name:     "BenchmarkNew",
+							Duration: 352 * time.Nanosecond,
+							Bytes:    80,
+							Allocs:   3,
+							Count:    5,
+							Output:   []string{},
+						},
+						{
+							Name:     "BenchmarkFew",
+							Duration: 102 * time.Nanosecond,
+							Bytes:    20,
+							Allocs:   1,
+							Count:    5,
+							Output:   []string{},
+						},
+					},
+				},
+			},
+		},
+	},
+	{
+		name:       "27-benchdecimal.txt",
+		reportName: "27-report.xml",
+		report: &parser.Report{
+			Packages: []parser.Package{
+				{
+					Name:     "really/small",
+					Duration: 4344 * time.Millisecond,
+					Time:     4344,
+					Benchmarks: []*parser.Benchmark{
+						{
+							Name:     "BenchmarkItsy",
+							Duration: 45 * time.Nanosecond,
+							Output:   []string{},
+						},
+						{
+							Name:     "BenchmarkTeeny",
+							Duration: 2 * time.Nanosecond,
+							Output:   []string{},
+						},
+						{
+							Name:     "BenchmarkWeeny",
+							Duration: 0 * time.Second,
+							Output:   []string{},
+						},
+					},
+				},
+			},
+		},
+	},
 }
 
 func TestParser(t *testing.T) {
@@ -994,6 +1234,37 @@ func TestParser(t *testing.T) {
 					t.Errorf("Test.Output (%s) ==\n%s\n, want\n%s", test.Name, testOutput, expTestOutput)
 				}
 			}
+
+			if len(pkg.Benchmarks) != len(expPkg.Benchmarks) {
+				t.Fatalf("Package Benchmarks == %d, want %d", len(pkg.Benchmarks), len(expPkg.Benchmarks))
+			}
+
+			for j, benchmark := range pkg.Benchmarks {
+				expBenchmark := expPkg.Benchmarks[j]
+
+				if benchmark.Name != expBenchmark.Name {
+					t.Errorf("Test.Name == %s, want %s", benchmark.Name, expBenchmark.Name)
+				}
+
+				if benchmark.Duration != expBenchmark.Duration {
+					t.Errorf("benchmark.Duration == %s, want %s", benchmark.Duration, expBenchmark.Duration)
+				}
+
+				if benchmark.Bytes != expBenchmark.Bytes {
+					t.Errorf("benchmark.Bytes == %d, want %d", benchmark.Bytes, expBenchmark.Bytes)
+				}
+
+				if benchmark.Allocs != expBenchmark.Allocs {
+					t.Errorf("benchmark.Allocs == %d, want %d", benchmark.Allocs, expBenchmark.Allocs)
+				}
+
+				benchmarkOutput := strings.Join(benchmark.Output, "\n")
+				expBenchmarkOutput := strings.Join(expBenchmark.Output, "\n")
+				if benchmarkOutput != expBenchmarkOutput {
+					t.Errorf("Benchmark.Output (%s) ==\n%s\n, want\n%s", benchmark.Name, benchmarkOutput, expBenchmarkOutput)
+				}
+			}
+
 			if pkg.CoveragePct != expPkg.CoveragePct {
 				t.Errorf("Package.CoveragePct == %s, want %s", pkg.CoveragePct, expPkg.CoveragePct)
 			}

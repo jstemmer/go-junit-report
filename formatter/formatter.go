@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"runtime"
+	"strconv"
 	"strings"
 	"time"
 
@@ -38,6 +39,9 @@ type JUnitTestCase struct {
 	Time        string            `xml:"time,attr"`
 	SkipMessage *JUnitSkipMessage `xml:"skipped,omitempty"`
 	Failure     *JUnitFailure     `xml:"failure,omitempty"`
+	// for benchmarks
+	Bytes  string `xml:"bytes,attr,omitempty"`
+	Allocs string `xml:"allocs,attr,omitempty"`
 }
 
 // JUnitSkipMessage contains the reason why a testcase was skipped.
@@ -65,8 +69,17 @@ func JUnitReportXML(report *parser.Report, noXMLHeader bool, goVersion string, w
 
 	// convert Report to JUnit test suites
 	for _, pkg := range report.Packages {
+		var tests int
+		if len(pkg.Tests) >= 1 && len(pkg.Benchmarks) >= 1 {
+			tests = len(pkg.Tests) + len(pkg.Benchmarks)
+		} else if len(pkg.Benchmarks) >= 1 {
+			tests = len(pkg.Benchmarks)
+		} else {
+			tests = len(pkg.Tests)
+		}
+
 		ts := JUnitTestSuite{
-			Tests:      len(pkg.Tests),
+			Tests:      tests,
 			Failures:   0,
 			Time:       formatTime(pkg.Duration),
 			Name:       pkg.Name,
@@ -114,6 +127,25 @@ func JUnitReportXML(report *parser.Report, noXMLHeader bool, goVersion string, w
 			ts.TestCases = append(ts.TestCases, testCase)
 		}
 
+		// individual benchmarks
+		for _, benchmark := range pkg.Benchmarks {
+			benchmarkCase := JUnitTestCase{
+				Classname: classname,
+				Name:      benchmark.Name,
+				Time:      formatBenchmarkTime(benchmark.Duration),
+				Failure:   nil,
+			}
+
+			if benchmark.Bytes != 0 {
+				benchmarkCase.Bytes = strconv.Itoa(benchmark.Bytes)
+			}
+			if benchmark.Allocs != 0 {
+				benchmarkCase.Allocs = strconv.Itoa(benchmark.Allocs)
+			}
+
+			ts.TestCases = append(ts.TestCases, benchmarkCase)
+		}
+
 		suites.Suites = append(suites.Suites, ts)
 	}
 
@@ -138,4 +170,8 @@ func JUnitReportXML(report *parser.Report, noXMLHeader bool, goVersion string, w
 
 func formatTime(d time.Duration) string {
 	return fmt.Sprintf("%.3f", d.Seconds())
+}
+
+func formatBenchmarkTime(d time.Duration) string {
+	return fmt.Sprintf("%.9f", d.Seconds())
 }
