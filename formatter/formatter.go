@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"runtime"
-	"strconv"
 	"strings"
 	"time"
 
@@ -39,9 +38,6 @@ type JUnitTestCase struct {
 	Time        string            `xml:"time,attr"`
 	SkipMessage *JUnitSkipMessage `xml:"skipped,omitempty"`
 	Failure     *JUnitFailure     `xml:"failure,omitempty"`
-	// for benchmarks
-	Bytes  string `xml:"bytes,attr,omitempty"`
-	Allocs string `xml:"allocs,attr,omitempty"`
 }
 
 // JUnitSkipMessage contains the reason why a testcase was skipped.
@@ -69,17 +65,8 @@ func JUnitReportXML(report *parser.Report, noXMLHeader bool, goVersion string, w
 
 	// convert Report to JUnit test suites
 	for _, pkg := range report.Packages {
-		var tests int
-		if len(pkg.Tests) >= 1 && len(pkg.Benchmarks) >= 1 {
-			tests = len(pkg.Tests) + len(pkg.Benchmarks)
-		} else if len(pkg.Benchmarks) >= 1 {
-			tests = len(pkg.Benchmarks)
-		} else {
-			tests = len(pkg.Tests)
-		}
-
 		ts := JUnitTestSuite{
-			Tests:      tests,
+			Tests:      len(pkg.Tests) + len(pkg.Benchmarks),
 			Failures:   0,
 			Time:       formatTime(pkg.Duration),
 			Name:       pkg.Name,
@@ -128,19 +115,12 @@ func JUnitReportXML(report *parser.Report, noXMLHeader bool, goVersion string, w
 		}
 
 		// individual benchmarks
-		for _, benchmark := range pkg.Benchmarks {
+		for _, benchmark := range mergeBenchmarks(pkg.Benchmarks) {
 			benchmarkCase := JUnitTestCase{
 				Classname: classname,
 				Name:      benchmark.Name,
 				Time:      formatBenchmarkTime(benchmark.Duration),
 				Failure:   nil,
-			}
-
-			if benchmark.Bytes != 0 {
-				benchmarkCase.Bytes = strconv.Itoa(benchmark.Bytes)
-			}
-			if benchmark.Allocs != 0 {
-				benchmarkCase.Allocs = strconv.Itoa(benchmark.Allocs)
 			}
 
 			ts.TestCases = append(ts.TestCases, benchmarkCase)
@@ -166,6 +146,44 @@ func JUnitReportXML(report *parser.Report, noXMLHeader bool, goVersion string, w
 	writer.Flush()
 
 	return nil
+}
+
+func mergeBenchmarks(benchmarks []*parser.Benchmark) []*parser.Benchmark {
+	// calculate the cumulative moving average CMA for each benchmark.
+	// CMA(n + 1) = val(n+1) + n*CMA/(n+1)
+	alloc := "Allocs"
+	bytes := "Bytes"
+	dur := "Duration"
+	n := 1
+	var merged []*parser.Benchmark
+	averages := make(map[string] /*bench name*/ map[string] /* type */ int)
+	for _, b := range benchmarks {
+		if avg, found := averages[b.Name]; found {
+			// calculate CMAs
+			averages[b.Name][alloc] = (b.Allocs + n*averages[b.Name][alloc]) / (n + 1)
+			averages[b.Name][bytes] = (b.Bytes + n*avg[bytes]) / (n + 1)
+			averages[b.Name][dur] = (int(b.Duration.Nanoseconds()) + n*avg[dur]) / (n + 1)
+
+			n++
+			continue
+		}
+		n = 1 // reset duplicate counter
+		merged = append(merged, &parser.Benchmark{Name: b.Name})
+		averages[b.Name] = make(map[string]int)
+		averages[b.Name][alloc] = b.Allocs
+		averages[b.Name][bytes] = b.Bytes
+		averages[b.Name][dur] = int(b.Duration.Nanoseconds())
+	}
+
+	// fill out benchmarks
+	for i := range merged {
+		avgVals := averages[merged[i].Name]
+		merged[i].Allocs = avgVals[alloc]
+		merged[i].Bytes = avgVals[bytes]
+		merged[i].Duration = time.Duration(avgVals[dur])
+	}
+
+	return merged
 }
 
 func formatTime(d time.Duration) string {

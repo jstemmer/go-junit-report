@@ -37,9 +37,13 @@ go test -v 2>&1 | go-junit-report > report.xml
 
 Note that it also can parse benchmark output with `-bench` flag:
 ```bash
- go test -bench . -benchmem -count 100
+go test -v -bench . 2>&1 | ./go-junit-report > report.xml
  ```
-will return the average mean benchmark time as the test case time.
+
+or using the optional -count parameter:
+```bash
+go test -v -bench . -count 5 2>&1 | ./go-junit-report > report.xml
+```
 
 [travis-badge]: https://travis-ci.org/jstemmer/go-junit-report.svg
 [travis-link]: https://travis-ci.org/jstemmer/go-junit-report

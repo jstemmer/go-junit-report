@@ -24,3 +24,24 @@ func TestParseSeconds(t *testing.T) {
 		}
 	}
 }
+
+func TestParseNanoseconds(t *testing.T) {
+	tests := []struct {
+		in string
+		d  time.Duration
+	}{
+		{"", 0},
+		{"0.1", 0 * time.Nanosecond},
+		{"0.9", 0 * time.Nanosecond},
+		{"4", 4 * time.Nanosecond},
+		{"5000", 5 * time.Microsecond},
+		{"2000003", 2*time.Millisecond + 3*time.Nanosecond},
+	}
+
+	for _, test := range tests {
+		d := parseNanoseconds(test.in)
+		if d != test.d {
+			t.Errorf("parseSeconds(%q) == %v, want %v\n", test.in, d, test.d)
+		}
+	}
+}

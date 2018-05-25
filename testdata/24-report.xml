@@ -8,7 +8,7 @@
 		<testcase classname="baz" name="TestNew/no" time="0.000"></testcase>
 		<testcase classname="baz" name="TestNew/normal" time="0.000"></testcase>
 		<testcase classname="baz" name="TestWriteThis" time="0.000"></testcase>
-		<testcase classname="baz" name="BenchmarkDeepMerge" time="0.000002611" bytes="1110" allocs="16"></testcase>
-		<testcase classname="baz" name="BenchmarkNext" time="0.000000100" bytes="100" allocs="1"></testcase>
+		<testcase classname="baz" name="BenchmarkDeepMerge" time="0.000002611"></testcase>
+		<testcase classname="baz" name="BenchmarkNext" time="0.000000100"></testcase>
 	</testsuite>
 </testsuites>

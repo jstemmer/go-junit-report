@@ -4,7 +4,7 @@
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
-		<testcase classname="one" name="BenchmarkIpsHistoryInsert" time="0.000052568" bytes="24879" allocs="494"></testcase>
-		<testcase classname="one" name="BenchmarkIpsHistoryLookup" time="0.000015208" bytes="7369" allocs="143"></testcase>
+		<testcase classname="one" name="BenchmarkIpsHistoryInsert" time="0.000052568"></testcase>
+		<testcase classname="one" name="BenchmarkIpsHistoryLookup" time="0.000015208"></testcase>
 	</testsuite>
 </testsuites>
