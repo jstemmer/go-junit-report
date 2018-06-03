@@ -65,6 +65,7 @@ func JUnitReportXML(report *parser.Report, noXMLHeader bool, goVersion string, w
 
 	// convert Report to JUnit test suites
 	for _, pkg := range report.Packages {
+		pkg.Benchmarks = mergeBenchmarks(pkg.Benchmarks)
 		ts := JUnitTestSuite{
 			Tests:      len(pkg.Tests) + len(pkg.Benchmarks),
 			Failures:   0,
@@ -115,7 +116,7 @@ func JUnitReportXML(report *parser.Report, noXMLHeader bool, goVersion string, w
 		}
 
 		// individual benchmarks
-		for _, benchmark := range mergeBenchmarks(pkg.Benchmarks) {
+		for _, benchmark := range pkg.Benchmarks {
 			benchmarkCase := JUnitTestCase{
 				Classname: classname,
 				Name:      benchmark.Name,
@@ -149,38 +150,25 @@ func JUnitReportXML(report *parser.Report, noXMLHeader bool, goVersion string, w
 }
 
 func mergeBenchmarks(benchmarks []*parser.Benchmark) []*parser.Benchmark {
-	// calculate the cumulative moving average CMA for each benchmark.
-	// CMA(n + 1) = val(n+1) + n*CMA/(n+1)
-	alloc := "Allocs"
-	bytes := "Bytes"
-	dur := "Duration"
-	n := 1
 	var merged []*parser.Benchmark
-	averages := make(map[string] /*bench name*/ map[string] /* type */ int)
-	for _, b := range benchmarks {
-		if avg, found := averages[b.Name]; found {
-			// calculate CMAs
-			averages[b.Name][alloc] = (b.Allocs + n*averages[b.Name][alloc]) / (n + 1)
-			averages[b.Name][bytes] = (b.Bytes + n*avg[bytes]) / (n + 1)
-			averages[b.Name][dur] = (int(b.Duration.Nanoseconds()) + n*avg[dur]) / (n + 1)
-
-			n++
-			continue
+	benchmap := make(map[string][]*parser.Benchmark)
+	for _, bm := range benchmarks {
+		if _, ok := benchmap[bm.Name]; !ok {
+			merged = append(merged, &parser.Benchmark{Name: bm.Name})
 		}
-		n = 1 // reset duplicate counter
-		merged = append(merged, &parser.Benchmark{Name: b.Name})
-		averages[b.Name] = make(map[string]int)
-		averages[b.Name][alloc] = b.Allocs
-		averages[b.Name][bytes] = b.Bytes
-		averages[b.Name][dur] = int(b.Duration.Nanoseconds())
+		benchmap[bm.Name] = append(benchmap[bm.Name], bm)
 	}
 
-	// fill out benchmarks
-	for i := range merged {
-		avgVals := averages[merged[i].Name]
-		merged[i].Allocs = avgVals[alloc]
-		merged[i].Bytes = avgVals[bytes]
-		merged[i].Duration = time.Duration(avgVals[dur])
+	for _, bm := range merged {
+		for _, b := range benchmap[bm.Name] {
+			bm.Allocs += b.Allocs
+			bm.Bytes += b.Bytes
+			bm.Duration += b.Duration
+		}
+		n := len(benchmap[bm.Name])
+		bm.Allocs /= n
+		bm.Bytes /= n
+		bm.Duration /= time.Duration(n)
 	}
 
 	return merged

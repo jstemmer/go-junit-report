@@ -177,6 +177,7 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 
 			buffers[cur] = buffers[cur][0:0]
 			tests = make([]*Test, 0)
+			benchmarks = make([]*Benchmark, 0)
 			coveragePct = ""
 			cur = ""
 			testsTime = 0
