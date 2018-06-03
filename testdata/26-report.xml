@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+	<testsuite tests="2" failures="0" time="7.267" name="mycode/common">
+		<properties>
+			<property name="go.version" value="1.0"></property>
+		</properties>
+		<testcase classname="common" name="BenchmarkParse" time="0.000001591"></testcase>
+		<testcase classname="common" name="BenchmarkNewTask" time="0.000000391"></testcase>
+	</testsuite>
+	<testsuite tests="4" failures="0" time="47.084" name="mycode/benchmarks/channels">
+		<properties>
+			<property name="go.version" value="1.0"></property>
+		</properties>
+		<testcase classname="channels" name="BenchmarkFanout/Channel/10" time="0.000004673"></testcase>
+		<testcase classname="channels" name="BenchmarkFanout/Channel/100" time="0.000024965"></testcase>
+		<testcase classname="channels" name="BenchmarkFanout/Channel/1000" time="0.000195672"></testcase>
+		<testcase classname="channels" name="BenchmarkFanout/Channel/10000" time="0.002410200"></testcase>
+	</testsuite>
+</testsuites>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+	<testsuite tests="6" failures="0" time="1.382" name="package3/baz">
+		<properties>
+			<property name="go.version" value="1.0"></property>
+		</properties>
+		<testcase classname="baz" name="TestNew" time="0.000"></testcase>
+		<testcase classname="baz" name="TestNew/no" time="0.000"></testcase>
+		<testcase classname="baz" name="TestNew/normal" time="0.000"></testcase>
+		<testcase classname="baz" name="TestWriteThis" time="0.000"></testcase>
+		<testcase classname="baz" name="BenchmarkDeepMerge" time="0.000002611"></testcase>
+		<testcase classname="baz" name="BenchmarkNext" time="0.000000100"></testcase>
+	</testsuite>
+</testsuites>

@@ -1,0 +1,8 @@
+goos: darwin
+goarch: amd64
+pkg: really/small
+BenchmarkItsy-8    	  30000000	         45.7 ns/op
+BenchmarkTeeny-8      1000000000	         2.12 ns/op
+BenchmarkWeeny-8      2000000000	         0.26 ns/op
+PASS
+ok really/small	4.344s

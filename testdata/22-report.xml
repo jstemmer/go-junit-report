@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+	<testsuite tests="2" failures="0" time="3.212" name="package/basic">
+		<properties>
+			<property name="go.version" value="1.0"></property>
+		</properties>
+		<testcase classname="basic" name="BenchmarkParse" time="0.000000604"></testcase>
+		<testcase classname="basic" name="BenchmarkReadingList" time="0.000001425"></testcase>
+	</testsuite>
+</testsuites>

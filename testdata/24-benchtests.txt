@@ -1,0 +1,15 @@
+=== RUN   TestNew
+=== RUN   TestNew/no
+=== RUN   TestNew/normal
+--- PASS: TestNew (0.00s)
+    --- PASS: TestNew/no (0.00s)
+    --- PASS: TestNew/normal (0.00s)
+=== RUN   TestWriteThis
+--- PASS: TestWriteThis (0.00s)
+goos: darwin
+goarch: amd64
+pkg: package3/baz
+BenchmarkDeepMerge-8      500000       2611 ns/op     1110 B/op       16 allocs/op
+BenchmarkNext-8           500000       100 ns/op      100 B/op        1 allocs/op
+PASS
+ok   package3/baz 1.382s

@@ -1,0 +1,12 @@
+pkg: mycode/common
+BenchmarkParse-8                   	 1000000	      1591 ns/op
+BenchmarkNewTask-8                 	 3000000	       391 ns/op
+PASS
+ok  	mycode/common	7.267s
+pkg: mycode/benchmarks/channels
+BenchmarkFanout/Channel/10-8         	  500000	      4673 ns/op
+BenchmarkFanout/Channel/100-8        	   50000	     24965 ns/op
+BenchmarkFanout/Channel/1000-8       	   10000	    195672 ns/op
+BenchmarkFanout/Channel/10000-8      	     500	   2410200 ns/op
+PASS
+ok  	mycode/benchmarks/channels	47.084s
