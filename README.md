@@ -32,12 +32,12 @@ go-junit-report reads the `go test` verbose output from standard in and writes
 junit compatible XML to standard out.
 
 ```bash
-go test -v -count 5 2>&1 | go-junit-report > report.xml
+go test -v 2>&1 | go-junit-report > report.xml
 ```
 
 Note that it also can parse benchmark output with `-bench` flag:
 ```bash
-go test -v -bench . 2>&1 | ./go-junit-report > report.xml
+go test -v -bench . -count 5 2>&1 | ./go-junit-report > report.xml
  ```
 
 [travis-badge]: https://travis-ci.org/jstemmer/go-junit-report.svg

@@ -84,7 +84,7 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 	// sum of tests' time, use this if current test has no result line (when it is compiled test)
 	var testsTime time.Duration
 
-	// current test or benchmark
+	// current test
 	var cur string
 
 	// keep track if we've already seen a summary for the current test
@@ -164,7 +164,6 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 			}
 
 			// all tests in this package are finished
-
 			report.Packages = append(report.Packages, Package{
 				Name:        matches[2],
 				Duration:    parseSeconds(matches[3]),

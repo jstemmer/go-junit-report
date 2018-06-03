@@ -121,7 +121,6 @@ func JUnitReportXML(report *parser.Report, noXMLHeader bool, goVersion string, w
 				Classname: classname,
 				Name:      benchmark.Name,
 				Time:      formatBenchmarkTime(benchmark.Duration),
-				Failure:   nil,
 			}
 
 			ts.TestCases = append(ts.TestCases, benchmarkCase)
