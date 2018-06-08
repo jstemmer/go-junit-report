@@ -1174,6 +1174,44 @@ var testCases = []TestCase{
 			},
 		},
 	},
+	{
+		name:       "28-bench-1cpu.txt",
+		reportName: "28-report.xml",
+		report: &parser.Report{
+			Packages: []parser.Package{
+				{
+					Name:     "single/cpu",
+					Duration: 9467 * time.Millisecond,
+					Time:     9467,
+					Benchmarks: []*parser.Benchmark{
+						{
+							Name:     "BenchmarkRing",
+							Duration: 74 * time.Nanosecond,
+						},
+					},
+				},
+			},
+		},
+	},
+	{
+		name:       "29-bench-16cpu.txt",
+		reportName: "29-report.xml",
+		report: &parser.Report{
+			Packages: []parser.Package{
+				{
+					Name:     "sixteen/cpu",
+					Duration: 1522 * time.Millisecond,
+					Time:     1522,
+					Benchmarks: []*parser.Benchmark{
+						{
+							Name:     "BenchmarkRingaround",
+							Duration: 13571 * time.Nanosecond,
+						},
+					},
+				},
+			},
+		},
+	},
 }
 
 func TestParser(t *testing.T) {

@@ -1,0 +1,4 @@
+pkg: sixteen/cpu
+BenchmarkRingaround-16    	  100000	     13571 ns/op
+PASS
+ok  	sixteen/cpu	1.522s
