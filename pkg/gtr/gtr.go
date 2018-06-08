@@ -7,7 +7,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jstemmer/go-junit-report/v2/pkg/parser/gotest"
 	"github.com/jstemmer/go-junit-report/v2/pkg/junit"
 )
 
@@ -68,7 +67,7 @@ type Test struct {
 }
 
 // FromEvents creates a Report from the given list of events.
-func FromEvents(events []gotest.Event) Report {
+func FromEvents(events []Event) Report {
 	report := NewReportBuilder()
 	for _, ev := range events {
 		switch ev.Type {

@@ -9,19 +9,9 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/jstemmer/go-junit-report/v2/pkg/gtr"
 )
-
-type Event struct {
-	Type string
-
-	Name        string
-	Result      string
-	Duration    time.Duration
-	Data        string
-	Indent      int
-	CovPct      float64
-	CovPackages []string
-}
 
 var (
 	regexEndTest = regexp.MustCompile(`((?:    )*)--- (PASS|FAIL|SKIP): ([^ ]+) \((\d+\.\d+)(?: seconds|s)\)`)
@@ -33,7 +23,7 @@ var (
 )
 
 // Parse parses Go test output from the given io.Reader r.
-func Parse(r io.Reader) ([]Event, error) {
+func Parse(r io.Reader) ([]gtr.Event, error) {
 	p := &parser{}
 
 	s := bufio.NewScanner(r)
@@ -48,7 +38,7 @@ func Parse(r io.Reader) ([]Event, error) {
 }
 
 type parser struct {
-	events []Event
+	events []gtr.Event
 }
 
 func (p *parser) parseLine(line string) {
@@ -71,20 +61,20 @@ func (p *parser) parseLine(line string) {
 	}
 }
 
-func (p *parser) add(event Event) {
+func (p *parser) add(event gtr.Event) {
 	p.events = append(p.events, event)
 }
 
 func (p *parser) runTest(name string) {
-	p.add(Event{Type: "run_test", Name: name})
+	p.add(gtr.Event{Type: "run_test", Name: name})
 }
 
 func (p *parser) pauseTest(name string) {
-	p.add(Event{Type: "pause_test", Name: name})
+	p.add(gtr.Event{Type: "pause_test", Name: name})
 }
 
 func (p *parser) contTest(name string) {
-	p.add(Event{Type: "cont_test", Name: name})
+	p.add(gtr.Event{Type: "cont_test", Name: name})
 }
 
 func (p *parser) endTest(line, indent, result, name, duration string) {
@@ -92,7 +82,7 @@ func (p *parser) endTest(line, indent, result, name, duration string) {
 		p.output(line[:idx])
 	}
 	_, n := stripIndent(indent)
-	p.add(Event{
+	p.add(gtr.Event{
 		Type:     "end_test",
 		Name:     name,
 		Result:   result,
@@ -102,11 +92,11 @@ func (p *parser) endTest(line, indent, result, name, duration string) {
 }
 
 func (p *parser) status(result string) {
-	p.add(Event{Type: "status", Result: result})
+	p.add(gtr.Event{Type: "status", Result: result})
 }
 
 func (p *parser) summary(result, name, duration, data, covpct, packages string) {
-	p.add(Event{
+	p.add(gtr.Event{
 		Type:        "summary",
 		Result:      result,
 		Name:        name,
@@ -118,7 +108,7 @@ func (p *parser) summary(result, name, duration, data, covpct, packages string) 
 }
 
 func (p *parser) coverage(percent, packages string) {
-	p.add(Event{
+	p.add(gtr.Event{
 		Type:        "coverage",
 		CovPct:      parseCoverage(percent),
 		CovPackages: parsePackages(packages),
@@ -126,7 +116,7 @@ func (p *parser) coverage(percent, packages string) {
 }
 
 func (p *parser) output(line string) {
-	p.add(Event{Type: "output", Data: line})
+	p.add(gtr.Event{Type: "output", Data: line})
 }
 
 func parseSeconds(s string) time.Duration {
