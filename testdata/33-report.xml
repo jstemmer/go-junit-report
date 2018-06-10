@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+	<testsuite tests="2" failures="0" time="83.202" name="compress/flate">
+		<properties>
+			<property name="go.version" value="1.0"></property>
+		</properties>
+		<testcase classname="flate" name="BenchmarkDecode/Digits/Huffman/1e4" time="0.000104427"></testcase>
+		<testcase classname="flate" name="BenchmarkEncode/Digits/Huffman/1e4" time="0.000028334"></testcase>
+	</testsuite>
+</testsuites>

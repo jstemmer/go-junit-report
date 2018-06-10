@@ -1535,6 +1535,29 @@ var testCases = []TestCase{
 			},
 		},
 	},
+	{
+		name:       "33-bench-mb.txt",
+		reportName: "33-report.xml",
+		report: &parser.Report{
+			Packages: []parser.Package{
+				{
+					Name:     "compress/flate",
+					Duration: 83202 * time.Millisecond,
+					Time:     83202,
+					Benchmarks: []*parser.Benchmark{
+						{
+							Name:     "BenchmarkDecode/Digits/Huffman/1e4",
+							Duration: 104427 * time.Nanosecond,
+						},
+						{
+							Name:     "BenchmarkEncode/Digits/Huffman/1e4",
+							Duration: 28334 * time.Nanosecond,
+						},
+					},
+				},
+			},
+		},
+	},
 }
 
 func TestParser(t *testing.T) {

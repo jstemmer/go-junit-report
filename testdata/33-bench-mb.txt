@@ -1,0 +1,7 @@
+goos: linux
+goarch: amd64
+pkg: compress/flate
+BenchmarkDecode/Digits/Huffman/1e4-8         	   10000	    104427 ns/op	  95.76 MB/s	   40629 B/op	       5 allocs/op
+BenchmarkEncode/Digits/Huffman/1e4-8         	   50000	     28334 ns/op	 352.93 MB/s
+PASS
+ok  	compress/flate	83.202s
