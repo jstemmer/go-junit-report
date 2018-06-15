@@ -14,12 +14,11 @@ import (
 )
 
 var (
-	regexEndTest = regexp.MustCompile(`((?:    )*)--- (PASS|FAIL|SKIP): ([^ ]+) \((\d+\.\d+)(?: seconds|s)\)`)
-	regexStatus  = regexp.MustCompile(`^(PASS|FAIL|SKIP)$`)
-	regexSummary = regexp.MustCompile(`^(ok|FAIL)\s+([^ ]+)\s+` +
-		`(?:(\d+\.\d+)s|(\(cached\)|\[\w+ failed]))` +
-		`(?:\s+coverage:\s+(\d+\.\d+)%\sof\sstatements(?:\sin\s(.+))?)?$`)
-	regexCoverage = regexp.MustCompile(`^coverage:\s+(\d+|\d+\.\d+)%\s+of\s+statements(?:\sin\s(.+))?$`)
+	regexBenchmark = regexp.MustCompile(`^(Benchmark[^\s]+)\s(\d+|\d+\.\d+)\s((?:[^\s]+\s[^\s]+)+)`)
+	regexCoverage  = regexp.MustCompile(`^coverage:\s+(\d+|\d+\.\d+)%\s+of\s+statements(?:\sin\s(.+))?$`)
+	regexEndTest   = regexp.MustCompile(`((?:    )*)--- (PASS|FAIL|SKIP): ([^ ]+) \((\d+\.\d+)(?: seconds|s)\)`)
+	regexStatus    = regexp.MustCompile(`^(PASS|FAIL|SKIP)$`)
+	regexSummary   = regexp.MustCompile(`^(ok|FAIL)\s+([^ ]+)\s+` + `(?:(\d+\.\d+)s|(\(cached\)|\[\w+ failed]))` + `(?:\s+coverage:\s+(\d+\.\d+)%\sof\sstatements(?:\sin\s(.+))?)?$`)
 )
 
 // Parse parses Go test output from the given io.Reader r.
@@ -56,6 +55,10 @@ func (p *parser) parseLine(line string) {
 		p.summary(matches[1], matches[2], matches[3], matches[4], matches[5], matches[6])
 	} else if matches := regexCoverage.FindStringSubmatch(line); len(matches) == 3 {
 		p.coverage(matches[1], matches[2])
+	} else if matches := regexBenchmark.FindStringSubmatch(line); len(matches) == 4 {
+		fields := strings.Fields(matches[3])
+		//p.benchmark(matches[1], matches[2], fields)
+		p.benchmark(fields)
 	} else {
 		p.output(line)
 	}
@@ -112,6 +115,13 @@ func (p *parser) coverage(percent, packages string) {
 		Type:        "coverage",
 		CovPct:      parseCoverage(percent),
 		CovPackages: parsePackages(packages),
+	})
+}
+
+func (p *parser) benchmark(fields []string) {
+	p.add(gtr.Event{
+		Type: "benchmark",
+		Name: fields[0],
 	})
 }
 
