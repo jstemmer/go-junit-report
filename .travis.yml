@@ -11,3 +11,9 @@ go:
   - "1.4.x"
   - "1.3.x"
   - "1.2.x"
+deploy:
+- provider: script
+  skip_cleanup: true
+  script: curl -sL https://git.io/goreleaser | bash
+  on:
+    tags: true
