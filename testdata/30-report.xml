@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+	<testsuite tests="17" failures="9" time="4.567" name="package/name1">
+		<properties>
+			<property name="go.version" value="1.0"></property>
+		</properties>
+		<testcase classname="name1" name="TestFailWithStdoutAndTestOutput" time="0.100">
+			<failure message="Failed" type="">multi&#xA;line&#xA;stdout&#xA;single-line stdout&#xA;example_test.go:13: single-line error&#xA;example_test.go:14: multi&#xA;    line&#xA;    error</failure>
+		</testcase>
+		<testcase classname="name1" name="TestFailWithStdoutAndNoTestOutput" time="0.150">
+			<failure message="Failed" type="">multi&#xA;line&#xA;stdout&#xA;single-line stdout</failure>
+		</testcase>
+		<testcase classname="name1" name="TestFailWithTestOutput" time="0.200">
+			<failure message="Failed" type="">example_test.go:26: single-line error&#xA;example_test.go:27: multi&#xA;    line&#xA;    error</failure>
+		</testcase>
+		<testcase classname="name1" name="TestFailWithNoTestOutput" time="0.250">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+		<testcase classname="name1" name="TestPassWithStdoutAndTestOutput" time="0.300"></testcase>
+		<testcase classname="name1" name="TestPassWithStdoutAndNoTestOutput" time="0.350"></testcase>
+		<testcase classname="name1" name="TestPassWithTestOutput" time="0.400"></testcase>
+		<testcase classname="name1" name="TestPassWithNoTestOutput" time="0.500"></testcase>
+		<testcase classname="name1" name="TestSubtests" time="2.270">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+		<testcase classname="name1" name="TestSubtests/TestFailWithStdoutAndTestOutput" time="0.100">
+			<failure message="Failed" type="">1 multi&#xA;line&#xA;stdout&#xA;1 single-line stdout&#xA;example_test.go:65: 1 single-line error&#xA;example_test.go:66: 1 multi&#xA;    line&#xA;    error</failure>
+		</testcase>
+		<testcase classname="name1" name="TestSubtests/TestFailWithStdoutAndNoTestOutput" time="0.150">
+			<failure message="Failed" type="">2 multi&#xA;line&#xA;stdout&#xA;2 single-line stdout</failure>
+		</testcase>
+		<testcase classname="name1" name="TestSubtests/TestFailWithTestOutput" time="0.200">
+			<failure message="Failed" type="">example_test.go:78: 3 single-line error&#xA;example_test.go:79: 3 multi&#xA;    line&#xA;    error</failure>
+		</testcase>
+		<testcase classname="name1" name="TestSubtests/TestFailWithNoTestOutput" time="0.250">
+			<failure message="Failed" type=""></failure>
+		</testcase>
+		<testcase classname="name1" name="TestSubtests/TestPassWithStdoutAndTestOutput" time="0.300"></testcase>
+		<testcase classname="name1" name="TestSubtests/TestPassWithStdoutAndNoTestOutput" time="0.350"></testcase>
+		<testcase classname="name1" name="TestSubtests/TestPassWithTestOutput" time="0.400"></testcase>
+		<testcase classname="name1" name="TestSubtests/TestPassWithNoTestOutput" time="0.500"></testcase>
+	</testsuite>
+</testsuites>
