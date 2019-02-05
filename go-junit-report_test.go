@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
+	"github.com/orbs-network/go-junit-report/formatter"
+	"github.com/orbs-network/go-junit-report/parser"
 	"io/ioutil"
 	"os"
 	"regexp"
@@ -11,9 +13,6 @@ import (
 	"strings"
 	"testing"
 	"time"
-
-	"github.com/jstemmer/go-junit-report/formatter"
-	"github.com/jstemmer/go-junit-report/parser"
 )
 
 var matchTest = flag.String("match", "", "only test testdata matching this pattern")
@@ -1425,6 +1424,57 @@ var testCases = []TestCase{
 			},
 		},
 	},
+	{
+		name:       "31-repeated-names-with-log.txt",
+		reportName: "31-report.xml",
+		packageName: "foo",
+		report: &parser.Report{
+			Packages: []parser.Package{
+				{
+					Name:     "github.com/orbs-network/go-junit-report",
+					Duration: 5 * time.Millisecond,
+					Time:     5,
+					Tests: []*parser.Test{
+						{
+							Name:     "TestFoo",
+							Duration: 0,
+							Time:     0,
+							Result:   parser.FAIL,
+							Output: []string{
+								"count_test.go:9: foo",
+								"count_test.go:10: bar",
+								"count_test.go:12: test failed due to even number rand",
+							},
+						},
+						{
+							Name:     "TestFoo",
+							Duration: 0,
+							Time:     0,
+							Result:   parser.PASS,
+							Output:   []string{},
+						}, {
+							Name:     "TestFoo",
+							Duration: 0,
+							Time:     0,
+							Result:   parser.PASS,
+							Output:   []string{},
+						},
+						{
+							Name:     "TestFoo",
+							Duration: 0,
+							Time:     0,
+							Result:   parser.FAIL,
+							Output: []string{
+								"count_test.go:9: foo",
+								"count_test.go:10: bar",
+								"count_test.go:12: test failed due to even number rand",
+							},
+						},
+					},
+				},
+			},
+		},
+	},
 }
 
 func TestParser(t *testing.T) {
@@ -1547,7 +1597,7 @@ func testJUnitFormatter(t *testing.T, goVersion string) {
 			continue
 		}
 
-		report, err := loadTestReport(testCase.reportName, goVersion)
+		expectedReport, err := loadTestReport(testCase.reportName, goVersion)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -1558,8 +1608,9 @@ func testJUnitFormatter(t *testing.T, goVersion string) {
 			t.Fatal(err)
 		}
 
-		if string(junitReport.Bytes()) != report {
-			t.Errorf("Fail: %s Report xml ==\n%s, want\n%s", testCase.name, string(junitReport.Bytes()), report)
+		strReport := string(junitReport.Bytes())
+		if strReport != expectedReport {
+			t.Errorf("Fail: %s Report xml ==\n%s, want\n%s", testCase.name, strReport, expectedReport)
 		}
 	}
 }

@@ -1,0 +1,21 @@
+=== RUN   TestFoo
+--- FAIL: TestFoo (0.00s)
+    count_test.go:9: foo
+    count_test.go:10: bar
+    count_test.go:12: test failed due to even number rand
+=== RUN   TestFoo
+--- PASS: TestFoo (0.00s)
+    count_test.go:9: foo
+    count_test.go:10: bar
+=== RUN   TestFoo
+--- PASS: TestFoo (0.00s)
+    count_test.go:9: foo
+    count_test.go:10: bar
+=== RUN   TestFoo
+--- FAIL: TestFoo (0.00s)
+    count_test.go:9: foo
+    count_test.go:10: bar
+    count_test.go:12: test failed due to even number rand
+FAIL
+exit status 1
+FAIL	github.com/orbs-network/go-junit-report	0.005s
