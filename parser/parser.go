@@ -128,7 +128,7 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 			// clear the current build package, so output lines won't be added to that build
 			capturedPackage = ""
 			seenSummary = false
-			delete(buffers, cur)
+			buffers[cur] = []string{}
 
 		} else if matches := regexBenchmark.FindStringSubmatch(line); len(matches) == 6 {
 			bytes, _ := strconv.Atoi(matches[4])

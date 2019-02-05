@@ -1425,8 +1425,8 @@ var testCases = []TestCase{
 		},
 	},
 	{
-		name:       "31-repeated-names-with-log.txt",
-		reportName: "31-report.xml",
+		name:        "31-repeated-names-with-log.txt",
+		reportName:  "31-report.xml",
 		packageName: "foo",
 		report: &parser.Report{
 			Packages: []parser.Package{
@@ -1451,13 +1451,15 @@ var testCases = []TestCase{
 							Duration: 0,
 							Time:     0,
 							Result:   parser.PASS,
-							Output:   []string{},
+							Output: []string{"count_test.go:9: foo",
+								"count_test.go:10: bar"},
 						}, {
 							Name:     "TestFoo",
 							Duration: 0,
 							Time:     0,
 							Result:   parser.PASS,
-							Output:   []string{},
+							Output: []string{"count_test.go:9: foo",
+								"count_test.go:10: bar"},
 						},
 						{
 							Name:     "TestFoo",
