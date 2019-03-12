@@ -4,7 +4,7 @@
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
-		<testcase classname="panic" name="Failure" time="0.000">
+		<testcase classname="package/panic" name="Failure" time="0.000">
 			<failure message="Failed" type="">panic: init&#xA;stacktrace</failure>
 		</testcase>
 	</testsuite>
@@ -12,7 +12,7 @@
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
-		<testcase classname="panic2" name="Failure" time="0.000">
+		<testcase classname="package/panic2" name="Failure" time="0.000">
 			<failure message="Failed" type="">panic: init&#xA;stacktrace</failure>
 		</testcase>
 	</testsuite>

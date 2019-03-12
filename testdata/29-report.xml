@@ -4,6 +4,6 @@
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
-		<testcase classname="cpu" name="BenchmarkRingaround" time="0.000013571"></testcase>
+		<testcase classname="sixteen/cpu" name="BenchmarkRingaround" time="0.000013571"></testcase>
 	</testsuite>
 </testsuites>

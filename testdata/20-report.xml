@@ -4,13 +4,13 @@
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
-		<testcase classname="parallel" name="FirstTest" time="2.000">
+		<testcase classname="pkg/parallel" name="FirstTest" time="2.000">
 			<failure message="Failed" type="">Message from first&#xA;Supplemental from first&#xA;parallel_test.go:14: FirstTest error</failure>
 		</testcase>
-		<testcase classname="parallel" name="SecondTest" time="1.000">
+		<testcase classname="pkg/parallel" name="SecondTest" time="1.000">
 			<failure message="Failed" type="">Message from second&#xA;parallel_test.go:23: SecondTest error</failure>
 		</testcase>
-		<testcase classname="parallel" name="ThirdTest" time="0.010">
+		<testcase classname="pkg/parallel" name="ThirdTest" time="0.010">
 			<failure message="Failed" type="">Message from third&#xA;parallel_test.go:32: ThirdTest error</failure>
 		</testcase>
 	</testsuite>

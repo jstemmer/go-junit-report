@@ -4,9 +4,9 @@
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
-		<testcase classname="name" name="TestOne" time="0.020">
+		<testcase classname="package/name" name="TestOne" time="0.020">
 			<skipped message="file_test.go:11: Skip message"></skipped>
 		</testcase>
-		<testcase classname="name" name="TestTwo" time="0.130"></testcase>
+		<testcase classname="package/name" name="TestTwo" time="0.130"></testcase>
 	</testsuite>
 </testsuites>
