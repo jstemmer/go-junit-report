@@ -164,6 +164,11 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 					Output: buffers[cur],
 				})
 				buffers[cur] = buffers[cur][0:0]
+			} else if matches[1] == "FAIL" {
+				// The package might fail after all tests passed.
+				// Change status of the last running test to Fail.
+                                test := findTest(tests, cur)
+				test.Result = FAIL
 			}
 
 			// all tests in this package are finished
@@ -227,14 +232,8 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 		} else if capturedPackage != "" {
 			// current line is build failure capture for the current built package
 			packageCaptures[capturedPackage] = append(packageCaptures[capturedPackage], line)
-		} else if matches := regexSummary.FindStringSubmatch(line); len(matches) == 2 {
+		} else if regexSummary.MatchString(line) {
 			seenSummary = true
-			test := findTest(tests, cur)
-                        // test status
-                        if matches[1] == "FAIL" {
-                                test.Result = FAIL
-                        }
-
 		} else if !seenSummary {
 			// buffer anything else that we didn't recognize
 			buffers[cur] = append(buffers[cur], line)
