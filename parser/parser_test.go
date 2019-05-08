@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"strings"
 	"testing"
 	"time"
 )
@@ -43,5 +44,34 @@ func TestParseNanoseconds(t *testing.T) {
 		if d != test.d {
 			t.Errorf("parseSeconds(%q) == %v, want %v\n", test.in, d, test.d)
 		}
+	}
+}
+
+func TestParse(t *testing.T) {
+	reader := strings.NewReader(
+	"=== RUN   TestGetMixerSAN\n" +
+	"--- PASS: TestGetMixerSAN (0.00s)\n" +
+	"=== RUN   TestGetPilotSAN\n" +
+	"--- PASS: TestGetPilotSAN (0.00s)\n" +
+	"--- PASS: TestGetPilotSAN (0.00s)\n" +
+	"=== RUN TestApplyThrice\n" +
+	"2019-05-02T02:00:14.273826Z	info	Graceful termination period is -10s, starting...\n" +
+	"--- PASS: TestApplyThrice (0.00s)\n" +
+	"2019-05-02T02:00:14.274025Z	info	Epoch 0 starting\n" +
+	"panic: Fail in goroutine after TestApplyThrice has completed\n" +
+	"FAIL\n")
+	//"FAIL	fake_test	0.008s\n")
+	res, _ := Parse(reader, "fake_test")
+	if len(res.Packages) != 1 {
+		t.Errorf("We have only one package.")
+	}
+        if len(res.Packages[0].Tests) != 3 {
+                t.Errorf("We expect to parse 3 tests.")
+        }
+	if res.Packages[0].Tests[0].Result != 0 || res.Packages[0].Tests[1].Result != 0 {
+		t.Errorf("We expect first two tests to Pass.")
+	}
+	if res.Packages[0].Tests[2].Result != 1 {
+		t.Errorf("We expect third test to Fail.")
 	}
 }
