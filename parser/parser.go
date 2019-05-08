@@ -233,6 +233,7 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 			// current line is build failure capture for the current built package
 			packageCaptures[capturedPackage] = append(packageCaptures[capturedPackage], line)
 		} else if regexSummary.MatchString(line) {
+			// don't store any output after the summary
 			seenSummary = true
 		} else if !seenSummary {
 			// buffer anything else that we didn't recognize
