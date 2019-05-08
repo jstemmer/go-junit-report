@@ -167,8 +167,16 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 			} else if matches[1] == "FAIL" {
 				// The package might fail after all tests passed.
 				// Change status of the last running test to Fail.
-                                test := findTest(tests, cur)
-				test.Result = FAIL
+				failed_tests := false
+				for i := len(tests) - 1; i >= 0; i-- {
+					if tests[i].Result == FAIL {
+						failed_tests = true
+	                                }
+				}
+				if !failed_tests {
+	                                test := findTest(tests, cur)
+					test.Result = FAIL
+				}
 			}
 
 			// all tests in this package are finished
