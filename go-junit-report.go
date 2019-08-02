@@ -3,10 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/monzo/go-junit-report/formatter"
+	"github.com/monzo/go-junit-report/parser"
 	"os"
-
-	"github.com/jstemmer/go-junit-report/formatter"
-	"github.com/jstemmer/go-junit-report/parser"
 )
 
 var (

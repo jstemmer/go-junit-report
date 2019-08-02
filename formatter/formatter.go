@@ -4,12 +4,11 @@ import (
 	"bufio"
 	"encoding/xml"
 	"fmt"
+	"github.com/monzo/go-junit-report/parser"
 	"io"
 	"runtime"
 	"strings"
 	"time"
-
-	"github.com/jstemmer/go-junit-report/parser"
 )
 
 // JUnitTestSuites is a collection of JUnit test suites.
@@ -74,7 +73,7 @@ func JUnitReportXML(report *parser.Report, noXMLHeader bool, goVersion string, w
 			Properties: []JUnitProperty{},
 			TestCases:  []JUnitTestCase{},
 		}
-
+		
 		classname := pkg.Name
 
 		// properties
