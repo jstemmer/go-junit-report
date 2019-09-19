@@ -1425,6 +1425,87 @@ var testCases = []TestCase{
 			},
 		},
 	},
+	{
+		name:       "31-syntax-error-test-binary.txt",
+		reportName: "31-report.xml",
+		report: &parser.Report{
+			Packages: []parser.Package{
+				{
+					Name:     "package/name/passing1",
+					Duration: 100 * time.Millisecond,
+					Time:     100,
+					Tests: []*parser.Test{
+						{
+							Name:     "TestA",
+							Duration: 100 * time.Millisecond,
+							Time:     100,
+							Result:   parser.PASS,
+							Output:   []string{},
+						},
+					},
+				},
+				{
+					Name:     "package/name/passing2",
+					Duration: 100 * time.Millisecond,
+					Time:     100,
+					Tests: []*parser.Test{
+						{
+							Name:     "TestB",
+							Duration: 100 * time.Millisecond,
+							Time:     100,
+							Result:   parser.PASS,
+							Output:   []string{},
+						},
+					},
+				},
+				{
+					Name: "package/name/failing1",
+					Tests: []*parser.Test{
+						{
+							Name:     "[build failed]",
+							Duration: 0,
+							Time:     0,
+							Result:   parser.FAIL,
+							Output: []string{
+								"failing1/failing_test.go:15: undefined: x",
+							},
+						},
+					},
+				},
+				{
+					Name: "package/name/failing2",
+					Tests: []*parser.Test{
+						{
+							Name:     "[build failed]",
+							Duration: 0,
+							Time:     0,
+							Result:   parser.FAIL,
+							Output: []string{
+								"failing2/another_failing_test.go:20: undefined: y",
+							},
+						},
+					},
+				},
+				{
+					Name: "package/name/setupfailing1",
+					Tests: []*parser.Test{
+						{
+							Name:     "[setup failed]",
+							Duration: 0,
+							Time:     0,
+							Result:   parser.FAIL,
+							Output: []string{
+								"setupfailing1/failing_test.go:4: cannot find package \"other/package\" in any of:",
+								"\t/path/vendor (vendor tree)",
+								"\t/path/go/root (from $GOROOT)",
+								"\t/path/go/path (from $GOPATH)",
+							},
+						},
+					},
+				},
+			},
+		},
+	},
 }
 
 func TestParser(t *testing.T) {
