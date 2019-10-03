@@ -10,14 +10,26 @@ import (
 )
 
 var (
+	Version   = "v0.9.1-dev"
+	Revision  = "HEAD"
+	BuildTime string
+)
+
+var (
 	noXMLHeader   = flag.Bool("no-xml-header", false, "do not print xml header")
 	packageName   = flag.String("package-name", "", "specify a package name (compiled test have no package name in output)")
 	goVersionFlag = flag.String("go-version", "", "specify the value to use for the go.version property in the generated XML")
 	setExitCode   = flag.Bool("set-exit-code", false, "set exit code to 1 if tests failed")
+	version       = flag.Bool("version", false, "print version")
 )
 
 func main() {
 	flag.Parse()
+
+	if *version {
+		fmt.Printf("go-junit-report %s %s (%s)\n", Version, BuildTime, Revision)
+		return
+	}
 
 	if flag.NArg() != 0 {
 		fmt.Fprintf(os.Stderr, "%s does not accept positional arguments\n", os.Args[0])
