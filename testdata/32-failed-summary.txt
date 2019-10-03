@@ -1,0 +1,5 @@
+=== RUN   TestOne
+--- PASS: TestOne (0.00s)
+PASS
+panic: panic
+FAIL	github.com/jstemmer/test/failedsummary	0.005s

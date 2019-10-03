@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+	<testsuite tests="2" failures="1" time="0.005" name="github.com/jstemmer/test/failedsummary">
+		<properties>
+			<property name="go.version" value="1.0"></property>
+		</properties>
+		<testcase classname="failedsummary" name="TestOne" time="0.000"></testcase>
+		<testcase classname="failedsummary" name="Failure" time="0.000">
+			<failure message="Failed" type="">panic: panic</failure>
+		</testcase>
+	</testsuite>
+</testsuites>

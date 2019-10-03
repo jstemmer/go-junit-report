@@ -91,9 +91,6 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 	// current test
 	var cur string
 
-	// keep track if we've already seen a summary for the current test
-	var seenSummary bool
-
 	// coverage percentage report for current package
 	var coveragePct string
 
@@ -128,7 +125,6 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 
 			// clear the current build package, so output lines won't be added to that build
 			capturedPackage = ""
-			seenSummary = false
 		} else if matches := regexBenchmark.FindStringSubmatch(line); len(matches) == 6 {
 			bytes, _ := strconv.Atoi(matches[4])
 			allocs, _ := strconv.Atoi(matches[5])
@@ -156,9 +152,10 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 					Result: FAIL,
 					Output: packageCaptures[matches[2]],
 				})
-			} else if matches[1] == "FAIL" && len(tests) == 0 && len(buffers[cur]) > 0 {
-				// This package didn't have any tests, but it failed with some
-				// output. Create a dummy test with the output.
+			} else if matches[1] == "FAIL" && !containsFailures(tests) && len(buffers[cur]) > 0 {
+				// This package didn't have any failing tests, but still it
+				// failed with some output. Create a dummy test with the
+				// output.
 				tests = append(tests, &Test{
 					Name:   "Failure",
 					Result: FAIL,
@@ -237,9 +234,10 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 			// current line is build failure capture for the current built package
 			packageCaptures[capturedPackage] = append(packageCaptures[capturedPackage], line)
 		} else if regexSummary.MatchString(line) {
-			// don't store any output after the summary
-			seenSummary = true
-		} else if !seenSummary {
+			// unset current test name so any additional output after the
+			// summary is captured separately.
+			cur = ""
+		} else {
 			// buffer anything else that we didn't recognize
 			buffers[cur] = append(buffers[cur], line)
 
@@ -294,6 +292,15 @@ func findTest(tests []*Test, name string) *Test {
 		}
 	}
 	return nil
+}
+
+func containsFailures(tests []*Test) bool {
+	for _, test := range tests {
+		if test.Result == FAIL {
+			return true
+		}
+	}
+	return false
 }
 
 // Failures counts the number of failed tests in this report

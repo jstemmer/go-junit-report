@@ -1506,6 +1506,35 @@ var testCases = []TestCase{
 			},
 		},
 	},
+	{
+		name:       "32-failed-summary.txt",
+		reportName: "32-report.xml",
+		report: &parser.Report{
+			Packages: []parser.Package{
+				{
+					Name:     "github.com/jstemmer/test/failedsummary",
+					Duration: 5 * time.Millisecond,
+					Time:     5,
+					Tests: []*parser.Test{
+						{
+							Name:     "TestOne",
+							Duration: 0,
+							Time:     0,
+							Result:   parser.PASS,
+							Output:   []string{},
+						},
+						{
+							Name:     "Failure",
+							Duration: 0,
+							Time:     0,
+							Result:   parser.FAIL,
+							Output:   []string{"panic: panic"},
+						},
+					},
+				},
+			},
+		},
+	},
 }
 
 func TestParser(t *testing.T) {
