@@ -65,9 +65,10 @@ var (
 	regexCoverage = regexp.MustCompile(`^coverage:\s+(\d+\.\d+)%\s+of\s+statements(?:\sin\s.+)?$`)
 	regexResult   = regexp.MustCompile(`^(ok|FAIL)\s+([^ ]+)\s+(?:(\d+\.\d+)s|\(cached\)|(\[\w+ failed]))(?:\s+coverage:\s+(\d+\.\d+)%\sof\sstatements(?:\sin\s.+)?)?$`)
 	// regexBenchmark captures 3-5 groups: benchmark name, number of times ran, ns/op (with or without decimal), B/op (optional), and allocs/op (optional).
-	regexBenchmark = regexp.MustCompile(`^(Benchmark[^ -]+)(?:-\d+\s+|\s+)(\d+)\s+(\d+|\d+\.\d+)\sns/op(?:\s+(\d+)\sB/op)?(?:\s+(\d+)\sallocs/op)?`)
-	regexOutput    = regexp.MustCompile(`(    )*\t(.*)`)
-	regexSummary   = regexp.MustCompile(`^(PASS|FAIL|SKIP)$`)
+	regexBenchmark       = regexp.MustCompile(`^(Benchmark[^ -]+)(?:-\d+\s+|\s+)(\d+)\s+(\d+|\d+\.\d+)\sns/op(?:\s+(\d+)\sB/op)?(?:\s+(\d+)\sallocs/op)?`)
+	regexOutput          = regexp.MustCompile(`(    )*\t(.*)`)
+	regexSummary         = regexp.MustCompile(`^(PASS|FAIL|SKIP)$`)
+	regexPackageWithTest = regexp.MustCompile(`^# ([^\[\]]+) \[[^\]]+\]$`)
 )
 
 // Parse parses go test output from reader r and returns a report with the
@@ -223,7 +224,15 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 			test.Output = append(test.Output, matches[2])
 		} else if strings.HasPrefix(line, "# ") {
 			// indicates a capture of build output of a package. set the current build package.
-			capturedPackage = line[2:]
+			packageWithTestBinary := regexPackageWithTest.FindStringSubmatch(line)
+			if packageWithTestBinary != nil {
+				// Sometimes, the text after "# " shows the name of the test binary
+				// ("<package>.test") in addition to the package
+				// e.g.: "# package/name [package/name.test]"
+				capturedPackage = packageWithTestBinary[1]
+			} else {
+				capturedPackage = line[2:]
+			}
 		} else if capturedPackage != "" {
 			// current line is build failure capture for the current built package
 			packageCaptures[capturedPackage] = append(packageCaptures[capturedPackage], line)
