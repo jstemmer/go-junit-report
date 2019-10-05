@@ -449,7 +449,14 @@ var tests = []struct {
 			{Type: "summary", Result: "FAIL", Name: "package/name/failing2", Data: "[build failed]"},
 			{Type: "summary", Result: "FAIL", Name: "package/name/setupfailing1", Data: "[setup failed]"},
 		}},
-	{"32-failed-summary", []gtr.Event{}},
+	{"32-failed-summary",
+		[]gtr.Event{
+			{Type: "run_test", Name: "TestOne"},
+			{Type: "end_test", Name: "TestOne", Result: "PASS"},
+			{Type: "status", Result: "PASS"},
+			{Type: "output", Data: "panic: panic"},
+			{Type: "summary", Result: "FAIL", Name: "github.com/jstemmer/test/failedsummary", Duration: 5 * time.Millisecond},
+		}},
 	{"130-bench-mb", []gtr.Event{}},
 	{"131-whitespace",
 		[]gtr.Event{
