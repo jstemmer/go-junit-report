@@ -14,8 +14,8 @@ import (
 )
 
 var (
-	// regexBenchmark captures 3-5 groups: benchmark name, number of times ran, ns/op (with or without decimal), B/op (optional), and allocs/op (optional).
-	regexBenchmark = regexp.MustCompile(`^(Benchmark[^ -]+)(?:-\d+\s+|\s+)(\d+)\s+(\d+|\d+\.\d+)\sns\/op(?:\s+(\d+)\sB\/op)?(?:\s+(\d+)\sallocs/op)?`)
+	// regexBenchmark captures 3-5 groups: benchmark name, number of times ran, ns/op (with or without decimal), MB/sec (optional), B/op (optional), and allocs/op (optional).
+	regexBenchmark = regexp.MustCompile(`^(Benchmark[^ -]+)(?:-\d+\s+|\s+)(\d+)\s+(\d+|\d+\.\d+)\sns\/op(?:\s+(\d+|\d+\.\d+)\sMB\/s)?(?:\s+(\d+)\sB\/op)?(?:\s+(\d+)\sallocs/op)?`)
 	regexCoverage  = regexp.MustCompile(`^coverage:\s+(\d+|\d+\.\d+)%\s+of\s+statements(?:\sin\s(.+))?$`)
 	regexEndTest   = regexp.MustCompile(`((?:    )*)--- (PASS|FAIL|SKIP): ([^ ]+) \((\d+\.\d+)(?: seconds|s)\)`)
 	regexStatus    = regexp.MustCompile(`^(PASS|FAIL|SKIP)$`)
@@ -52,8 +52,8 @@ func (p *parser) parseLine(line string) {
 		p.summary(matches[1], matches[2], matches[3], matches[4], matches[5], matches[6])
 	} else if matches := regexCoverage.FindStringSubmatch(line); len(matches) == 3 {
 		p.coverage(matches[1], matches[2])
-	} else if matches := regexBenchmark.FindStringSubmatch(line); len(matches) == 6 {
-		p.benchmark(matches[1], matches[2], matches[3], matches[4], matches[5])
+	} else if matches := regexBenchmark.FindStringSubmatch(line); len(matches) == 7 {
+		p.benchmark(matches[1], matches[2], matches[3], matches[4], matches[5], matches[6])
 	} else {
 		p.output(line)
 	}
@@ -113,12 +113,13 @@ func (p *parser) coverage(percent, packages string) {
 	})
 }
 
-func (p *parser) benchmark(name, iterations, timePerOp, bytesPerOp, allocsPerOp string) {
+func (p *parser) benchmark(name, iterations, nsPerOp, mbPerSec, bytesPerOp, allocsPerOp string) {
 	p.add(gtr.Event{
 		Type:        "benchmark",
 		Name:        name,
 		Iterations:  parseInt(iterations),
-		NsPerOp:     parseFloat(timePerOp),
+		NsPerOp:     parseFloat(nsPerOp),
+		MBPerSec:    parseFloat(mbPerSec),
 		BytesPerOp:  parseInt(bytesPerOp),
 		AllocsPerOp: parseInt(allocsPerOp),
 	})

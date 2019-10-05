@@ -47,6 +47,7 @@ type Event struct {
 	// Benchmarks
 	Iterations  int64
 	NsPerOp     float64
+	MBPerSec    float64
 	BytesPerOp  int64
 	AllocsPerOp int64
 }

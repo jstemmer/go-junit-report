@@ -559,7 +559,16 @@ var tests = []struct {
 			{Type: "output", Data: "panic: panic"},
 			{Type: "summary", Result: "FAIL", Name: "github.com/jstemmer/test/failedsummary", Duration: 5 * time.Millisecond},
 		}},
-	{"130-bench-mb", []gtr.Event{}},
+	{"130-bench-mb",
+		[]gtr.Event{
+			{Type: "output", Data: "goos: linux"},
+			{Type: "output", Data: "goarch: amd64"},
+			{Type: "output", Data: "pkg: compress/flate"},
+			{Type: "benchmark", Name: "BenchmarkDecode/Digits/Huffman/1e4", Iterations: 10000, NsPerOp: 104427, MBPerSec: 95.76, BytesPerOp: 40629, AllocsPerOp: 5},
+			{Type: "benchmark", Name: "BenchmarkEncode/Digits/Huffman/1e4", Iterations: 50000, NsPerOp: 28334, MBPerSec: 352.93},
+			{Type: "status", Result: "PASS"},
+			{Type: "summary", Result: "ok", Name: "compress/flate", Duration: 83202 * time.Millisecond},
+		}},
 	{"131-whitespace",
 		[]gtr.Event{
 			{Type: "run_test", Name: "TestFlat"},
