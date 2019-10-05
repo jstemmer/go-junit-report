@@ -100,7 +100,7 @@ func (p *parser) summary(result, name, duration, data, covpct, packages string) 
 		Name:        name,
 		Duration:    parseSeconds(duration),
 		Data:        data,
-		CovPct:      parseCoverage(covpct),
+		CovPct:      parseFloat(covpct),
 		CovPackages: parsePackages(packages),
 	})
 }
@@ -108,7 +108,7 @@ func (p *parser) summary(result, name, duration, data, covpct, packages string) 
 func (p *parser) coverage(percent, packages string) {
 	p.add(gtr.Event{
 		Type:        "coverage",
-		CovPct:      parseCoverage(percent),
+		CovPct:      parseFloat(percent),
 		CovPackages: parsePackages(packages),
 	})
 }
@@ -118,7 +118,7 @@ func (p *parser) benchmark(name, iterations, timePerOp, bytesPerOp, allocsPerOp 
 		Type:        "benchmark",
 		Name:        name,
 		Iterations:  parseInt(iterations),
-		NsPerOp:     parseInt(timePerOp),
+		NsPerOp:     parseFloat(timePerOp),
 		BytesPerOp:  parseInt(bytesPerOp),
 		AllocsPerOp: parseInt(allocsPerOp),
 	})
@@ -137,12 +137,12 @@ func parseSeconds(s string) time.Duration {
 	return d
 }
 
-func parseCoverage(percent string) float64 {
-	if percent == "" {
+func parseFloat(s string) float64 {
+	if s == "" {
 		return 0
 	}
 	// ignore error
-	pct, _ := strconv.ParseFloat(percent, 64)
+	pct, _ := strconv.ParseFloat(s, 64)
 	return pct
 }
 
