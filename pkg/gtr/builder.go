@@ -10,7 +10,8 @@ type ReportBuilder struct {
 	packages    []Package
 	tests       map[int]Test
 	benchmarks  map[int]Benchmark
-	buildErrors map[int]BuildError
+	buildErrors map[int]Error
+	runErrors   map[int]Error
 
 	// state
 	nextId   int // next free id
@@ -26,7 +27,8 @@ func NewReportBuilder(packageName string) *ReportBuilder {
 	return &ReportBuilder{
 		tests:       make(map[int]Test),
 		benchmarks:  make(map[int]Benchmark),
-		buildErrors: make(map[int]BuildError),
+		buildErrors: make(map[int]Error),
+		runErrors:   make(map[int]Error),
 		nextId:      1,
 		packageName: packageName,
 	}
@@ -79,7 +81,7 @@ func (b *ReportBuilder) Benchmark(name string, iterations int64, nsPerOp, mbPerS
 }
 
 func (b *ReportBuilder) CreateBuildError(packageName string) {
-	b.buildErrors[b.newId()] = BuildError{Name: packageName}
+	b.buildErrors[b.newId()] = Error{Name: packageName}
 }
 
 func (b *ReportBuilder) CreatePackage(name string, duration time.Duration, data string) {
@@ -91,14 +93,32 @@ func (b *ReportBuilder) CreatePackage(name string, duration time.Duration, data 
 			if len(b.tests) > 0 || len(b.benchmarks) > 0 {
 				panic("unexpected tests and/or benchmarks found in build error package")
 			}
+			buildErr.Duration = duration
 			buildErr.Cause = data
 			b.packages = append(b.packages, Package{
 				Name:       name,
 				BuildError: buildErr,
 			})
 			delete(b.buildErrors, id)
+			// TODO: reset state
 			return
 		}
+	}
+
+	// If we've collected output, but there were no tests or benchmarks then
+	// there was some other error.
+	if len(b.output) > 0 && len(b.tests) == 0 && len(b.benchmarks) == 0 {
+		b.packages = append(b.packages, Package{
+			Name:     name,
+			Duration: duration,
+			RunError: Error{
+				Name:   name,
+				Output: b.output,
+			},
+		})
+		b.output = nil
+		// TODO: reset state
+		return
 	}
 
 	// Collect tests and benchmarks for this package, maintaining insertion order.

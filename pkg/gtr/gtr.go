@@ -39,7 +39,8 @@ type Package struct {
 	Tests      []Test
 	Benchmarks []Benchmark
 
-	BuildError BuildError
+	BuildError Error
+	RunError   Error
 }
 
 type Test struct {
@@ -60,10 +61,11 @@ type Benchmark struct {
 	AllocsPerOp int64
 }
 
-type BuildError struct {
-	Name   string
-	Cause  string
-	Output []string
+type Error struct {
+	Name     string
+	Duration time.Duration
+	Cause    string
+	Output   []string
 }
 
 // FromEvents creates a Report from the given list of events.
@@ -111,8 +113,9 @@ func JUnit(report Report) junit.Testsuites {
 			}
 		}
 
-		// JUnit doesn't have a good way of dealing with build errors, so we
-		// create a single failing test that contains the build error details.
+		// JUnit doesn't have a good way of dealing with build or runtime
+		// errors that happen before a test has started, so we create a single
+		// failing test that contains the build error details.
 		if pkg.BuildError.Name != "" {
 			tc := junit.Testcase{
 				Classname: pkg.BuildError.Name,
@@ -121,6 +124,19 @@ func JUnit(report Report) junit.Testsuites {
 				Failure: &junit.Result{
 					Message: "Failed",
 					Data:    strings.Join(pkg.BuildError.Output, "\n"),
+				},
+			}
+			suite.AddTestcase(tc)
+		}
+
+		if pkg.RunError.Name != "" {
+			tc := junit.Testcase{
+				Classname: pkg.RunError.Name,
+				Name:      "Failure",
+				Time:      junit.FormatDuration(0),
+				Failure: &junit.Result{
+					Message: "Failed",
+					Data:    strings.Join(pkg.RunError.Output, "\n"),
 				},
 			}
 			suite.AddTestcase(tc)
