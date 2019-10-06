@@ -38,6 +38,8 @@ type Package struct {
 
 	Tests      []Test
 	Benchmarks []Benchmark
+
+	BuildError BuildError
 }
 
 type Test struct {
@@ -58,6 +60,12 @@ type Benchmark struct {
 	AllocsPerOp int64
 }
 
+type BuildError struct {
+	Name   string
+	Cause  string
+	Output []string
+}
+
 // FromEvents creates a Report from the given list of events.
 // TODO: make packageName optional option
 func FromEvents(events []Event, packageName string) Report {
@@ -72,9 +80,11 @@ func FromEvents(events []Event, packageName string) Report {
 			report.Benchmark(ev.Name, ev.Iterations, ev.NsPerOp, ev.MBPerSec, ev.BytesPerOp, ev.AllocsPerOp)
 		case "status": // ignore for now
 		case "summary":
-			report.CreatePackage(ev.Name, ev.Duration)
+			report.CreatePackage(ev.Name, ev.Duration, ev.Data)
 		case "coverage":
 			report.Coverage(ev.CovPct, ev.CovPackages)
+		case "build_output":
+			report.CreateBuildError(ev.Name)
 		case "output":
 			report.AppendOutput(ev.Data)
 		default:
@@ -99,6 +109,21 @@ func JUnit(report Report) junit.Testsuites {
 			if fields := strings.FieldsFunc(line, propFieldsFunc); len(fields) == 2 && propPrefixes[fields[0]] {
 				suite.AddProperty(fields[0], fields[1])
 			}
+		}
+
+		// JUnit doesn't have a good way of dealing with build errors, so we
+		// create a single failing test that contains the build error details.
+		if pkg.BuildError.Name != "" {
+			tc := junit.Testcase{
+				Classname: pkg.BuildError.Name,
+				Name:      pkg.BuildError.Cause,
+				Time:      junit.FormatDuration(0),
+				Failure: &junit.Result{
+					Message: "Failed",
+					Data:    strings.Join(pkg.BuildError.Output, "\n"),
+				},
+			}
+			suite.AddTestcase(tc)
 		}
 
 		for _, test := range pkg.Tests {

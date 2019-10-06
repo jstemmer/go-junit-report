@@ -54,6 +54,13 @@ func (p *parser) parseLine(line string) {
 		p.coverage(matches[1], matches[2])
 	} else if matches := regexBenchmark.FindStringSubmatch(line); len(matches) == 7 {
 		p.benchmark(matches[1], matches[2], matches[3], matches[4], matches[5], matches[6])
+	} else if strings.HasPrefix(line, "# ") {
+		fields := strings.Fields(strings.TrimPrefix(line, "# "))
+		if len(fields) == 1 || len(fields) == 2 {
+			p.buildOutput(fields[0])
+		} else {
+			p.output(line)
+		}
 	} else {
 		p.output(line)
 	}
@@ -122,6 +129,13 @@ func (p *parser) benchmark(name, iterations, nsPerOp, mbPerSec, bytesPerOp, allo
 		MBPerSec:    parseFloat(mbPerSec),
 		BytesPerOp:  parseInt(bytesPerOp),
 		AllocsPerOp: parseInt(allocsPerOp),
+	})
+}
+
+func (p *parser) buildOutput(packageName string) {
+	p.add(gtr.Event{
+		Type: "build_output",
+		Name: packageName,
 	})
 }
 

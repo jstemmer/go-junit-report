@@ -7,9 +7,10 @@ import (
 
 // ReportBuilder builds Reports.
 type ReportBuilder struct {
-	packages   []Package
-	tests      map[int]Test
-	benchmarks map[int]Benchmark
+	packages    []Package
+	tests       map[int]Test
+	benchmarks  map[int]Benchmark
+	buildErrors map[int]BuildError
 
 	// state
 	nextId   int // next free id
@@ -25,6 +26,7 @@ func NewReportBuilder(packageName string) *ReportBuilder {
 	return &ReportBuilder{
 		tests:       make(map[int]Test),
 		benchmarks:  make(map[int]Benchmark),
+		buildErrors: make(map[int]BuildError),
 		nextId:      1,
 		packageName: packageName,
 	}
@@ -76,7 +78,29 @@ func (b *ReportBuilder) Benchmark(name string, iterations int64, nsPerOp, mbPerS
 	}
 }
 
-func (b *ReportBuilder) CreatePackage(name string, duration time.Duration) {
+func (b *ReportBuilder) CreateBuildError(packageName string) {
+	b.buildErrors[b.newId()] = BuildError{Name: packageName}
+}
+
+func (b *ReportBuilder) CreatePackage(name string, duration time.Duration, data string) {
+	// Build errors are treated somewhat differently. Rather than having a
+	// single package with all build errors collected so far, we only care
+	// about the build errors for this particular package.
+	for id, buildErr := range b.buildErrors {
+		if buildErr.Name == name {
+			if len(b.tests) > 0 || len(b.benchmarks) > 0 {
+				panic("unexpected tests and/or benchmarks found in build error package")
+			}
+			buildErr.Cause = data
+			b.packages = append(b.packages, Package{
+				Name:       name,
+				BuildError: buildErr,
+			})
+			delete(b.buildErrors, id)
+			return
+		}
+	}
+
 	// Collect tests and benchmarks for this package, maintaining insertion order.
 	var tests []Test
 	var benchmarks []Benchmark
@@ -115,9 +139,20 @@ func (b *ReportBuilder) AppendOutput(line string) {
 		b.output = append(b.output, line)
 		return
 	}
-	t := b.tests[b.lastId]
-	t.Output = append(t.Output, line)
-	b.tests[b.lastId] = t
+
+	if t, ok := b.tests[b.lastId]; ok {
+		t.Output = append(t.Output, line)
+		b.tests[b.lastId] = t
+	} else if bm, ok := b.benchmarks[b.lastId]; ok {
+		bm.Output = append(bm.Output, line)
+		b.benchmarks[b.lastId] = bm
+	} else if be, ok := b.buildErrors[b.lastId]; ok {
+		be.Output = append(be.Output, line)
+		b.buildErrors[b.lastId] = be
+	} else {
+		fmt.Printf("DEBUG output else\n")
+		b.output = append(b.output, line)
+	}
 }
 
 func (b *ReportBuilder) findTest(name string) int {
