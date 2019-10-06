@@ -278,7 +278,7 @@ var testCases = []TestCase{
 		report: &parser.Report{
 			Packages: []parser.Package{
 				{
-					Name:     "github.com/dmitris/test-go-junit-report",
+					Name:     "package/name",
 					Duration: 440 * time.Millisecond,
 					Time:     440,
 					Tests: []*parser.Test{
