@@ -1591,6 +1591,12 @@ func testNewParser(input, reportFile, packageName string, t *testing.T) {
 		t.Fatal(err)
 	}
 
+	if *printEvents {
+		for _, event := range events {
+			t.Logf("Event: %+v", event)
+		}
+	}
+
 	actual := gtr.JUnit(gtr.FromEvents(events, packageName))
 
 	expectedXML, err := loadTestReport(reportFile, "")
