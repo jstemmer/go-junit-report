@@ -1609,10 +1609,31 @@ func testNewParser(input, reportFile, packageName string, t *testing.T) {
 		t.Fatal(err)
 	}
 
-	expected.XMLName.Local = ""
+	expected = modifyForBackwardsCompat(expected)
 	if diff := cmp.Diff(actual, expected); diff != "" {
 		t.Errorf("Unexpected report diff (-got, +want):\n%v", diff)
 	}
+}
+
+func modifyForBackwardsCompat(testsuites junit.Testsuites) junit.Testsuites {
+	testsuites.XMLName.Local = ""
+	for i, suite := range testsuites.Suites {
+		testsuites.Suites[i].Properties = dropProperty("go.version", suite.Properties)
+		for j := range suite.Testcases {
+			testsuites.Suites[i].Testcases[j].Classname = suite.Name
+		}
+	}
+	return testsuites
+}
+
+func dropProperty(name string, properties []junit.Property) []junit.Property {
+	var props []junit.Property
+	for _, prop := range properties {
+		if prop.Name != name {
+			props = append(props, prop)
+		}
+	}
+	return props
 }
 
 func toXML(testsuites junit.Testsuites) (string, error) {
