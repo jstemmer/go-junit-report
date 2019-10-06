@@ -1593,16 +1593,17 @@ func testNewParser(input, reportFile, packageName string, t *testing.T) {
 
 	actual := gtr.JUnit(gtr.FromEvents(events, packageName))
 
-	actual, err := toXML(gtr.JUnit(report))
+	expectedXML, err := loadTestReport(reportFile, "")
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	expected, err := loadTestReport(reportFile, "")
-	if err != nil {
+	var expected junit.Testsuites
+	if err := xml.Unmarshal([]byte(expectedXML), &expected); err != nil {
 		t.Fatal(err)
 	}
 
+	expected.XMLName.Local = ""
 	if diff := cmp.Diff(actual, expected); diff != "" {
 		t.Errorf("Unexpected report diff (-got, +want):\n%v", diff)
 	}
