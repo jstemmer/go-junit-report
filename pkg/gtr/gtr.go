@@ -86,9 +86,8 @@ func JUnit(report Report) junit.Testsuites {
 	var suites junit.Testsuites
 	for _, pkg := range report.Packages {
 		suite := junit.Testsuite{
-			Name:  pkg.Name,
-			Tests: len(pkg.Tests),
-			Time:  junit.FormatDuration(pkg.Duration),
+			Name: pkg.Name,
+			Time: junit.FormatDuration(pkg.Duration),
 		}
 
 		for _, line := range pkg.Output {
