@@ -113,11 +113,11 @@ func JUnit(report Report) junit.Testsuites {
 			if test.Result == Fail {
 				tc.Failure = &junit.Result{
 					Message: "Failed",
-					Data:    strings.Join(test.Output, "\n"),
+					Data:    formatOutput(test.Output),
 				}
 			} else if test.Result == Skip {
 				tc.Skipped = &junit.Result{
-					Message: strings.Join(test.Output, "\n"),
+					Message: formatOutput(test.Output),
 				}
 			}
 
@@ -148,6 +148,16 @@ func JUnit(report Report) junit.Testsuites {
 		suites.AddSuite(suite)
 	}
 	return suites
+}
+
+func formatOutput(output []string) string {
+	var lines []string
+	for _, line := range output {
+		line = strings.TrimPrefix(line, "    ")
+		line = strings.TrimPrefix(line, "\t")
+		lines = append(lines, line)
+	}
+	return strings.Join(lines, "\n")
 }
 
 func mergeBenchmarks(benchmarks []Benchmark) []Benchmark {

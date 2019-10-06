@@ -126,8 +126,6 @@ func (p *parser) benchmark(name, iterations, nsPerOp, mbPerSec, bytesPerOp, allo
 }
 
 func (p *parser) output(line string) {
-	line = strings.TrimPrefix(line, "    ")
-	line = strings.TrimPrefix(line, "\t")
 	p.add(gtr.Event{Type: "output", Data: line})
 }
 
