@@ -30,6 +30,13 @@ func NewReportBuilder(packageName string) *ReportBuilder {
 	}
 }
 
+func (b *ReportBuilder) newId() int {
+	id := b.nextId
+	b.lastId = id
+	b.nextId += 1
+	return id
+}
+
 func (b *ReportBuilder) flush() {
 	if len(b.tests) > 0 {
 		b.CreatePackage(b.packageName, 0)
@@ -42,11 +49,7 @@ func (b *ReportBuilder) Build() Report {
 }
 
 func (b *ReportBuilder) CreateTest(name string) {
-	id := b.nextId
-	b.lastId = id
-
-	b.nextId += 1
-	b.tests[id] = Test{Name: name}
+	b.tests[b.newId()] = Test{Name: name}
 }
 
 func (b *ReportBuilder) EndTest(name, result string, duration time.Duration) {
@@ -60,11 +63,7 @@ func (b *ReportBuilder) EndTest(name, result string, duration time.Duration) {
 }
 
 func (b *ReportBuilder) Benchmark(name string, iterations int64, nsPerOp, mbPerSec float64, bytesPerOp, allocsPerOp int64) {
-	id := b.nextId
-	b.lastId = id
-
-	b.nextId += 1
-	b.benchmarks[id] = Benchmark{
+	b.benchmarks[b.newId()] = Benchmark{
 		Name:        name,
 		Result:      Pass,
 		Iterations:  iterations,
@@ -76,10 +75,9 @@ func (b *ReportBuilder) Benchmark(name string, iterations int64, nsPerOp, mbPerS
 }
 
 func (b *ReportBuilder) CreatePackage(name string, duration time.Duration) {
+	// Collect tests and benchmarks for this package, maintaining insertion order.
 	var tests []Test
 	var benchmarks []Benchmark
-
-	// Iterate by id to maintain original test order
 	for id := 1; id < b.nextId; id++ {
 		if t, ok := b.tests[id]; ok {
 			tests = append(tests, t)
