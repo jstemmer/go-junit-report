@@ -88,10 +88,8 @@ func FromEvents(events []Event, packageName string) Report {
 func JUnit(report Report) junit.Testsuites {
 	var suites junit.Testsuites
 	for _, pkg := range report.Packages {
-		suite := junit.Testsuite{
-			Name: pkg.Name,
-			Time: junit.FormatDuration(pkg.Duration),
-		}
+		var duration time.Duration
+		suite := junit.Testsuite{Name: pkg.Name}
 
 		if pkg.Coverage > 0 {
 			suite.AddProperty("coverage.statements.pct", fmt.Sprintf("%.2f", pkg.Coverage))
@@ -104,11 +102,14 @@ func JUnit(report Report) junit.Testsuites {
 		}
 
 		for _, test := range pkg.Tests {
+			duration += test.Duration
+
 			tc := junit.Testcase{
 				Classname: pkg.Name,
 				Name:      test.Name,
 				Time:      junit.FormatDuration(test.Duration),
 			}
+
 			if test.Result == Fail {
 				tc.Failure = &junit.Result{
 					Message: "Failed",
@@ -119,6 +120,7 @@ func JUnit(report Report) junit.Testsuites {
 					Message: strings.Join(test.Output, "\n"),
 				}
 			}
+
 			suite.AddTestcase(tc)
 		}
 
@@ -128,14 +130,21 @@ func JUnit(report Report) junit.Testsuites {
 				Name:      bm.Name,
 				Time:      junit.FormatBenchmarkTime(time.Duration(bm.NsPerOp)),
 			}
+
 			if bm.Result == Fail {
 				tc.Failure = &junit.Result{
 					Message: "Failed",
 				}
 			}
+
 			suite.AddTestcase(tc)
 		}
 
+		if (pkg.Duration) == 0 {
+			suite.Time = junit.FormatDuration(duration)
+		} else {
+			suite.Time = junit.FormatDuration(pkg.Duration)
+		}
 		suites.AddSuite(suite)
 	}
 	return suites
