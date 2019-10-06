@@ -116,7 +116,7 @@ func JUnit(report Report) junit.Testsuites {
 				}
 			} else if test.Result == Skip {
 				tc.Skipped = &junit.Result{
-					Data: strings.Join(test.Output, "\n"),
+					Message: strings.Join(test.Output, "\n"),
 				}
 			}
 			suite.AddTestcase(tc)
