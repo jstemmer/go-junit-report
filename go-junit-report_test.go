@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/xml"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -12,6 +13,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/jstemmer/go-junit-report/v2/pkg/gtr"
+	"github.com/jstemmer/go-junit-report/v2/pkg/junit"
+	"github.com/jstemmer/go-junit-report/v2/pkg/parser/gotest"
+
+	"github.com/google/go-cmp/cmp"
 	"github.com/jstemmer/go-junit-report/formatter"
 	"github.com/jstemmer/go-junit-report/parser"
 )
@@ -1560,7 +1566,6 @@ var testCases = []TestCase{
 	},
 }
 
-/*
 func TestNewOutput(t *testing.T) {
 	matchRegex := compileMatch(t)
 	for _, testCase := range testCases {
@@ -1569,11 +1574,56 @@ func TestNewOutput(t *testing.T) {
 		}
 
 		t.Run(testCase.name, func(t *testing.T) {
-
+			testNewParser(testCase.name, testCase.reportName, t)
 		})
 	}
 }
-*/
+
+func testNewParser(input, reportFile string, t *testing.T) {
+	file, err := os.Open("testdata/" + input)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer file.Close()
+
+	events, err := gotest.Parse(file)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	report := gtr.FromEvents(events)
+
+	actual, err := toXML(gtr.JUnit(report))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected, err := loadTestReport(reportFile, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if diff := cmp.Diff(actual, expected); diff != "" {
+		t.Errorf("Unexpected report diff (-got, +want):\n%v", diff)
+	}
+}
+
+func toXML(testsuites junit.Testsuites) (string, error) {
+	var buf bytes.Buffer
+
+	fmt.Fprintf(&buf, xml.Header)
+
+	enc := xml.NewEncoder(&buf)
+	enc.Indent("", "\t")
+
+	if err := enc.Encode(testsuites); err != nil {
+		return "", err
+	}
+	if err := enc.Flush(); err != nil {
+		return "", err
+	}
+	return buf.String(), nil
+}
 
 func TestParser(t *testing.T) {
 	matchRegex := compileMatch(t)
