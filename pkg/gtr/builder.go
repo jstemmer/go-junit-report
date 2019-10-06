@@ -12,9 +12,10 @@ type ReportBuilder struct {
 	benchmarks map[int]Benchmark
 
 	// state
-	nextId int // next free id
-	lastId int // last test id // TODO: stack?
-	output []string
+	nextId   int // next free id
+	lastId   int // last test id // TODO: stack?
+	output   []string
+	coverage float64
 
 	// defaults
 	packageName string
@@ -91,16 +92,22 @@ func (b *ReportBuilder) CreatePackage(name string, duration time.Duration) {
 	b.packages = append(b.packages, Package{
 		Name:       name,
 		Duration:   duration,
+		Coverage:   b.coverage,
+		Output:     b.output,
 		Tests:      tests,
 		Benchmarks: benchmarks,
-		Output:     b.output,
 	})
 
-	b.tests = make(map[int]Test)
-	b.benchmarks = make(map[int]Benchmark)
-	b.output = nil
 	b.nextId = 1
 	b.lastId = 0
+	b.output = nil
+	b.coverage = 0
+	b.tests = make(map[int]Test)
+	b.benchmarks = make(map[int]Benchmark)
+}
+
+func (b *ReportBuilder) Coverage(pct float64, packages []string) {
+	b.coverage = pct
 }
 
 func (b *ReportBuilder) AppendOutput(line string) {

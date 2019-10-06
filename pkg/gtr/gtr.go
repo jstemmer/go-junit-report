@@ -73,6 +73,8 @@ func FromEvents(events []Event, packageName string) Report {
 		case "status": // ignore for now
 		case "summary":
 			report.CreatePackage(ev.Name, ev.Duration)
+		case "coverage":
+			report.Coverage(ev.CovPct, ev.CovPackages)
 		case "output":
 			report.AppendOutput(ev.Data)
 		default:
@@ -89,6 +91,10 @@ func JUnit(report Report) junit.Testsuites {
 		suite := junit.Testsuite{
 			Name: pkg.Name,
 			Time: junit.FormatDuration(pkg.Duration),
+		}
+
+		if pkg.Coverage > 0 {
+			suite.AddProperty("coverage.statements.pct", fmt.Sprintf("%.2f", pkg.Coverage))
 		}
 
 		for _, line := range pkg.Output {
