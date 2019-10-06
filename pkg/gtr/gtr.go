@@ -82,7 +82,7 @@ func FromEvents(events []Event, packageName string) Report {
 			report.Benchmark(ev.Name, ev.Iterations, ev.NsPerOp, ev.MBPerSec, ev.BytesPerOp, ev.AllocsPerOp)
 		case "status": // ignore for now
 		case "summary":
-			report.CreatePackage(ev.Name, ev.Duration, ev.Data)
+			report.CreatePackage(ev.Name, ev.Result, ev.Duration, ev.Data)
 		case "coverage":
 			report.Coverage(ev.CovPct, ev.CovPackages)
 		case "build_output":

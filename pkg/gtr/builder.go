@@ -45,7 +45,7 @@ func (b *ReportBuilder) flush() {
 	// Create package in case we have tests or benchmarks that didn't get a
 	// summary.
 	if len(b.tests) > 0 || len(b.benchmarks) > 0 {
-		b.CreatePackage(b.packageName, 0, "")
+		b.CreatePackage(b.packageName, "", 0, "")
 	}
 }
 
@@ -84,7 +84,7 @@ func (b *ReportBuilder) CreateBuildError(packageName string) {
 	b.buildErrors[b.newId()] = Error{Name: packageName}
 }
 
-func (b *ReportBuilder) CreatePackage(name string, duration time.Duration, data string) {
+func (b *ReportBuilder) CreatePackage(name, result string, duration time.Duration, data string) {
 	// Build errors are treated somewhat differently. Rather than having a
 	// single package with all build errors collected so far, we only care
 	// about the build errors for this particular package.
@@ -101,23 +101,28 @@ func (b *ReportBuilder) CreatePackage(name string, duration time.Duration, data 
 			})
 			delete(b.buildErrors, id)
 			// TODO: reset state
+			// TODO: buildErrors shouldn't reset/use nextId/lastId, they're more like a global cache
 			return
 		}
 	}
 
 	// If we've collected output, but there were no tests or benchmarks then
-	// there was some other error.
+	// either there were no tests, or there was some other non-build error.
 	if len(b.output) > 0 && len(b.tests) == 0 && len(b.benchmarks) == 0 {
-		b.packages = append(b.packages, Package{
+		pkg := Package{
 			Name:     name,
 			Duration: duration,
-			RunError: Error{
+		}
+		if parseResult(result) == Fail {
+			pkg.RunError = Error{
 				Name:   name,
 				Output: b.output,
-			},
-		})
-		b.output = nil
+			}
+		}
+		b.packages = append(b.packages, pkg)
+
 		// TODO: reset state
+		b.output = nil
 		return
 	}
 
