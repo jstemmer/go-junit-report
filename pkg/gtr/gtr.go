@@ -59,8 +59,9 @@ type Benchmark struct {
 }
 
 // FromEvents creates a Report from the given list of events.
-func FromEvents(events []Event) Report {
-	report := NewReportBuilder()
+// TODO: make packageName optional option
+func FromEvents(events []Event, packageName string) Report {
+	report := NewReportBuilder(packageName)
 	for _, ev := range events {
 		switch ev.Type {
 		case "run_test":

@@ -15,19 +15,23 @@ type ReportBuilder struct {
 	nextId int // next free id
 	lastId int // last test id // TODO: stack?
 	output []string
+
+	// defaults
+	packageName string
 }
 
-func NewReportBuilder() *ReportBuilder {
+func NewReportBuilder(packageName string) *ReportBuilder {
 	return &ReportBuilder{
-		tests:      make(map[int]Test),
-		benchmarks: make(map[int]Benchmark),
-		nextId:     1,
+		tests:       make(map[int]Test),
+		benchmarks:  make(map[int]Benchmark),
+		nextId:      1,
+		packageName: packageName,
 	}
 }
 
 func (b *ReportBuilder) flush() {
 	if len(b.tests) > 0 {
-		b.CreatePackage("unknown", 0)
+		b.CreatePackage(b.packageName, 0)
 	}
 }
 

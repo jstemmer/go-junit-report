@@ -1574,12 +1574,12 @@ func TestNewOutput(t *testing.T) {
 		}
 
 		t.Run(testCase.name, func(t *testing.T) {
-			testNewParser(testCase.name, testCase.reportName, t)
+			testNewParser(testCase.name, testCase.reportName, testCase.packageName, t)
 		})
 	}
 }
 
-func testNewParser(input, reportFile string, t *testing.T) {
+func testNewParser(input, reportFile, packageName string, t *testing.T) {
 	file, err := os.Open("testdata/" + input)
 	if err != nil {
 		t.Fatal(err)
@@ -1591,7 +1591,7 @@ func testNewParser(input, reportFile string, t *testing.T) {
 		t.Fatal(err)
 	}
 
-	report := gtr.FromEvents(events)
+	actual := gtr.JUnit(gtr.FromEvents(events, packageName))
 
 	actual, err := toXML(gtr.JUnit(report))
 	if err != nil {

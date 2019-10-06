@@ -53,7 +53,7 @@ func main() {
 			fmt.Printf("%02d: %#v\n", i, ev)
 		}
 	}
-	report := gtr.FromEvents(events)
+	report := gtr.FromEvents(events, *packageName)
 
 	if !*noXMLHeader {
 		fmt.Fprintf(os.Stdout, xml.Header)
