@@ -84,7 +84,8 @@ func FromEvents(events []Event, packageName string) Report {
 			report.EndTest(ev.Name, ev.Result, ev.Duration)
 		case "benchmark":
 			report.Benchmark(ev.Name, ev.Iterations, ev.NsPerOp, ev.MBPerSec, ev.BytesPerOp, ev.AllocsPerOp)
-		case "status": // ignore for now
+		case "status":
+			report.End()
 		case "summary":
 			report.CreatePackage(ev.Name, ev.Result, ev.Duration, ev.Data)
 		case "coverage":
@@ -198,6 +199,7 @@ func JUnit(report Report) junit.Testsuites {
 func formatOutput(output []string) string {
 	var lines []string
 	for _, line := range output {
+		// TODO: should this change depending on subtest level?
 		line = strings.TrimPrefix(line, "    ")
 		line = strings.TrimPrefix(line, "\t")
 		lines = append(lines, line)

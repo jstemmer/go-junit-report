@@ -76,6 +76,10 @@ func (b *ReportBuilder) EndTest(name, result string, duration time.Duration) {
 	b.tests[id] = t
 }
 
+func (b *ReportBuilder) End() {
+	b.lastId = 0
+}
+
 func (b *ReportBuilder) Benchmark(name string, iterations int64, nsPerOp, mbPerSec float64, bytesPerOp, allocsPerOp int64) {
 	b.benchmarks[b.newId()] = Benchmark{
 		Name:        name,
