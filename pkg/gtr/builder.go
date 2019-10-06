@@ -58,6 +58,14 @@ func (b *ReportBuilder) CreateTest(name string) {
 	b.tests[b.newId()] = Test{Name: name}
 }
 
+func (b *ReportBuilder) PauseTest(name string) {
+	b.lastId = 0
+}
+
+func (b *ReportBuilder) ContinueTest(name string) {
+	b.lastId = b.findTest(name)
+}
+
 func (b *ReportBuilder) EndTest(name, result string, duration time.Duration) {
 	id := b.findTest(name)
 	b.lastId = id

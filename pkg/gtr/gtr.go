@@ -76,6 +76,10 @@ func FromEvents(events []Event, packageName string) Report {
 		switch ev.Type {
 		case "run_test":
 			report.CreateTest(ev.Name)
+		case "pause_test":
+			report.PauseTest(ev.Name)
+		case "cont_test":
+			report.ContinueTest(ev.Name)
 		case "end_test":
 			report.EndTest(ev.Name, ev.Result, ev.Duration)
 		case "benchmark":
