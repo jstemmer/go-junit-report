@@ -38,8 +38,10 @@ func (b *ReportBuilder) newId() int {
 }
 
 func (b *ReportBuilder) flush() {
-	if len(b.tests) > 0 {
-		b.CreatePackage(b.packageName, 0)
+	// Create package in case we have tests or benchmarks that didn't get a
+	// summary.
+	if len(b.tests) > 0 || len(b.benchmarks) > 0 {
+		b.CreatePackage(b.packageName, 0, "")
 	}
 }
 
