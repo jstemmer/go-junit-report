@@ -1560,13 +1560,27 @@ var testCases = []TestCase{
 	},
 }
 
+/*
+func TestNewOutput(t *testing.T) {
+	matchRegex := compileMatch(t)
+	for _, testCase := range testCases {
+		if !matchRegex.MatchString(testCase.name) {
+			continue
+		}
+
+		t.Run(testCase.name, func(t *testing.T) {
+
+		})
+	}
+}
+*/
+
 func TestParser(t *testing.T) {
 	matchRegex := compileMatch(t)
 	for _, testCase := range testCases {
 		if !matchRegex.MatchString(testCase.name) {
 			continue
 		}
-		t.Logf("Test %s", testCase.name)
 
 		file, err := os.Open("testdata/" + testCase.name)
 		if err != nil {
