@@ -10,31 +10,6 @@ import (
 	"github.com/jstemmer/go-junit-report/v2/pkg/junit"
 )
 
-type Result int
-
-const (
-	// TODO: move these to event and don't make the all-caps
-	UNKNOWN Result = iota
-	PASS
-	FAIL
-	SKIP
-)
-
-func (r Result) String() string {
-	switch r {
-	case UNKNOWN:
-		return "UNKNOWN"
-	case PASS:
-		return "PASS"
-	case FAIL:
-		return "FAIL"
-	case SKIP:
-		return "SKIP"
-	default:
-		panic("invalid result")
-	}
-}
-
 type Report struct {
 	Packages []Package
 }
@@ -42,7 +17,7 @@ type Report struct {
 func (r *Report) HasFailures() bool {
 	for _, pkg := range r.Packages {
 		for _, t := range pkg.Tests {
-			if t.Result == FAIL {
+			if t.Result == Fail {
 				return true
 			}
 		}
@@ -103,12 +78,12 @@ func JUnit(report Report) junit.Testsuites {
 				Name:      test.Name,
 				Time:      junit.FormatDuration(test.Duration),
 			}
-			if test.Result == FAIL {
+			if test.Result == Fail {
 				tc.Failure = &junit.Result{
 					Message: "Failed",
 					Data:    strings.Join(test.Output, "\n"),
 				}
-			} else if test.Result == SKIP {
+			} else if test.Result == Skip {
 				tc.Skipped = &junit.Result{
 					Data: strings.Join(test.Output, "\n"),
 				}

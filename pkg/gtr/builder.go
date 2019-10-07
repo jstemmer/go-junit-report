@@ -96,13 +96,13 @@ func (b *ReportBuilder) findTest(name string) int {
 func parseResult(r string) Result {
 	switch r {
 	case "PASS":
-		return PASS
+		return Pass
 	case "FAIL":
-		return FAIL
+		return Fail
 	case "SKIP":
-		return SKIP
+		return Skip
 	default:
 		fmt.Printf("unknown result: %q\n", r)
-		return UNKNOWN
+		return Unknown
 	}
 }
