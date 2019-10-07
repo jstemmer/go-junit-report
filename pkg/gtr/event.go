@@ -43,4 +43,10 @@ type Event struct {
 	// Code coverage
 	CovPct      float64
 	CovPackages []string
+
+	// Benchmarks
+	Iterations  int64
+	NsPerOp     int64
+	BytesPerOp  int64
+	AllocsPerOp int64
 }

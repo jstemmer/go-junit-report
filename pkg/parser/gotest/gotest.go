@@ -14,7 +14,8 @@ import (
 )
 
 var (
-	regexBenchmark = regexp.MustCompile(`^(Benchmark[^\s]+)\s(\d+|\d+\.\d+)\s((?:[^\s]+\s[^\s]+)+)`)
+	// regexBenchmark captures 3-5 groups: benchmark name, number of times ran, ns/op (with or without decimal), B/op (optional), and allocs/op (optional).
+	regexBenchmark = regexp.MustCompile(`^(Benchmark[^ -]+)(?:-\d+\s+|\s+)(\d+)\s+(\d+|\d+\.\d+)\sns\/op(?:\s+(\d+)\sB\/op)?(?:\s+(\d+)\\sallocs/op)?`)
 	regexCoverage  = regexp.MustCompile(`^coverage:\s+(\d+|\d+\.\d+)%\s+of\s+statements(?:\sin\s(.+))?$`)
 	regexEndTest   = regexp.MustCompile(`((?:    )*)--- (PASS|FAIL|SKIP): ([^ ]+) \((\d+\.\d+)(?: seconds|s)\)`)
 	regexStatus    = regexp.MustCompile(`^(PASS|FAIL|SKIP)$`)
@@ -29,11 +30,7 @@ func Parse(r io.Reader) ([]gtr.Event, error) {
 	for s.Scan() {
 		p.parseLine(s.Text())
 	}
-	if s.Err() != nil {
-		return nil, s.Err()
-	}
-
-	return p.events, nil
+	return p.events, s.Err()
 }
 
 type parser struct {
@@ -55,10 +52,8 @@ func (p *parser) parseLine(line string) {
 		p.summary(matches[1], matches[2], matches[3], matches[4], matches[5], matches[6])
 	} else if matches := regexCoverage.FindStringSubmatch(line); len(matches) == 3 {
 		p.coverage(matches[1], matches[2])
-	} else if matches := regexBenchmark.FindStringSubmatch(line); len(matches) == 4 {
-		fields := strings.Fields(matches[3])
-		//p.benchmark(matches[1], matches[2], fields)
-		p.benchmark(fields)
+	} else if matches := regexBenchmark.FindStringSubmatch(line); len(matches) == 6 {
+		p.benchmark(matches[1], matches[2], matches[3], matches[4], matches[5])
 	} else {
 		p.output(line)
 	}
@@ -118,10 +113,14 @@ func (p *parser) coverage(percent, packages string) {
 	})
 }
 
-func (p *parser) benchmark(fields []string) {
+func (p *parser) benchmark(name, iterations, timePerOp, bytesPerOp, allocsPerOp string) {
 	p.add(gtr.Event{
-		Type: "benchmark",
-		Name: fields[0],
+		Type:        "benchmark",
+		Name:        name,
+		Iterations:  parseInt(iterations),
+		NsPerOp:     parseInt(timePerOp),
+		BytesPerOp:  parseInt(bytesPerOp),
+		AllocsPerOp: parseInt(allocsPerOp),
 	})
 }
 
@@ -152,6 +151,12 @@ func parsePackages(pkgList string) []string {
 		return nil
 	}
 	return strings.Split(pkgList, ", ")
+}
+
+func parseInt(s string) int64 {
+	// ignore error
+	n, _ := strconv.ParseInt(s, 10, 64)
+	return n
 }
 
 func stripIndent(line string) (string, int) {

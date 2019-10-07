@@ -1,8 +1,10 @@
 package gotest
 
 import (
+	"flag"
 	"os"
 	"path/filepath"
+	"regexp"
 	"testing"
 	"time"
 
@@ -12,6 +14,8 @@ import (
 )
 
 const testdataRoot = "../../../testdata/"
+
+var matchTest = flag.String("match", "", "only test testdata matching this pattern")
 
 var tests = []struct {
 	in       string
@@ -328,23 +332,116 @@ var tests = []struct {
 			{Type: "status", Result: "PASS"},
 			{Type: "summary", Result: "ok", Name: "package/one", Data: "(cached)"},
 		}},
-	{"22-whitespace",
-		[]gtr.Event{}},
+	{"22-bench",
+		[]gtr.Event{
+			{Type: "output", Data: "goos: darwin"},
+			{Type: "output", Data: "goarch: amd64"},
+			{Type: "output", Data: "pkg: code.internal/state"},
+			{Type: "benchmark", Name: "BenchmarkParse", Iterations: 2000000, NsPerOp: 604},
+			{Type: "benchmark", Name: "BenchmarkReadingList", Iterations: 1000000, NsPerOp: 1425},
+			{Type: "status", Result: "PASS"},
+			{Type: "summary", Result: "ok", Name: "package/basic", Duration: 3212 * time.Millisecond},
+		}},
+	{"23-benchmem", []gtr.Event{}},
+	{"24-benchtests", []gtr.Event{}},
+	{"25-benchcount", []gtr.Event{}},
+	{"26-testbenchmultiple", []gtr.Event{}},
+	{"27-benchdecimal", []gtr.Event{}},
+	{"28-bench-1cpu", []gtr.Event{}},
+	{"29-bench-16cpu", []gtr.Event{}},
+	{"30-stdout", []gtr.Event{}},
+	{"31-syntax-error-test-binary", []gtr.Event{}},
+	{"32-failed-summary", []gtr.Event{}},
+	{"130-bench-mb", []gtr.Event{}},
+	{"131-whitespace",
+		[]gtr.Event{
+			{Type: "run_test", Name: "TestFlat"},
+			{Type: "output", Data: "printf 1"},
+			{Type: "output", Data: "printf 2"},
+			{Type: "end_test", Name: "TestFlat", Result: "PASS"},
+			{Type: "output", Data: "\twhitespace_test.go:9: log 1"},
+			{Type: "output", Data: "\twhitespace_test.go:10: log 2"},
+			{Type: "run_test", Name: "TestWithSpace"},
+			{Type: "output", Data: "no-space"},
+			{Type: "output", Data: " one-space"},
+			{Type: "output", Data: "  two-space"},
+			{Type: "output", Data: "    four-space"},
+			{Type: "output", Data: "        eight-space"},
+			{Type: "output", Data: "no-space"},
+			{Type: "end_test", Name: "TestWithSpace", Result: "PASS"},
+			{Type: "output", Data: "\twhitespace_test.go:16: no-space"},
+			{Type: "output", Data: "\twhitespace_test.go:17:  one-space"},
+			{Type: "output", Data: "\twhitespace_test.go:18:   two-space"},
+			{Type: "output", Data: "\twhitespace_test.go:19:     four-space"},
+			{Type: "output", Data: "\twhitespace_test.go:20:         eight-space"},
+			{Type: "output", Data: "\twhitespace_test.go:21: no-space"},
+			{Type: "run_test", Name: "TestWithTab"},
+			{Type: "output", Data: "no-tab"},
+			{Type: "output", Data: "\tone-tab"},
+			{Type: "output", Data: "\ttwo-tab"},
+			{Type: "end_test", Name: "TestWithTab", Result: "PASS"},
+			{Type: "output", Data: "\twhitespace_test.go:31: no-tab"},
+			{Type: "output", Data: "\twhitespace_test.go:32: \tone-tab"},
+			{Type: "output", Data: "\twhitespace_test.go:33: \t\ttwo-tab"},
+			{Type: "run_test", Name: "TestWithNewlinesFlat"},
+			{Type: "output", Data: "no-newline"},
+			{Type: "output", Data: "one-newline"},
+			{Type: "output", Data: "one-newline"},
+			{Type: "output", Data: "two-newlines"},
+			{Type: "output", Data: "two-newlines"},
+			{Type: "output", Data: "two-newlines"},
+			{Type: "end_test", Name: "TestWithNewlinesFlat", Result: "PASS"},
+			{Type: "output", Data: "        whitespace_test.go:40: no-newline"},
+			{Type: "output", Data: "        whitespace_test.go:41: one-newline"},
+			{Type: "output", Data: "                one-newline"},
+			{Type: "output", Data: "        whitespace_test.go:42: two-newlines"},
+			{Type: "output", Data: "                two-newlines"},
+			{Type: "output", Data: "                two-newlines"},
+			{Type: "run_test", Name: "TestSubTests"},
+			{Type: "run_test", Name: "TestSubTests/TestFlat"},
+			{Type: "output", Data: "printf 1"},
+			{Type: "output", Data: "printf 2"},
+			{Type: "run_test", Name: "TestSubTests/TestWithSpace"},
+			{Type: "output", Data: "no-space"},
+			{Type: "output", Data: " one-space"},
+			{Type: "output", Data: "  two-space"},
+			{Type: "output", Data: "    four-space"},
+			{Type: "output", Data: "        eight-space"},
+			{Type: "output", Data: "no-space"},
+			{Type: "run_test", Name: "TestSubTests/TestWithTab"},
+			{Type: "output", Data: "no-tab"},
+			{Type: "output", Data: "        one-tab"},
+			{Type: "output", Data: "                two-tab"},
+			{Type: "run_test", Name: "TestSubTests/TestWithNewlinesFlat"},
+			{Type: "output", Data: "no-newline"},
+			{Type: "output", Data: "one-newline"},
+			{Type: "output", Data: "one-newline"},
+			{Type: "output", Data: "two-newlines"},
+			{Type: "output", Data: "two-newlines"},
+			{Type: "output", Data: "two-newlines"},
+			{Type: "end_test", Name: "TestSubTests", Result: "PASS"},
+			{Type: "end_test", Name: "TestSubTests/TestFlat", Result: "PASS", Indent: 1},
+			{Type: "output", Data: "        whitespace_test.go:9: log 1"},
+			{Type: "output", Data: "        whitespace_test.go:10: log 2"},
+			{Type: "end_test", Name: "TestSubTests/TestWithSpace", Result: "PASS", Indent: 1},
+			{Type: "output", Data: "        whitespace_test.go:16: no-space"},
+			{Type: "output", Data: "        whitespace_test.go:17:  one-space"},
+		}},
 }
 
 func TestParse(t *testing.T) {
+	matchRegex := compileMatch(t)
 	for _, test := range tests {
 		t.Run(test.in, func(t *testing.T) {
+			if !matchRegex.MatchString(test.in) || len(test.expected) == 0 {
+				t.SkipNow()
+			}
 			testParse(t, test.in, test.expected)
 		})
 	}
 }
 
 func testParse(t *testing.T, name string, expected []gtr.Event) {
-	if len(expected) == 0 {
-		t.SkipNow()
-		return
-	}
 	f, err := os.Open(filepath.Join(testdataRoot, name+".txt"))
 	if err != nil {
 		t.Errorf("error reading %s: %v", name, err)
@@ -361,4 +458,12 @@ func testParse(t *testing.T, name string, expected []gtr.Event) {
 	if diff := cmp.Diff(actual, expected); diff != "" {
 		t.Errorf("Parse %s returned unexpected events, diff (-got, +want):\n%v", name, diff)
 	}
+}
+
+func compileMatch(t *testing.T) *regexp.Regexp {
+	rx, err := regexp.Compile(*matchTest)
+	if err != nil {
+		t.Fatalf("Error compiling -match flag %q: %v", *matchTest, err)
+	}
+	return rx
 }
