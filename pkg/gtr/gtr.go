@@ -47,6 +47,7 @@ type Test struct {
 	Name     string
 	Duration time.Duration
 	Result   Result
+	Level    int
 	Output   []string
 }
 
@@ -81,7 +82,7 @@ func FromEvents(events []Event, packageName string) Report {
 		case "cont_test":
 			report.ContinueTest(ev.Name)
 		case "end_test":
-			report.EndTest(ev.Name, ev.Result, ev.Duration)
+			report.EndTest(ev.Name, ev.Result, ev.Duration, ev.Indent)
 		case "benchmark":
 			report.Benchmark(ev.Name, ev.Iterations, ev.NsPerOp, ev.MBPerSec, ev.BytesPerOp, ev.AllocsPerOp)
 		case "status":
@@ -130,11 +131,11 @@ func JUnit(report Report) junit.Testsuites {
 			if test.Result == Fail {
 				tc.Failure = &junit.Result{
 					Message: "Failed",
-					Data:    formatOutput(test.Output),
+					Data:    formatOutput(test.Output, test.Level),
 				}
 			} else if test.Result == Skip {
 				tc.Skipped = &junit.Result{
-					Message: formatOutput(test.Output),
+					Message: formatOutput(test.Output, test.Level),
 				}
 			}
 
@@ -196,15 +197,28 @@ func JUnit(report Report) junit.Testsuites {
 	return suites
 }
 
-func formatOutput(output []string) string {
+func formatOutput(output []string, level int) string {
 	var lines []string
 	for _, line := range output {
-		// TODO: should this change depending on subtest level?
-		line = strings.TrimPrefix(line, "    ")
-		line = strings.TrimPrefix(line, "\t")
-		lines = append(lines, line)
+		lines = append(lines, trimOutputPrefix(line, level))
 	}
 	return strings.Join(lines, "\n")
+}
+
+func trimOutputPrefix(line string, level int) string {
+	// We only want to trim the whitespace prefix if it was part of the test
+	// output. Test output is usually prefixed by a series of 4-space indents,
+	// so we'll check for that to decide whether this output was likely to be
+	// from a test.
+	prefixLen := strings.IndexFunc(line, func(r rune) bool { return r != ' ' })
+	if prefixLen%4 == 0 {
+		// Use the subtest level to trim a consistenly sized prefix from the
+		// output lines.
+		for i := 0; i <= level; i++ {
+			line = strings.TrimPrefix(line, "    ")
+		}
+	}
+	return strings.TrimPrefix(line, "\t")
 }
 
 func mergeBenchmarks(benchmarks []Benchmark) []Benchmark {

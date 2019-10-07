@@ -67,13 +67,14 @@ func (b *ReportBuilder) ContinueTest(name string) {
 	b.lastId = b.findTest(name)
 }
 
-func (b *ReportBuilder) EndTest(name, result string, duration time.Duration) {
+func (b *ReportBuilder) EndTest(name, result string, duration time.Duration, level int) {
 	id := b.findTest(name)
 	b.lastId = id
 
 	t := b.tests[id]
 	t.Result = parseResult(result)
 	t.Duration = duration
+	t.Level = level
 	b.tests[id] = t
 }
 
@@ -244,7 +245,6 @@ func parseResult(r string) Result {
 	case "SKIP":
 		return Skip
 	default:
-		fmt.Printf("unknown result: %q\n", r)
 		return Unknown
 	}
 }
