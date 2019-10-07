@@ -1599,6 +1599,8 @@ func testNewParser(input, reportFile, packageName string, t *testing.T) {
 	}
 
 	actual := gtr.JUnit(gtr.FromEvents(events, packageName))
+	// Remove any new properties for backwards compatibility
+	actual = dropNewProperties(actual)
 
 	expectedXML, err := loadTestReport(reportFile, "")
 	if err != nil {
@@ -1628,6 +1630,17 @@ func modifyForBackwardsCompat(testsuites junit.Testsuites) junit.Testsuites {
 		for j := range suite.Testcases {
 			testsuites.Suites[i].Testcases[j].Classname = suite.Name
 		}
+	}
+	return testsuites
+}
+
+func dropNewProperties(testsuites junit.Testsuites) junit.Testsuites {
+	for i, suite := range testsuites.Suites {
+		ps := suite.Properties
+		ps = dropProperty("goos", ps)
+		ps = dropProperty("goarch", ps)
+		ps = dropProperty("pkg", ps)
+		testsuites.Suites[i].Properties = ps
 	}
 	return testsuites
 }
