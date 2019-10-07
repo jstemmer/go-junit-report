@@ -7,8 +7,9 @@ import (
 
 // ReportBuilder builds Reports.
 type ReportBuilder struct {
-	packages []Package
-	tests    map[int]Test
+	packages   []Package
+	tests      map[int]Test
+	benchmarks map[int]Benchmark
 
 	// state
 	nextId int // next free id
@@ -18,8 +19,9 @@ type ReportBuilder struct {
 
 func NewReportBuilder() *ReportBuilder {
 	return &ReportBuilder{
-		tests:  make(map[int]Test),
-		nextId: 1,
+		tests:      make(map[int]Test),
+		benchmarks: make(map[int]Benchmark),
+		nextId:     1,
 	}
 }
 
@@ -52,19 +54,46 @@ func (b *ReportBuilder) EndTest(name, result string, duration time.Duration) {
 	b.tests[id] = t
 }
 
+func (b *ReportBuilder) Benchmark(name string, iterations int64, nsPerOp, mbPerSec float64, bytesPerOp, allocsPerOp int64) {
+	id := b.nextId
+	b.lastId = id
+
+	b.nextId += 1
+	b.benchmarks[id] = Benchmark{
+		Name:        name,
+		Result:      Pass,
+		Iterations:  iterations,
+		NsPerOp:     nsPerOp,
+		MBPerSec:    mbPerSec,
+		BytesPerOp:  bytesPerOp,
+		AllocsPerOp: allocsPerOp,
+	}
+}
+
 func (b *ReportBuilder) CreatePackage(name string, duration time.Duration) {
 	var tests []Test
+	var benchmarks []Benchmark
+
+	// Iterate by id to maintain original test order
 	for id := 1; id < b.nextId; id++ {
-		tests = append(tests, b.tests[id])
+		if t, ok := b.tests[id]; ok {
+			tests = append(tests, t)
+		}
+		if bm, ok := b.benchmarks[id]; ok {
+			benchmarks = append(benchmarks, bm)
+		}
 	}
+
 	b.packages = append(b.packages, Package{
-		Name:     name,
-		Duration: duration,
-		Tests:    tests,
-		Output:   b.output,
+		Name:       name,
+		Duration:   duration,
+		Tests:      tests,
+		Benchmarks: benchmarks,
+		Output:     b.output,
 	})
 
 	b.tests = make(map[int]Test)
+	b.benchmarks = make(map[int]Benchmark)
 	b.output = nil
 	b.nextId = 1
 	b.lastId = 0
@@ -87,6 +116,19 @@ func (b *ReportBuilder) findTest(name string) int {
 	}
 	for id := len(b.tests); id >= 0; id-- {
 		if b.tests[id].Name == name {
+			return id
+		}
+	}
+	return -1
+}
+
+func (b *ReportBuilder) findBenchmark(name string) int {
+	// check if this benchmark was lastId
+	if bm, ok := b.benchmarks[b.lastId]; ok && bm.Name == name {
+		return b.lastId
+	}
+	for id := len(b.benchmarks); id >= 0; id-- {
+		if b.benchmarks[id].Name == name {
 			return id
 		}
 	}

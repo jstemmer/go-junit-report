@@ -21,6 +21,11 @@ func TestFromEvents(t *testing.T) {
 		{Type: "end_test", Name: "TestOne", Result: "FAIL", Duration: 1 * time.Millisecond},
 		{Type: "status", Result: "FAIL"},
 		{Type: "summary", Result: "FAIL", Name: "package/name2", Duration: 1 * time.Millisecond},
+		{Type: "output", Data: "goarch: amd64"},
+		{Type: "benchmark", Name: "BenchmarkOne", NsPerOp: 100},
+		{Type: "benchmark", Name: "BenchmarkOne", NsPerOp: 300},
+		{Type: "status", Result: "PASS"},
+		{Type: "summary", Result: "ok", Name: "package/name3", Duration: 1234 * time.Millisecond},
 	}
 	expected := Report{
 		Packages: []Package{
@@ -31,7 +36,7 @@ func TestFromEvents(t *testing.T) {
 					{
 						Name:     "TestOne",
 						Duration: 1 * time.Millisecond,
-						Result:   PASS,
+						Result:   Pass,
 						Output: []string{
 							"\tHello", // TODO: strip tabs?
 						},
@@ -39,7 +44,7 @@ func TestFromEvents(t *testing.T) {
 					{
 						Name:     "TestSkip",
 						Duration: 1 * time.Millisecond,
-						Result:   SKIP,
+						Result:   Skip,
 					},
 				},
 			},
@@ -50,12 +55,29 @@ func TestFromEvents(t *testing.T) {
 					{
 						Name:     "TestOne",
 						Duration: 1 * time.Millisecond,
-						Result:   FAIL,
+						Result:   Fail,
 						Output: []string{
 							"\tfile_test.go:10: error",
 						},
 					},
 				},
+			},
+			{
+				Name:     "package/name3",
+				Duration: 1234 * time.Millisecond,
+				Benchmarks: []Benchmark{
+					{
+						Name:    "BenchmarkOne",
+						Result:  Pass,
+						NsPerOp: 100,
+					},
+					{
+						Name:    "BenchmarkOne",
+						Result:  Pass,
+						NsPerOp: 300,
+					},
+				},
+				Output: []string{"goarch: amd64"},
 			},
 		},
 	}
