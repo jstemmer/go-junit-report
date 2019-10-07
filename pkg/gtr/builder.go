@@ -23,6 +23,7 @@ type ReportBuilder struct {
 	packageName string
 }
 
+// TODO: move gtr.FromEvents to ReportBuilder so we could have report builders for different parsers.
 func NewReportBuilder(packageName string) *ReportBuilder {
 	return &ReportBuilder{
 		tests:       make(map[int]Test),
@@ -97,6 +98,11 @@ func (b *ReportBuilder) CreateBuildError(packageName string) {
 }
 
 func (b *ReportBuilder) CreatePackage(name, result string, duration time.Duration, data string) {
+	pkg := Package{
+		Name:     name,
+		Duration: duration,
+	}
+
 	// Build errors are treated somewhat differently. Rather than having a
 	// single package with all build errors collected so far, we only care
 	// about the build errors for this particular package.
@@ -107,10 +113,9 @@ func (b *ReportBuilder) CreatePackage(name, result string, duration time.Duratio
 			}
 			buildErr.Duration = duration
 			buildErr.Cause = data
-			b.packages = append(b.packages, Package{
-				Name:       name,
-				BuildError: buildErr,
-			})
+			pkg.BuildError = buildErr
+			b.packages = append(b.packages, pkg)
+
 			delete(b.buildErrors, id)
 			// TODO: reset state
 			// TODO: buildErrors shouldn't reset/use nextId/lastId, they're more like a global cache
@@ -121,10 +126,6 @@ func (b *ReportBuilder) CreatePackage(name, result string, duration time.Duratio
 	// If we've collected output, but there were no tests or benchmarks then
 	// either there were no tests, or there was some other non-build error.
 	if len(b.output) > 0 && len(b.tests) == 0 && len(b.benchmarks) == 0 {
-		pkg := Package{
-			Name:     name,
-			Duration: duration,
-		}
 		if parseResult(result) == Fail {
 			pkg.RunError = Error{
 				Name:   name,
@@ -136,6 +137,16 @@ func (b *ReportBuilder) CreatePackage(name, result string, duration time.Duratio
 		// TODO: reset state
 		b.output = nil
 		return
+	}
+
+	// If the summary result says we failed, but there were no failing tests
+	// then something else must have failed.
+	if parseResult(result) == Fail && (len(b.tests) > 0 || len(b.benchmarks) > 0) && !b.containsFailingTest() {
+		pkg.RunError = Error{
+			Name:   name,
+			Output: b.output,
+		}
+		b.output = nil
 	}
 
 	// Collect tests and benchmarks for this package, maintaining insertion order.
@@ -150,14 +161,11 @@ func (b *ReportBuilder) CreatePackage(name, result string, duration time.Duratio
 		}
 	}
 
-	b.packages = append(b.packages, Package{
-		Name:       name,
-		Duration:   duration,
-		Coverage:   b.coverage,
-		Output:     b.output,
-		Tests:      tests,
-		Benchmarks: benchmarks,
-	})
+	pkg.Coverage = b.coverage
+	pkg.Output = b.output
+	pkg.Tests = tests
+	pkg.Benchmarks = benchmarks
+	b.packages = append(b.packages, pkg)
 
 	b.nextId = 1
 	b.lastId = 0
@@ -216,6 +224,15 @@ func (b *ReportBuilder) findBenchmark(name string) int {
 		}
 	}
 	return -1
+}
+
+func (b *ReportBuilder) containsFailingTest() bool {
+	for _, test := range b.tests {
+		if test.Result == Fail {
+			return true
+		}
+	}
+	return false
 }
 
 func parseResult(r string) Result {
