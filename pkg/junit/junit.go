@@ -82,8 +82,8 @@ type Testcase struct {
 	Classname string `xml:"classname,attr"`
 
 	// optional attributes
-	Time   string `xml:"time,attr"` // duration in seconds
-	Status string `xml:"status,attr"`
+	Time   string `xml:"time,attr,omitempty"` // duration in seconds
+	Status string `xml:"status,attr,omitempty"`
 
 	Skipped   *Result `xml:"skipped,omitempty"`
 	Error     *Result `xml:"error,omitempty"`
@@ -109,4 +109,10 @@ type Result struct {
 // duration.
 func FormatDuration(d time.Duration) string {
 	return fmt.Sprintf("%.3f", d.Seconds())
+}
+
+// FormatBenchmarkTime returns the JUnit string representation of the given
+// benchmark time.
+func FormatBenchmarkTime(d time.Duration) string {
+	return fmt.Sprintf("%.9f", d.Seconds())
 }
