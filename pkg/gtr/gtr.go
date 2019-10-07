@@ -118,35 +118,6 @@ func JUnit(report Report) junit.Testsuites {
 			}
 		}
 
-		// JUnit doesn't have a good way of dealing with build or runtime
-		// errors that happen before a test has started, so we create a single
-		// failing test that contains the build error details.
-		if pkg.BuildError.Name != "" {
-			tc := junit.Testcase{
-				Classname: pkg.BuildError.Name,
-				Name:      pkg.BuildError.Cause,
-				Time:      junit.FormatDuration(0),
-				Failure: &junit.Result{
-					Message: "Failed",
-					Data:    strings.Join(pkg.BuildError.Output, "\n"),
-				},
-			}
-			suite.AddTestcase(tc)
-		}
-
-		if pkg.RunError.Name != "" {
-			tc := junit.Testcase{
-				Classname: pkg.RunError.Name,
-				Name:      "Failure",
-				Time:      junit.FormatDuration(0),
-				Failure: &junit.Result{
-					Message: "Failed",
-					Data:    strings.Join(pkg.RunError.Output, "\n"),
-				},
-			}
-			suite.AddTestcase(tc)
-		}
-
 		for _, test := range pkg.Tests {
 			duration += test.Duration
 
@@ -183,6 +154,35 @@ func JUnit(report Report) junit.Testsuites {
 				}
 			}
 
+			suite.AddTestcase(tc)
+		}
+
+		// JUnit doesn't have a good way of dealing with build or runtime
+		// errors that happen before a test has started, so we create a single
+		// failing test that contains the build error details.
+		if pkg.BuildError.Name != "" {
+			tc := junit.Testcase{
+				Classname: pkg.BuildError.Name,
+				Name:      pkg.BuildError.Cause,
+				Time:      junit.FormatDuration(0),
+				Failure: &junit.Result{
+					Message: "Failed",
+					Data:    strings.Join(pkg.BuildError.Output, "\n"),
+				},
+			}
+			suite.AddTestcase(tc)
+		}
+
+		if pkg.RunError.Name != "" {
+			tc := junit.Testcase{
+				Classname: pkg.RunError.Name,
+				Name:      "Failure",
+				Time:      junit.FormatDuration(0),
+				Failure: &junit.Result{
+					Message: "Failed",
+					Data:    strings.Join(pkg.RunError.Output, "\n"),
+				},
+			}
 			suite.AddTestcase(tc)
 		}
 
