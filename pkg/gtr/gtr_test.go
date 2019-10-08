@@ -26,6 +26,9 @@ func TestFromEvents(t *testing.T) {
 		{Type: "benchmark", Name: "BenchmarkOne", NsPerOp: 300},
 		{Type: "status", Result: "PASS"},
 		{Type: "summary", Result: "ok", Name: "package/name3", Duration: 1234 * time.Millisecond},
+		{Type: "build_output", Name: "package/failing1"},
+		{Type: "output", Data: "error message"},
+		{Type: "summary", Result: "FAIL", Name: "package/failing1", Data: "[build failed]"},
 	}
 	expected := Report{
 		Packages: []Package{
@@ -79,10 +82,18 @@ func TestFromEvents(t *testing.T) {
 				},
 				Output: []string{"goarch: amd64"},
 			},
+			{
+				Name: "package/failing1",
+				BuildError: Error{
+					Name:   "package/failing1",
+					Cause:  "[build failed]",
+					Output: []string{"error message"},
+				},
+			},
 		},
 	}
 
-	actual := FromEvents(events)
+	actual := FromEvents(events, "")
 	if diff := cmp.Diff(actual, expected); diff != "" {
 		t.Errorf("FromEvents report incorrect, diff (-got, +want):\n%v", diff)
 	}
