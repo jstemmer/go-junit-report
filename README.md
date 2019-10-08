@@ -43,7 +43,7 @@ Create Pull Request. It can be merged by owner or administrator then.
 go test
 ```
 
-[travis-badge]: https://travis-ci.org/jstemmer/go-junit-report.svg
+[travis-badge]: https://travis-ci.org/jstemmer/go-junit-report.svg?branch=master
 [travis-link]: https://travis-ci.org/jstemmer/go-junit-report
 [report-badge]: https://goreportcard.com/badge/github.com/jstemmer/go-junit-report
 [report-link]: https://goreportcard.com/report/github.com/jstemmer/go-junit-report
