@@ -1,0 +1,4 @@
+{"Time":"2019-10-09T00:00:00.740642406+00:00","Action":"output","Package":"package/name/empty","Output":"testing: warning: no tests to run\n"}
+{"Time":"2019-10-09T00:00:00.740741069+00:00","Action":"output","Package":"package/name/empty","Output":"PASS\n"}
+{"Time":"2019-10-09T00:00:00.740776164+00:00","Action":"output","Package":"package/name/empty","Output":"ok  \tpackage/name/empty\t0.001s\n"}
+{"Time":"2019-10-09T00:00:00.74078812+00:00","Action":"pass","Package":"package/name/empty","Elapsed":0.001}

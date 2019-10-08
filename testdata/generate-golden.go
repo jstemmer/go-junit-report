@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/jstemmer/go-junit-report/v2/pkg/gtr"
 	"github.com/jstemmer/go-junit-report/v2/pkg/junit"
 	"github.com/jstemmer/go-junit-report/v2/pkg/parser/gotest"
 )
@@ -90,21 +91,35 @@ func createReportFromInput(inputFile, outputFile string, write bool) error {
 		defer f.Close()
 		out = f
 	}
-	return writeReport(in, out, fileSettings[inputFile])
-}
 
-func writeReport(in io.Reader, out io.Writer, settings Settings) error {
-	parser := gotest.New(
+	settings := fileSettings[inputFile]
+
+	options := []gotest.Option{
 		gotest.PackageName(settings.packageName),
 		gotest.TimestampFunc(func() time.Time {
 			return time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
 		}),
-	)
+	}
+
+	var parser Parser
+	if strings.HasSuffix(inputFile, ".gojson.txt") {
+		parser = gotest.NewJSON(options...)
+	} else {
+		parser = gotest.New(options...)
+	}
 
 	report, err := parser.Parse(in)
 	if err != nil {
 		return err
 	}
+	return writeReport(report, out, settings)
+}
+
+type Parser interface {
+	Parse(r io.Reader) (gtr.Report, error)
+}
+
+func writeReport(report gtr.Report, out io.Writer, settings Settings) error {
 	for i := range report.Packages {
 		report.Packages[i].SetProperty("go.version", "1.0")
 	}
@@ -124,6 +139,6 @@ func writeReport(in io.Reader, out io.Writer, settings Settings) error {
 	if err := enc.Flush(); err != nil {
 		return err
 	}
-	_, err = fmt.Fprintf(out, "\n")
+	_, err := fmt.Fprintf(out, "\n")
 	return err
 }

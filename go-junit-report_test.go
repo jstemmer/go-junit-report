@@ -72,12 +72,19 @@ func testRun(inputFile, reportFile string, config TestConfig, t *testing.T) {
 		t.Fatalf("error loading report file: %v", err)
 	}
 
-	parser := gotest.New(
+	options := []gotest.Option{
 		gotest.PackageName(config.packageName),
 		gotest.TimestampFunc(func() time.Time {
 			return time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
 		}),
-	)
+	}
+
+	var parser Parser
+	if strings.HasSuffix(inputFile, ".gojson.txt") {
+		parser = gotest.NewJSON(options...)
+	} else {
+		parser = gotest.New(options...)
+	}
 
 	report, err := parser.Parse(input)
 	if err != nil {

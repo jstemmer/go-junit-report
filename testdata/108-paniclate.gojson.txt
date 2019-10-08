@@ -1,0 +1,15 @@
+{"Time":"2019-10-09T00:00:00.660908821+00:00","Action":"run","Package":"package/name/paniclate","Test":"TestOne"}
+{"Time":"2019-10-09T00:00:00.660994505+00:00","Action":"output","Package":"package/name/paniclate","Test":"TestOne","Output":"=== RUN   TestOne\n"}
+{"Time":"2019-10-09T00:00:00.661001176+00:00","Action":"output","Package":"package/name/paniclate","Test":"TestOne","Output":"    main_test.go:13: ok\n"}
+{"Time":"2019-10-09T00:00:00.661007326+00:00","Action":"output","Package":"package/name/paniclate","Test":"TestOne","Output":"--- PASS: TestOne (0.00s)\n"}
+{"Time":"2019-10-09T00:00:00.661010216+00:00","Action":"pass","Package":"package/name/paniclate","Test":"TestOne","Elapsed":0}
+{"Time":"2019-10-09T00:00:00.661014007+00:00","Action":"output","Package":"package/name/paniclate","Output":"PASS\n"}
+{"Time":"2019-10-09T00:00:00.663185752+00:00","Action":"output","Package":"package/name/paniclate","Output":"panic: panic\n"}
+{"Time":"2019-10-09T00:00:00.663196708+00:00","Action":"output","Package":"package/name/paniclate","Output":"\n"}
+{"Time":"2019-10-09T00:00:00.663201293+00:00","Action":"output","Package":"package/name/paniclate","Output":"goroutine 1 [running]:\n"}
+{"Time":"2019-10-09T00:00:00.663206374+00:00","Action":"output","Package":"package/name/paniclate","Output":"package/name/paniclate.TestMain(...)\n"}
+{"Time":"2019-10-09T00:00:00.663209509+00:00","Action":"output","Package":"package/name/paniclate","Output":"\t/src/package/name/paniclate/main_test.go:9\n"}
+{"Time":"2019-10-09T00:00:00.663213452+00:00","Action":"output","Package":"package/name/paniclate","Output":"main.main()\n"}
+{"Time":"2019-10-09T00:00:00.663216003+00:00","Action":"output","Package":"package/name/paniclate","Output":"\t_testmain.go:49 +0x17f\n"}
+{"Time":"2019-10-09T00:00:00.66336185+00:00","Action":"output","Package":"package/name/paniclate","Output":"FAIL\tpackage/name/paniclate\t0.003s\n"}
+{"Time":"2019-10-09T00:00:00.663374091+00:00","Action":"fail","Package":"package/name/paniclate","Elapsed":0.003}

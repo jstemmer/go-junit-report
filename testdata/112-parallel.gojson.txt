@@ -1,0 +1,41 @@
+{"Time":"2019-10-09T00:00:00.357524357+00:00","Action":"run","Package":"package/name/parallel","Test":"TestP1"}
+{"Time":"2019-10-09T00:00:00.35763106+00:00","Action":"output","Package":"package/name/parallel","Test":"TestP1","Output":"=== RUN   TestP1\n"}
+{"Time":"2019-10-09T00:00:00.357639447+00:00","Action":"output","Package":"package/name/parallel","Test":"TestP1","Output":"=== PAUSE TestP1\n"}
+{"Time":"2019-10-09T00:00:00.357642993+00:00","Action":"pause","Package":"package/name/parallel","Test":"TestP1"}
+{"Time":"2019-10-09T00:00:00.357647811+00:00","Action":"run","Package":"package/name/parallel","Test":"TestP2"}
+{"Time":"2019-10-09T00:00:00.357650618+00:00","Action":"output","Package":"package/name/parallel","Test":"TestP2","Output":"=== RUN   TestP2\n"}
+{"Time":"2019-10-09T00:00:00.357653576+00:00","Action":"output","Package":"package/name/parallel","Test":"TestP2","Output":"=== PAUSE TestP2\n"}
+{"Time":"2019-10-09T00:00:00.35765612+00:00","Action":"pause","Package":"package/name/parallel","Test":"TestP2"}
+{"Time":"2019-10-09T00:00:00.357659179+00:00","Action":"run","Package":"package/name/parallel","Test":"TestP3"}
+{"Time":"2019-10-09T00:00:00.357661598+00:00","Action":"output","Package":"package/name/parallel","Test":"TestP3","Output":"=== RUN   TestP3\n"}
+{"Time":"2019-10-09T00:00:00.357664327+00:00","Action":"output","Package":"package/name/parallel","Test":"TestP3","Output":"=== PAUSE TestP3\n"}
+{"Time":"2019-10-09T00:00:00.357666658+00:00","Action":"pause","Package":"package/name/parallel","Test":"TestP3"}
+{"Time":"2019-10-09T00:00:00.357669385+00:00","Action":"cont","Package":"package/name/parallel","Test":"TestP1"}
+{"Time":"2019-10-09T00:00:00.357672779+00:00","Action":"output","Package":"package/name/parallel","Test":"TestP1","Output":"=== CONT  TestP1\n"}
+{"Time":"2019-10-09T00:00:00.357675573+00:00","Action":"cont","Package":"package/name/parallel","Test":"TestP3"}
+{"Time":"2019-10-09T00:00:00.357677968+00:00","Action":"output","Package":"package/name/parallel","Test":"TestP3","Output":"=== CONT  TestP3\n"}
+{"Time":"2019-10-09T00:00:00.357680531+00:00","Action":"cont","Package":"package/name/parallel","Test":"TestP2"}
+{"Time":"2019-10-09T00:00:00.357683223+00:00","Action":"output","Package":"package/name/parallel","Test":"TestP2","Output":"=== CONT  TestP2\n"}
+{"Time":"2019-10-09T00:00:00.357686021+00:00","Action":"output","Package":"package/name/parallel","Test":"TestP2","Output":"    pkg_test.go:19: t.Log(P2)\n"}
+{"Time":"2019-10-09T00:00:00.357688933+00:00","Action":"output","Package":"package/name/parallel","Test":"TestP2","Output":"fmt.Printf(P2)\n"}
+{"Time":"2019-10-09T00:00:00.357691543+00:00","Action":"output","Package":"package/name/parallel","Test":"TestP2","Output":"    pkg_test.go:23: P2 error\n"}
+{"Time":"2019-10-09T00:00:00.357695428+00:00","Action":"output","Package":"package/name/parallel","Test":"TestP2","Output":"--- FAIL: TestP2 (0.00s)\n"}
+{"Time":"2019-10-09T00:00:00.357698172+00:00","Action":"fail","Package":"package/name/parallel","Test":"TestP2","Elapsed":0}
+{"Time":"2019-10-09T00:00:00.357701575+00:00","Action":"cont","Package":"package/name/parallel","Test":"TestP3"}
+{"Time":"2019-10-09T00:00:00.35770407+00:00","Action":"output","Package":"package/name/parallel","Test":"TestP3","Output":"=== CONT  TestP3\n"}
+{"Time":"2019-10-09T00:00:00.357706546+00:00","Action":"output","Package":"package/name/parallel","Test":"TestP3","Output":"    pkg_test.go:28: t.Log(P3)\n"}
+{"Time":"2019-10-09T00:00:00.357709127+00:00","Action":"output","Package":"package/name/parallel","Test":"TestP3","Output":"fmt.Printf(P3)\n"}
+{"Time":"2019-10-09T00:00:00.357711692+00:00","Action":"output","Package":"package/name/parallel","Test":"TestP3","Output":"    pkg_test.go:32: P3 error\n"}
+{"Time":"2019-10-09T00:00:00.357714665+00:00","Action":"output","Package":"package/name/parallel","Test":"TestP3","Output":"--- FAIL: TestP3 (0.00s)\n"}
+{"Time":"2019-10-09T00:00:00.357717319+00:00","Action":"fail","Package":"package/name/parallel","Test":"TestP3","Elapsed":0}
+{"Time":"2019-10-09T00:00:00.357719718+00:00","Action":"cont","Package":"package/name/parallel","Test":"TestP1"}
+{"Time":"2019-10-09T00:00:00.357725608+00:00","Action":"output","Package":"package/name/parallel","Test":"TestP1","Output":"=== CONT  TestP1\n"}
+{"Time":"2019-10-09T00:00:00.357728586+00:00","Action":"output","Package":"package/name/parallel","Test":"TestP1","Output":"    pkg_test.go:10: t.Log(P1)\n"}
+{"Time":"2019-10-09T00:00:00.357731205+00:00","Action":"output","Package":"package/name/parallel","Test":"TestP1","Output":"fmt.Printf(P1)\n"}
+{"Time":"2019-10-09T00:00:00.357733751+00:00","Action":"output","Package":"package/name/parallel","Test":"TestP1","Output":"    pkg_test.go:14: P1 error\n"}
+{"Time":"2019-10-09T00:00:00.357736767+00:00","Action":"output","Package":"package/name/parallel","Test":"TestP1","Output":"--- FAIL: TestP1 (0.00s)\n"}
+{"Time":"2019-10-09T00:00:00.357739279+00:00","Action":"fail","Package":"package/name/parallel","Test":"TestP1","Elapsed":0}
+{"Time":"2019-10-09T00:00:00.357741786+00:00","Action":"output","Package":"package/name/parallel","Output":"FAIL\n"}
+{"Time":"2019-10-09T00:00:00.357761811+00:00","Action":"output","Package":"package/name/parallel","Output":"exit status 1\n"}
+{"Time":"2019-10-09T00:00:00.357766968+00:00","Action":"output","Package":"package/name/parallel","Output":"FAIL\tpackage/name/parallel\t0.001s\n"}
+{"Time":"2019-10-09T00:00:00.357770181+00:00","Action":"fail","Package":"package/name/parallel","Elapsed":0.001}

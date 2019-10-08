@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" errors="1">
+	<testsuite name="package/name/paniclate" tests="2" failures="0" errors="1" hostname="hostname" time="0.003" timestamp="2022-01-01T00:00:00Z">
+		<properties>
+			<property name="go.version" value="1.0"></property>
+		</properties>
+		<testcase name="TestOne" classname="package/name/paniclate" time="0.000"></testcase>
+		<testcase name="Failure" classname="package/name/paniclate" time="0.000">
+			<error message="Runtime error"><![CDATA[panic: panic
+
+goroutine 1 [running]:
+package/name/paniclate.TestMain(...)
+	/src/package/name/paniclate/main_test.go:9
+main.main()
+	_testmain.go:49 +0x17f]]></error>
+		</testcase>
+	</testsuite>
+</testsuites>

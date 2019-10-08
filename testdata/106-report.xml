@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="3" errors="1">
+	<testsuite name="package/name/main/ack" tests="1" failures="0" errors="0" hostname="hostname" time="0.000" timestamp="2022-01-01T00:00:00Z">
+		<properties>
+			<property name="go.version" value="1.0"></property>
+		</properties>
+		<testcase name="TestAck" classname="package/name/main/ack" time="0.000"></testcase>
+	</testsuite>
+	<testsuite name="package/name/main/ok" tests="1" failures="0" errors="0" hostname="hostname" time="0.000" timestamp="2022-01-01T00:00:00Z">
+		<properties>
+			<property name="go.version" value="1.0"></property>
+		</properties>
+		<testcase name="TestOk" classname="package/name/main/ok" time="0.000"></testcase>
+	</testsuite>
+	<testsuite name="package/name/main/fail" tests="1" failures="0" errors="1" hostname="hostname" time="0.001" timestamp="2022-01-01T00:00:00Z">
+		<properties>
+			<property name="go.version" value="1.0"></property>
+		</properties>
+		<testcase name="Failure" classname="package/name/main/fail" time="0.000">
+			<error message="Runtime error"><![CDATA[TestMain failed, returning early]]></error>
+		</testcase>
+	</testsuite>
+</testsuites>

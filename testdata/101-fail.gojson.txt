@@ -1,0 +1,16 @@
+{"Time":"2019-10-09T00:00:00.978937959+00:00","Action":"run","Package":"package/name/fail","Test":"TestOne"}
+{"Time":"2019-10-09T00:00:00.979041013+00:00","Action":"output","Package":"package/name/fail","Test":"TestOne","Output":"=== RUN   TestOne\n"}
+{"Time":"2019-10-09T00:00:00.979048927+00:00","Action":"output","Package":"package/name/fail","Test":"TestOne","Output":"    main_test.go:6: Error message\n"}
+{"Time":"2019-10-09T00:00:00.979053125+00:00","Action":"output","Package":"package/name/fail","Test":"TestOne","Output":"    main_test.go:7: Longer\n"}
+{"Time":"2019-10-09T00:00:00.97905703+00:00","Action":"output","Package":"package/name/fail","Test":"TestOne","Output":"        error\n"}
+{"Time":"2019-10-09T00:00:00.979060012+00:00","Action":"output","Package":"package/name/fail","Test":"TestOne","Output":"        message.\n"}
+{"Time":"2019-10-09T00:00:00.979064328+00:00","Action":"output","Package":"package/name/fail","Test":"TestOne","Output":"--- FAIL: TestOne (0.00s)\n"}
+{"Time":"2019-10-09T00:00:00.979067283+00:00","Action":"fail","Package":"package/name/fail","Test":"TestOne","Elapsed":0}
+{"Time":"2019-10-09T00:00:00.979071228+00:00","Action":"run","Package":"package/name/fail","Test":"TestTwo"}
+{"Time":"2019-10-09T00:00:00.979073638+00:00","Action":"output","Package":"package/name/fail","Test":"TestTwo","Output":"=== RUN   TestTwo\n"}
+{"Time":"2019-10-09T00:00:00.979076797+00:00","Action":"output","Package":"package/name/fail","Test":"TestTwo","Output":"--- PASS: TestTwo (0.00s)\n"}
+{"Time":"2019-10-09T00:00:00.979079302+00:00","Action":"pass","Package":"package/name/fail","Test":"TestTwo","Elapsed":0}
+{"Time":"2019-10-09T00:00:00.979081855+00:00","Action":"output","Package":"package/name/fail","Output":"FAIL\n"}
+{"Time":"2019-10-09T00:00:00.979133907+00:00","Action":"output","Package":"package/name/fail","Output":"exit status 1\n"}
+{"Time":"2019-10-09T00:00:00.979146205+00:00","Action":"output","Package":"package/name/fail","Output":"FAIL\tpackage/name/fail\t0.001s\n"}
+{"Time":"2019-10-09T00:00:00.979150031+00:00","Action":"fail","Package":"package/name/fail","Elapsed":0.001}

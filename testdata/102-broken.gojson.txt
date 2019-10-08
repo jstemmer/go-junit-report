@@ -1,0 +1,5 @@
+# package/name/broken [package/name/broken.test]
+./main.go:4:6: unused declared but not used
+./main.go:5:2: undefined: fmt
+./main.go:5:48: undefined: value
+FAIL	package/name/broken [build failed]

@@ -1,0 +1,19 @@
+{"Time":"2019-10-09T00:00:00.439383963+00:00","Action":"run","Package":"package/name/main/ack","Test":"TestAck"}
+{"Time":"2019-10-09T00:00:00.439487748+00:00","Action":"output","Package":"package/name/main/ack","Test":"TestAck","Output":"=== RUN   TestAck\n"}
+{"Time":"2019-10-09T00:00:00.439496258+00:00","Action":"output","Package":"package/name/main/ack","Test":"TestAck","Output":"    ack_test.go:13: ack\n"}
+{"Time":"2019-10-09T00:00:00.439503036+00:00","Action":"output","Package":"package/name/main/ack","Test":"TestAck","Output":"--- PASS: TestAck (0.00s)\n"}
+{"Time":"2019-10-09T00:00:00.439507387+00:00","Action":"pass","Package":"package/name/main/ack","Test":"TestAck","Elapsed":0}
+{"Time":"2019-10-09T00:00:00.439513347+00:00","Action":"output","Package":"package/name/main/ack","Output":"PASS\n"}
+{"Time":"2019-10-09T00:00:00.439517752+00:00","Action":"output","Package":"package/name/main/ack","Output":"ok  \tpackage/name/main/ack\t(cached)\n"}
+{"Time":"2019-10-09T00:00:00.439522697+00:00","Action":"pass","Package":"package/name/main/ack","Elapsed":0}
+{"Time":"2019-10-09T00:00:00.439813777+00:00","Action":"run","Package":"package/name/main/ok","Test":"TestOk"}
+{"Time":"2019-10-09T00:00:00.4398418+00:00","Action":"output","Package":"package/name/main/ok","Test":"TestOk","Output":"=== RUN   TestOk\n"}
+{"Time":"2019-10-09T00:00:00.439848365+00:00","Action":"output","Package":"package/name/main/ok","Test":"TestOk","Output":"    ok_test.go:13: ok\n"}
+{"Time":"2019-10-09T00:00:00.439855774+00:00","Action":"output","Package":"package/name/main/ok","Test":"TestOk","Output":"--- PASS: TestOk (0.00s)\n"}
+{"Time":"2019-10-09T00:00:00.439860255+00:00","Action":"pass","Package":"package/name/main/ok","Test":"TestOk","Elapsed":0}
+{"Time":"2019-10-09T00:00:00.43986525+00:00","Action":"output","Package":"package/name/main/ok","Output":"PASS\n"}
+{"Time":"2019-10-09T00:00:00.439870064+00:00","Action":"output","Package":"package/name/main/ok","Output":"ok  \tpackage/name/main/ok\t(cached)\n"}
+{"Time":"2019-10-09T00:00:00.439881025+00:00","Action":"pass","Package":"package/name/main/ok","Elapsed":0}
+{"Time":"2019-10-09T00:00:00.494446083+00:00","Action":"output","Package":"package/name/main/fail","Output":"TestMain failed, returning early\n"}
+{"Time":"2019-10-09T00:00:00.494579248+00:00","Action":"output","Package":"package/name/main/fail","Output":"FAIL\tpackage/name/main/fail\t0.001s\n"}
+{"Time":"2019-10-09T00:00:00.494593522+00:00","Action":"fail","Package":"package/name/main/fail","Elapsed":0.001}

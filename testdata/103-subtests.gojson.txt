@@ -1,0 +1,21 @@
+{"Time":"2019-10-09T00:00:00.284172551+00:00","Action":"run","Package":"package/name/subtest","Test":"TestMultiple"}
+{"Time":"2019-10-09T00:00:00.284270018+00:00","Action":"output","Package":"package/name/subtest","Test":"TestMultiple","Output":"=== RUN   TestMultiple\n"}
+{"Time":"2019-10-09T00:00:00.284277654+00:00","Action":"run","Package":"package/name/subtest","Test":"TestMultiple/Empty_string"}
+{"Time":"2019-10-09T00:00:00.284280691+00:00","Action":"output","Package":"package/name/subtest","Test":"TestMultiple/Empty_string","Output":"=== RUN   TestMultiple/Empty_string\n"}
+{"Time":"2019-10-09T00:00:00.28428418+00:00","Action":"run","Package":"package/name/subtest","Test":"TestMultiple/Single"}
+{"Time":"2019-10-09T00:00:00.284287002+00:00","Action":"output","Package":"package/name/subtest","Test":"TestMultiple/Single","Output":"=== RUN   TestMultiple/Single\n"}
+{"Time":"2019-10-09T00:00:00.284291242+00:00","Action":"output","Package":"package/name/subtest","Test":"TestMultiple/Single","Output":"    pkg_test.go:20: Do(\"a\"): got aaaaaaaaaa, want a\n"}
+{"Time":"2019-10-09T00:00:00.284294939+00:00","Action":"run","Package":"package/name/subtest","Test":"TestMultiple/Multi"}
+{"Time":"2019-10-09T00:00:00.284297402+00:00","Action":"output","Package":"package/name/subtest","Test":"TestMultiple/Multi","Output":"=== RUN   TestMultiple/Multi\n"}
+{"Time":"2019-10-09T00:00:00.284301367+00:00","Action":"output","Package":"package/name/subtest","Test":"TestMultiple","Output":"--- FAIL: TestMultiple (0.00s)\n"}
+{"Time":"2019-10-09T00:00:00.284304576+00:00","Action":"output","Package":"package/name/subtest","Test":"TestMultiple/Empty_string","Output":"    --- PASS: TestMultiple/Empty_string (0.00s)\n"}
+{"Time":"2019-10-09T00:00:00.284307585+00:00","Action":"pass","Package":"package/name/subtest","Test":"TestMultiple/Empty_string","Elapsed":0}
+{"Time":"2019-10-09T00:00:00.284310972+00:00","Action":"output","Package":"package/name/subtest","Test":"TestMultiple/Single","Output":"    --- FAIL: TestMultiple/Single (0.00s)\n"}
+{"Time":"2019-10-09T00:00:00.284313906+00:00","Action":"fail","Package":"package/name/subtest","Test":"TestMultiple/Single","Elapsed":0}
+{"Time":"2019-10-09T00:00:00.284316515+00:00","Action":"output","Package":"package/name/subtest","Test":"TestMultiple/Multi","Output":"    --- PASS: TestMultiple/Multi (0.00s)\n"}
+{"Time":"2019-10-09T00:00:00.284319052+00:00","Action":"pass","Package":"package/name/subtest","Test":"TestMultiple/Multi","Elapsed":0}
+{"Time":"2019-10-09T00:00:00.284321427+00:00","Action":"fail","Package":"package/name/subtest","Test":"TestMultiple","Elapsed":0}
+{"Time":"2019-10-09T00:00:00.284323862+00:00","Action":"output","Package":"package/name/subtest","Output":"FAIL\n"}
+{"Time":"2019-10-09T00:00:00.284344993+00:00","Action":"output","Package":"package/name/subtest","Output":"exit status 1\n"}
+{"Time":"2019-10-09T00:00:00.284351108+00:00","Action":"output","Package":"package/name/subtest","Output":"FAIL\tpackage/name/subtest\t0.001s\n"}
+{"Time":"2019-10-09T00:00:00.284354151+00:00","Action":"fail","Package":"package/name/subtest","Elapsed":0.001}

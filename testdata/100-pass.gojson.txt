@@ -1,0 +1,7 @@
+{"Time":"2019-10-09T00:00:00.708039352+00:00","Action":"run","Package":"package/name/ok","Test":"TestOK"}
+{"Time":"2019-10-09T00:00:00.708139047+00:00","Action":"output","Package":"package/name/ok","Test":"TestOK","Output":"=== RUN   TestOK\n"}
+{"Time":"2019-10-09T00:00:00.708148292+00:00","Action":"output","Package":"package/name/ok","Test":"TestOK","Output":"--- PASS: TestOK (0.00s)\n"}
+{"Time":"2019-10-09T00:00:00.708154115+00:00","Action":"pass","Package":"package/name/ok","Test":"TestOK","Elapsed":0}
+{"Time":"2019-10-09T00:00:00.708157995+00:00","Action":"output","Package":"package/name/ok","Output":"PASS\n"}
+{"Time":"2019-10-09T00:00:00.708199504+00:00","Action":"output","Package":"package/name/ok","Output":"ok  \tpackage/name/ok\t0.001s\n"}
+{"Time":"2019-10-09T00:00:00.708212177+00:00","Action":"pass","Package":"package/name/ok","Elapsed":0.001}

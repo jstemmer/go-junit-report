@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" errors="1">
+	<testsuite name="package/name/panic" tests="1" failures="0" errors="1" hostname="hostname" time="0.003" timestamp="2022-01-01T00:00:00Z">
+		<properties>
+			<property name="go.version" value="1.0"></property>
+		</properties>
+		<testcase name="Failure" classname="package/name/panic" time="0.000">
+			<error message="Runtime error"><![CDATA[panic: init
+
+goroutine 1 [running]:
+package/name/panic.init.0()
+	/src/package/name/panic/main_test.go:6 +0x27
+exit status 2]]></error>
+		</testcase>
+	</testsuite>
+</testsuites>

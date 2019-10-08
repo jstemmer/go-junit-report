@@ -1,0 +1,13 @@
+{"Time":"2019-10-09T00:00:00.329193863+00:00","Action":"run","Package":"package/name/skip","Test":"TestSkip"}
+{"Time":"2019-10-09T00:00:00.329288607+00:00","Action":"output","Package":"package/name/skip","Test":"TestSkip","Output":"=== RUN   TestSkip\n"}
+{"Time":"2019-10-09T00:00:00.32929713+00:00","Action":"output","Package":"package/name/skip","Test":"TestSkip","Output":"    skip_test.go:6: skip message\n"}
+{"Time":"2019-10-09T00:00:00.329302577+00:00","Action":"output","Package":"package/name/skip","Test":"TestSkip","Output":"--- SKIP: TestSkip (0.00s)\n"}
+{"Time":"2019-10-09T00:00:00.329305698+00:00","Action":"skip","Package":"package/name/skip","Test":"TestSkip","Elapsed":0}
+{"Time":"2019-10-09T00:00:00.329309504+00:00","Action":"run","Package":"package/name/skip","Test":"TestSkipNow"}
+{"Time":"2019-10-09T00:00:00.329312988+00:00","Action":"output","Package":"package/name/skip","Test":"TestSkipNow","Output":"=== RUN   TestSkipNow\n"}
+{"Time":"2019-10-09T00:00:00.329315853+00:00","Action":"output","Package":"package/name/skip","Test":"TestSkipNow","Output":"    skip_test.go:10: log message\n"}
+{"Time":"2019-10-09T00:00:00.329319388+00:00","Action":"output","Package":"package/name/skip","Test":"TestSkipNow","Output":"--- SKIP: TestSkipNow (0.00s)\n"}
+{"Time":"2019-10-09T00:00:00.329322008+00:00","Action":"skip","Package":"package/name/skip","Test":"TestSkipNow","Elapsed":0}
+{"Time":"2019-10-09T00:00:00.329324691+00:00","Action":"output","Package":"package/name/skip","Output":"PASS\n"}
+{"Time":"2019-10-09T00:00:00.329392899+00:00","Action":"output","Package":"package/name/skip","Output":"ok  \tpackage/name/skip\t0.001s\n"}
+{"Time":"2019-10-09T00:00:00.329615729+00:00","Action":"pass","Package":"package/name/skip","Elapsed":0.001}

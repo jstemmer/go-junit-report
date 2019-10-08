@@ -1,0 +1,19 @@
+{"Time":"2019-10-09T00:00:00.025742278+00:00","Action":"output","Package":"package/name/benchfail","Output":"goos: linux\n"}
+{"Time":"2019-10-09T00:00:00.025842393+00:00","Action":"output","Package":"package/name/benchfail","Output":"goarch: amd64\n"}
+{"Time":"2019-10-09T00:00:00.025848233+00:00","Action":"output","Package":"package/name/benchfail","Output":"pkg: package/name/benchfail\n"}
+{"Time":"2019-10-09T00:00:00.025857524+00:00","Action":"output","Package":"package/name/benchfail","Output":"BenchmarkError\n"}
+{"Time":"2019-10-09T00:00:00.025926237+00:00","Action":"output","Package":"package/name/benchfail","Output":"    bench_test.go:6: error message\n"}
+{"Time":"2019-10-09T00:00:00.025968693+00:00","Action":"output","Package":"package/name/benchfail","Test":"BenchmarkError","Output":"--- FAIL: BenchmarkError\n"}
+{"Time":"2019-10-09T00:00:00.025973906+00:00","Action":"output","Package":"package/name/benchfail","Test":"BenchmarkError","Output":"BenchmarkFatal\n"}
+{"Time":"2019-10-09T00:00:00.026152458+00:00","Action":"output","Package":"package/name/benchfail","Test":"BenchmarkError","Output":"    bench_test.go:10: fatal message\n"}
+{"Time":"2019-10-09T00:00:00.026171221+00:00","Action":"fail","Package":"package/name/benchfail","Test":"BenchmarkError"}
+{"Time":"2019-10-09T00:00:00.026174732+00:00","Action":"output","Package":"package/name/benchfail","Test":"BenchmarkFatal","Output":"--- FAIL: BenchmarkFatal\n"}
+{"Time":"2019-10-09T00:00:00.026188643+00:00","Action":"output","Package":"package/name/benchfail","Test":"BenchmarkFatal","Output":"BenchmarkSkip\n"}
+{"Time":"2019-10-09T00:00:00.026346331+00:00","Action":"output","Package":"package/name/benchfail","Test":"BenchmarkFatal","Output":"    bench_test.go:14: skip message\n"}
+{"Time":"2019-10-09T00:00:00.026352372+00:00","Action":"fail","Package":"package/name/benchfail","Test":"BenchmarkFatal"}
+{"Time":"2019-10-09T00:00:00.026355025+00:00","Action":"output","Package":"package/name/benchfail","Test":"BenchmarkSkip","Output":"--- SKIP: BenchmarkSkip\n"}
+{"Time":"2019-10-09T00:00:00.026358242+00:00","Action":"skip","Package":"package/name/benchfail","Test":"BenchmarkSkip"}
+{"Time":"2019-10-09T00:00:00.026361938+00:00","Action":"output","Package":"package/name/benchfail","Output":"FAIL\n"}
+{"Time":"2019-10-09T00:00:00.026550031+00:00","Action":"output","Package":"package/name/benchfail","Output":"exit status 1\n"}
+{"Time":"2019-10-09T00:00:00.026562733+00:00","Action":"output","Package":"package/name/benchfail","Output":"FAIL\tpackage/name/benchfail\t0.002s\n"}
+{"Time":"2019-10-09T00:00:00.026568631+00:00","Action":"fail","Package":"package/name/benchfail","Elapsed":0.002}

@@ -1,0 +1,8 @@
+{"Time":"2019-10-09T00:00:00.596409464+00:00","Action":"output","Package":"package/name/panic","Output":"panic: init\n"}
+{"Time":"2019-10-09T00:00:00.596508615+00:00","Action":"output","Package":"package/name/panic","Output":"\n"}
+{"Time":"2019-10-09T00:00:00.596515201+00:00","Action":"output","Package":"package/name/panic","Output":"goroutine 1 [running]:\n"}
+{"Time":"2019-10-09T00:00:00.596518457+00:00","Action":"output","Package":"package/name/panic","Output":"package/name/panic.init.0()\n"}
+{"Time":"2019-10-09T00:00:00.596521268+00:00","Action":"output","Package":"package/name/panic","Output":"\t/src/package/name/panic/main_test.go:6 +0x27\n"}
+{"Time":"2019-10-09T00:00:00.596604261+00:00","Action":"output","Package":"package/name/panic","Output":"exit status 2\n"}
+{"Time":"2019-10-09T00:00:00.596615441+00:00","Action":"output","Package":"package/name/panic","Output":"FAIL\tpackage/name/panic\t0.003s\n"}
+{"Time":"2019-10-09T00:00:00.596619695+00:00","Action":"fail","Package":"package/name/panic","Elapsed":0.003}

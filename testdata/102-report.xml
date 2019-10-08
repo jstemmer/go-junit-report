@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" errors="1">
+	<testsuite name="package/name/broken" tests="1" failures="0" errors="1" hostname="hostname" time="0.000" timestamp="2022-01-01T00:00:00Z">
+		<properties>
+			<property name="go.version" value="1.0"></property>
+		</properties>
+		<testcase name="[build failed]" classname="package/name/broken" time="0.000">
+			<error message="Build error"><![CDATA[./main.go:4:6: unused declared but not used
+./main.go:5:2: undefined: fmt
+./main.go:5:48: undefined: value]]></error>
+		</testcase>
+	</testsuite>
+</testsuites>
