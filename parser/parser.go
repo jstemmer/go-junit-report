@@ -317,3 +317,15 @@ func (r *Report) Failures() int {
 
 	return count
 }
+
+// PrefixPackage returns a copy of the given report, with the given prefix prepended to all package names.
+func (r *Report) PrefixPackage(prefix string) *Report {
+	reportCopy := Report{
+		Packages: make([]Package, len(r.Packages)),
+	}
+	for i, pkg := range r.Packages {
+		pkg.Name = prefix + pkg.Name
+		reportCopy.Packages[i] = pkg
+	}
+	return &reportCopy
+}

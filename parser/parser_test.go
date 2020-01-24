@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"strings"
 	"testing"
 	"time"
 )
@@ -42,6 +43,28 @@ func TestParseNanoseconds(t *testing.T) {
 		d := parseNanoseconds(test.in)
 		if d != test.d {
 			t.Errorf("parseSeconds(%q) == %v, want %v\n", test.in, d, test.d)
+		}
+	}
+}
+
+func TestReportPrefixPackage(t *testing.T) {
+	const prefix = "linux/amd64/"
+	originalReport := &Report{
+		Packages: []Package{
+			{Name: "pkg/a"},
+			{Name: "pkg/b"},
+			{Name: "pkg/c"},
+		},
+	}
+
+	prefixedReport := originalReport.PrefixPackage(prefix)
+
+	for i, pkg := range originalReport.Packages {
+		if strings.HasPrefix(pkg.Name, prefix) {
+			t.Errorf("expecting original report package %q not to be modified", pkg.Name)
+		}
+		if !strings.HasPrefix(prefixedReport.Packages[i].Name, prefix) {
+			t.Errorf("expecting prefixed report package %q to be prefixed with %q", pkg.Name, prefix)
 		}
 	}
 }

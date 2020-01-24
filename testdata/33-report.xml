@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+	<testsuite tests="1" failures="0" time="0.005" name="linux/arm64/pkg/pass">
+		<properties>
+			<property name="go.version" value="1.0"></property>
+		</properties>
+		<testcase classname="pass" name="TestOne" time="0.000"></testcase>
+	</testsuite>
+</testsuites>
