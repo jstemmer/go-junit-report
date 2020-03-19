@@ -326,7 +326,82 @@ var testCases = []TestCase{
 		},
 	},
 	{
+		name:       "09-coverage-acc.txt",
+		reportName: "09-report.xml",
+		report: &parser.Report{
+			Packages: []parser.Package{
+				{
+					Name:     "package/name",
+					Duration: 160 * time.Millisecond,
+					Time:     160,
+					Tests: []*parser.Test{
+						{
+							Name:     "TestZ",
+							Duration: 60 * time.Millisecond,
+							Time:     60,
+							Result:   parser.PASS,
+							Output:   []string{},
+						},
+						{
+							Name:     "TestA",
+							Duration: 100 * time.Millisecond,
+							Time:     100,
+							Result:   parser.PASS,
+							Output:   []string{},
+						},
+					},
+					CoveragePct: "13.37",
+				},
+			},
+		},
+	},
+	{
 		name:       "10-multipkg-coverage.txt",
+		reportName: "10-report.xml",
+		report: &parser.Report{
+			Packages: []parser.Package{
+				{
+					Name:     "package1/foo",
+					Duration: 400 * time.Millisecond,
+					Time:     400,
+					Tests: []*parser.Test{
+						{
+							Name:     "TestA",
+							Duration: 100 * time.Millisecond,
+							Time:     100,
+							Result:   parser.PASS,
+							Output:   []string{},
+						},
+						{
+							Name:     "TestB",
+							Duration: 300 * time.Millisecond,
+							Time:     300,
+							Result:   parser.PASS,
+							Output:   []string{},
+						},
+					},
+					CoveragePct: "10.0",
+				},
+				{
+					Name:     "package2/bar",
+					Duration: 4200 * time.Millisecond,
+					Time:     4200,
+					Tests: []*parser.Test{
+						{
+							Name:     "TestC",
+							Duration: 4200 * time.Millisecond,
+							Time:     4200,
+							Result:   parser.PASS,
+							Output:   []string{},
+						},
+					},
+					CoveragePct: "99.8",
+				},
+			},
+		},
+	},
+	{
+		name:       "10-multipkg-coverage-acc.txt",
 		reportName: "10-report.xml",
 		report: &parser.Report{
 			Packages: []parser.Package{
@@ -779,6 +854,51 @@ var testCases = []TestCase{
 	},
 	{
 		name:       "18-coverpkg.txt",
+		reportName: "18-report.xml",
+		report: &parser.Report{
+			Packages: []parser.Package{
+				{
+					Name:     "package1/foo",
+					Duration: 400 * time.Millisecond,
+					Time:     400,
+					Tests: []*parser.Test{
+						{
+							Name:     "TestA",
+							Duration: 100 * time.Millisecond,
+							Time:     100,
+							Result:   parser.PASS,
+							Output:   []string{},
+						},
+						{
+							Name:     "TestB",
+							Duration: 300 * time.Millisecond,
+							Time:     300,
+							Result:   parser.PASS,
+							Output:   []string{},
+						},
+					},
+					CoveragePct: "10.0",
+				},
+				{
+					Name:     "package2/bar",
+					Duration: 4200 * time.Millisecond,
+					Time:     4200,
+					Tests: []*parser.Test{
+						{
+							Name:     "TestC",
+							Duration: 4200 * time.Millisecond,
+							Time:     4200,
+							Result:   parser.PASS,
+							Output:   []string{},
+						},
+					},
+					CoveragePct: "99.8",
+				},
+			},
+		},
+	},
+	{
+		name:       "18-coverpkg-acc.txt",
 		reportName: "18-report.xml",
 		report: &parser.Report{
 			Packages: []parser.Package{
