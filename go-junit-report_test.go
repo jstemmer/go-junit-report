@@ -1647,7 +1647,7 @@ func TestJUnitFormatter(t *testing.T) {
 }
 
 func TestVersionFlag(t *testing.T) {
-	testJUnitFormatter(t, "custom-version")
+	testJUnitFormatter(t, "go1.13")
 }
 
 func testJUnitFormatter(t *testing.T, goVersion string) {

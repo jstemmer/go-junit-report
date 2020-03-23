@@ -38,6 +38,7 @@ type JUnitTestCase struct {
 	Time        string            `xml:"time,attr"`
 	SkipMessage *JUnitSkipMessage `xml:"skipped,omitempty"`
 	Failure     *JUnitFailure     `xml:"failure,omitempty"`
+	Pass        *JUnitPass        `xml:"pass,omitempty"`
 }
 
 // JUnitSkipMessage contains the reason why a testcase was skipped.
@@ -55,6 +56,12 @@ type JUnitProperty struct {
 type JUnitFailure struct {
 	Message  string `xml:"message,attr"`
 	Type     string `xml:"type,attr"`
+	Contents string `xml:",chardata"`
+}
+
+// JUnitPass contains data related to a success test.
+type JUnitPass struct {
+	Message  string `xml:"message,attr"`
 	Contents string `xml:",chardata"`
 }
 
@@ -97,6 +104,7 @@ func JUnitReportXML(report *parser.Report, noXMLHeader bool, goVersion string, w
 				Name:      test.Name,
 				Time:      formatTime(test.Duration),
 				Failure:   nil,
+				Pass:      nil,
 			}
 
 			if test.Result == parser.FAIL {
@@ -104,6 +112,13 @@ func JUnitReportXML(report *parser.Report, noXMLHeader bool, goVersion string, w
 				testCase.Failure = &JUnitFailure{
 					Message:  "Failed",
 					Type:     "",
+					Contents: strings.Join(test.Output, "\n"),
+				}
+			}
+
+			if test.Result == parser.PASS {
+				testCase.Pass = &JUnitPass{
+					Message:  "Pass",
 					Contents: strings.Join(test.Output, "\n"),
 				}
 			}
