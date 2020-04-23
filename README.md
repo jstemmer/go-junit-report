@@ -17,13 +17,17 @@ go get -u github.com/jstemmer/go-junit-report
 
 ## Usage
 
-go-junit-report reads the `go test` verbose output from standard in and writes
+go-junit-report reads the `go test` verbose output from either standard in or file,and writes
 junit compatible XML to standard out.
-
-```bash
-go test -v 2>&1 | go-junit-report > report.xml
-```
-
+* Standard Input: 
+    ```bash
+    go test -v ./... 2>&1 | go-junit-report > report.xml
+    ```
+* File:
+    ```bash
+    go test -v ./... > gotest.out  
+    go-junit-report --go-test-output gotest.out > report.xml
+    ```
 Note that it also can parse benchmark output with `-bench` flag:
 ```bash
 go test -v -bench . -count 5 2>&1 | go-junit-report > report.xml
