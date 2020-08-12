@@ -17,6 +17,7 @@ const (
 	PASS Result = iota
 	FAIL
 	SKIP
+	ERROR
 )
 
 // Report is a collection of package tests.
@@ -74,7 +75,7 @@ var (
 // Parse parses go test output from reader r and returns a report with the
 // results. An optional pkgName can be given, which is used in case a package
 // result line is missing.
-func Parse(r io.Reader, pkgName string) (*Report, error) {
+func Parse(r io.Reader, pkgName string, ignoreParents bool) (*Report, error) {
 	reader := bufio.NewReader(r)
 
 	report := &Report{make([]Package, 0)}
@@ -117,6 +118,14 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 		if strings.HasPrefix(line, "=== RUN ") {
 			// new test
 			cur = strings.TrimSpace(line[8:])
+
+			// if requested, overwrite the sub-test parent / wrapped with cases
+			// to exclude from output
+			if ignoreParents && len(tests) != 0 && tests[len(tests)-1].Name == strings.SplitN(cur, "/", 2)[0] {
+				tests[len(tests)-1].Name = cur
+				continue
+			}
+
 			tests = append(tests, &Test{
 				Name:   cur,
 				Result: FAIL,
@@ -146,19 +155,20 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 			}
 			if strings.HasSuffix(matches[4], "failed]") {
 				// the build of the package failed, inject a dummy test into the package
-				// which indicate about the failure and contain the failure description.
+				// which indicate about the error and contain the error description.
 				tests = append(tests, &Test{
 					Name:   matches[4],
-					Result: FAIL,
+					Result: ERROR,
 					Output: packageCaptures[matches[2]],
 				})
 			} else if matches[1] == "FAIL" && !containsFailures(tests) && len(buffers[cur]) > 0 {
 				// This package didn't have any failing tests, but still it
-				// failed with some output. Create a dummy test with the
-				// output.
+				// failed with some output.
+				// This is usually indicative of a panic, or other such
+				// error.
 				tests = append(tests, &Test{
-					Name:   "Failure",
-					Result: FAIL,
+					Name:   "Error",
+					Result: ERROR,
 					Output: buffers[cur],
 				})
 				buffers[cur] = buffers[cur][0:0]
@@ -218,6 +228,10 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 			if test == nil {
 				continue
 			}
+
+			// append to buffer as well to fully support multi-line outputs
+			buffers[cur] = append(buffers[cur], line)
+
 			test.Output = append(test.Output, matches[2])
 		} else if strings.HasPrefix(line, "# ") {
 			// indicates a capture of build output of a package. set the current build package.
