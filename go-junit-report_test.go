@@ -19,11 +19,12 @@ import (
 var matchTest = flag.String("match", "", "only test testdata matching this pattern")
 
 type TestCase struct {
-	name        string
-	reportName  string
-	report      *parser.Report
-	noXMLHeader bool
-	packageName string
+	name          string
+	reportName    string
+	report        *parser.Report
+	noXMLHeader   bool
+	packageName   string
+	ignoreParents bool
 }
 
 var testCases = []TestCase{
@@ -590,7 +591,7 @@ var testCases = []TestCase{
 							Name:     "[build failed]",
 							Duration: 0,
 							Time:     0,
-							Result:   parser.FAIL,
+							Result:   parser.ERROR,
 							Output: []string{
 								"failing1/failing_test.go:15: undefined: x",
 							},
@@ -604,7 +605,7 @@ var testCases = []TestCase{
 							Name:     "[build failed]",
 							Duration: 0,
 							Time:     0,
-							Result:   parser.FAIL,
+							Result:   parser.ERROR,
 							Output: []string{
 								"failing2/another_failing_test.go:20: undefined: y",
 							},
@@ -618,7 +619,7 @@ var testCases = []TestCase{
 							Name:     "[setup failed]",
 							Duration: 0,
 							Time:     0,
-							Result:   parser.FAIL,
+							Result:   parser.ERROR,
 							Output: []string{
 								"setupfailing1/failing_test.go:4: cannot find package \"other/package\" in any of:",
 								"\t/path/vendor (vendor tree)",
@@ -642,8 +643,8 @@ var testCases = []TestCase{
 					Time:     3,
 					Tests: []*parser.Test{
 						{
-							Name:   "Failure",
-							Result: parser.FAIL,
+							Name:   "Error",
+							Result: parser.ERROR,
 							Output: []string{
 								"panic: init",
 								"stacktrace",
@@ -657,8 +658,8 @@ var testCases = []TestCase{
 					Time:     3,
 					Tests: []*parser.Test{
 						{
-							Name:   "Failure",
-							Result: parser.FAIL,
+							Name:   "Error",
+							Result: parser.ERROR,
 							Output: []string{
 								"panic: init",
 								"stacktrace",
@@ -1465,7 +1466,7 @@ var testCases = []TestCase{
 							Name:     "[build failed]",
 							Duration: 0,
 							Time:     0,
-							Result:   parser.FAIL,
+							Result:   parser.ERROR,
 							Output: []string{
 								"failing1/failing_test.go:15: undefined: x",
 							},
@@ -1479,7 +1480,7 @@ var testCases = []TestCase{
 							Name:     "[build failed]",
 							Duration: 0,
 							Time:     0,
-							Result:   parser.FAIL,
+							Result:   parser.ERROR,
 							Output: []string{
 								"failing2/another_failing_test.go:20: undefined: y",
 							},
@@ -1493,7 +1494,7 @@ var testCases = []TestCase{
 							Name:     "[setup failed]",
 							Duration: 0,
 							Time:     0,
-							Result:   parser.FAIL,
+							Result:   parser.ERROR,
 							Output: []string{
 								"setupfailing1/failing_test.go:4: cannot find package \"other/package\" in any of:",
 								"\t/path/vendor (vendor tree)",
@@ -1524,16 +1525,89 @@ var testCases = []TestCase{
 							Output:   []string{},
 						},
 						{
-							Name:     "Failure",
+							Name:     "Error",
 							Duration: 0,
 							Time:     0,
-							Result:   parser.FAIL,
+							Result:   parser.ERROR,
 							Output:   []string{"panic: panic"},
 						},
 					},
 				},
 			},
 		},
+	},
+	{
+		name:       "33-subtest.txt",
+		reportName: "33-report.xml",
+		report: &parser.Report{
+			Packages: []parser.Package{
+				{
+					Name:     "github.com/maintainer/repo/package1",
+					Duration: 610 * time.Millisecond,
+					Time:     610,
+					Tests: []*parser.Test{
+						{
+							Name:     "TestParent/child1",
+							Duration: 90 * time.Millisecond,
+							Time:     90,
+							Output:   []string{},
+							Result:   parser.PASS,
+						},
+						{
+							Name:     "TestParent/child2",
+							Duration: 90 * time.Millisecond,
+							Time:     90,
+							Output:   []string{},
+							Result:   parser.PASS,
+						},
+						{
+							Name:     "TestParent/failureChild3",
+							Duration: 420 * time.Millisecond,
+							Time:     420,
+							Output: []string{"    example.go:123: ",
+								"        \tError Trace:\texample.go:123",
+								"        \tError:      \tNot equal:",
+								"        \t            \texpected: 1",
+								"        \t            \tactual: 2",
+								"        \tTest:       \tTestParent/failureChild3",
+							},
+							Result: parser.FAIL,
+						},
+						{
+							Name:     "TestParent/skippedChild4",
+							Duration: 0,
+							Time:     0,
+							Output:   []string{},
+							Result:   parser.SKIP,
+						},
+						{
+							Name:     "TestTwo",
+							Duration: 10 * time.Millisecond,
+							Time:     10,
+							Output:   []string{},
+							Result:   parser.PASS,
+						},
+					},
+					CoveragePct: "20.0",
+				},
+				{
+					Name:     "github.com/maintainer/repo/package2",
+					Duration: 1020 * time.Millisecond,
+					Time:     1020,
+					Tests: []*parser.Test{
+						{
+							Name:     "TestPackage2",
+							Duration: 1020 * time.Millisecond,
+							Time:     1020,
+							Output:   []string{},
+							Result:   parser.PASS,
+						},
+					},
+					CoveragePct: "12.5",
+				},
+			},
+		},
+		ignoreParents: true,
 	},
 }
 
@@ -1550,7 +1624,7 @@ func TestParser(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		report, err := parser.Parse(file, testCase.packageName)
+		report, err := parser.Parse(file, testCase.packageName, testCase.ignoreParents)
 		if err != nil {
 			t.Fatalf("error parsing: %s", err)
 		}
@@ -1668,8 +1742,8 @@ func testJUnitFormatter(t *testing.T, goVersion string) {
 			t.Fatal(err)
 		}
 
-		if string(junitReport.Bytes()) != report {
-			t.Errorf("Fail: %s Report xml ==\n%s, want\n%s", testCase.name, string(junitReport.Bytes()), report)
+		if junitReport.String() != report {
+			t.Errorf("Fail: %s Report xml ==\n%s, want\n%s", testCase.name, junitReport.String(), report)
 		}
 	}
 }

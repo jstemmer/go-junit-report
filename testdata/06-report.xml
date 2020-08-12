@@ -1,12 +1,12 @@
 <testsuites>
-	<testsuite tests="2" failures="0" time="0.160" name="package/name1">
+	<testsuite tests="2" failures="0" errors="0" time="0.160" name="package/name1">
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
 		<testcase classname="name1" name="TestOne" time="0.060"></testcase>
 		<testcase classname="name1" name="TestTwo" time="0.100"></testcase>
 	</testsuite>
-	<testsuite tests="2" failures="1" time="0.151" name="package/name2">
+	<testsuite tests="2" failures="1" errors="0" time="0.151" name="package/name2">
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>

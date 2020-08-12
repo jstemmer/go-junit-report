@@ -10,10 +10,11 @@ import (
 )
 
 var (
-	noXMLHeader   = flag.Bool("no-xml-header", false, "do not print xml header")
-	packageName   = flag.String("package-name", "", "specify a package name (compiled test have no package name in output)")
-	goVersionFlag = flag.String("go-version", "", "specify the value to use for the go.version property in the generated XML")
-	setExitCode   = flag.Bool("set-exit-code", false, "set exit code to 1 if tests failed")
+	noXMLHeader          = flag.Bool("no-xml-header", false, "do not print xml header")
+	packageName          = flag.String("package-name", "", "specify a package name (compiled test have no package name in output)")
+	goVersionFlag        = flag.String("go-version", "", "specify the value to use for the go.version property in the generated XML")
+	ignoreSubtestParents = flag.Bool("ignore-parents", false, "exclude parents of sub tests in the generated XML")
+	setExitCode          = flag.Bool("set-exit-code", false, "set exit code to 1 if tests failed")
 )
 
 func main() {
@@ -26,7 +27,7 @@ func main() {
 	}
 
 	// Read input
-	report, err := parser.Parse(os.Stdin, *packageName)
+	report, err := parser.Parse(os.Stdin, *packageName, *ignoreSubtestParents)
 	if err != nil {
 		fmt.Printf("Error reading input: %s\n", err)
 		os.Exit(1)

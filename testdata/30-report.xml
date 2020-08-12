@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-	<testsuite tests="17" failures="9" time="4.567" name="package/name1">
+	<testsuite tests="17" failures="9" errors="0" time="4.567" name="package/name1">
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
@@ -16,9 +16,9 @@
 		<testcase classname="name1" name="TestFailWithNoTestOutput" time="0.250">
 			<failure message="Failed" type=""></failure>
 		</testcase>
-		<testcase classname="name1" name="TestPassWithStdoutAndTestOutput" time="0.300"></testcase>
-		<testcase classname="name1" name="TestPassWithStdoutAndNoTestOutput" time="0.350"></testcase>
-		<testcase classname="name1" name="TestPassWithTestOutput" time="0.400"></testcase>
+		<testcase classname="name1" name="TestPassWithStdoutAndTestOutput" time="0.300" system-out="multi&#xA;line&#xA;stdout&#xA;single-line stdout&#xA;example_test.go:39: single-line info&#xA;example_test.go:40: multi&#xA;    line&#xA;    info"></testcase>
+		<testcase classname="name1" name="TestPassWithStdoutAndNoTestOutput" time="0.350" system-out="multi&#xA;line&#xA;stdout&#xA;single-line stdout"></testcase>
+		<testcase classname="name1" name="TestPassWithTestOutput" time="0.400" system-out="example_test.go:51: single-line info&#xA;example_test.go:52: multi&#xA;    line&#xA;    info"></testcase>
 		<testcase classname="name1" name="TestPassWithNoTestOutput" time="0.500"></testcase>
 		<testcase classname="name1" name="TestSubtests" time="2.270">
 			<failure message="Failed" type=""></failure>
@@ -35,9 +35,9 @@
 		<testcase classname="name1" name="TestSubtests/TestFailWithNoTestOutput" time="0.250">
 			<failure message="Failed" type=""></failure>
 		</testcase>
-		<testcase classname="name1" name="TestSubtests/TestPassWithStdoutAndTestOutput" time="0.300"></testcase>
-		<testcase classname="name1" name="TestSubtests/TestPassWithStdoutAndNoTestOutput" time="0.350"></testcase>
-		<testcase classname="name1" name="TestSubtests/TestPassWithTestOutput" time="0.400"></testcase>
+		<testcase classname="name1" name="TestSubtests/TestPassWithStdoutAndTestOutput" time="0.300" system-out="4 multi&#xA;line&#xA;stdout&#xA;4 single-line stdout&#xA;example_test.go:91: 4 single-line info&#xA;example_test.go:92: 4 multi&#xA;    line&#xA;    info"></testcase>
+		<testcase classname="name1" name="TestSubtests/TestPassWithStdoutAndNoTestOutput" time="0.350" system-out="5 multi&#xA;line&#xA;stdout&#xA;5 single-line stdout"></testcase>
+		<testcase classname="name1" name="TestSubtests/TestPassWithTestOutput" time="0.400" system-out="example_test.go:103: 6 single-line info&#xA;example_test.go:104: 6 multi&#xA;    line&#xA;    info"></testcase>
 		<testcase classname="name1" name="TestSubtests/TestPassWithNoTestOutput" time="0.500"></testcase>
 	</testsuite>
 </testsuites>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+	<testsuite tests="5" failures="1" errors="0" time="0.610" name="github.com/maintainer/repo/package1">
+		<properties>
+			<property name="go.version" value="1.0"></property>
+			<property name="coverage.statements.pct" value="20.0"></property>
+		</properties>
+		<testcase classname="package1" name="TestParent/child1" time="0.090"></testcase>
+		<testcase classname="package1" name="TestParent/child2" time="0.090"></testcase>
+		<testcase classname="package1" name="TestParent/failureChild3" time="0.420">
+			<failure message="Failed" type="">    example.go:123: &#xA;        &#x9;Error Trace:&#x9;example.go:123&#xA;        &#x9;Error:      &#x9;Not equal:&#xA;        &#x9;            &#x9;expected: 1&#xA;        &#x9;            &#x9;actual: 2&#xA;        &#x9;Test:       &#x9;TestParent/failureChild3</failure>
+		</testcase>
+		<testcase classname="package1" name="TestParent/skippedChild4" time="0.000">
+			<skipped message=""></skipped>
+		</testcase>
+		<testcase classname="package1" name="TestTwo" time="0.010"></testcase>
+	</testsuite>
+	<testsuite tests="1" failures="0" errors="0" time="1.020" name="github.com/maintainer/repo/package2">
+		<properties>
+			<property name="go.version" value="1.0"></property>
+			<property name="coverage.statements.pct" value="12.5"></property>
+		</properties>
+		<testcase classname="package2" name="TestPackage2" time="1.020"></testcase>
+	</testsuite>
+</testsuites>

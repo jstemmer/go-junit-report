@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"encoding/xml"
 	"fmt"
+	"html"
 	"io"
 	"runtime"
 	"strings"
@@ -24,6 +25,7 @@ type JUnitTestSuite struct {
 	XMLName    xml.Name        `xml:"testsuite"`
 	Tests      int             `xml:"tests,attr"`
 	Failures   int             `xml:"failures,attr"`
+	Errors     int             `xml:"errors,attr"`
 	Time       string          `xml:"time,attr"`
 	Name       string          `xml:"name,attr"`
 	Properties []JUnitProperty `xml:"properties>property,omitempty"`
@@ -36,8 +38,10 @@ type JUnitTestCase struct {
 	Classname   string            `xml:"classname,attr"`
 	Name        string            `xml:"name,attr"`
 	Time        string            `xml:"time,attr"`
+	SysOut      string            `xml:"system-out,attr,omitempty"`
 	SkipMessage *JUnitSkipMessage `xml:"skipped,omitempty"`
 	Failure     *JUnitFailure     `xml:"failure,omitempty"`
+	Error       *JUnitFailure     `xml:"error,omitempty"`
 }
 
 // JUnitSkipMessage contains the reason why a testcase was skipped.
@@ -99,17 +103,25 @@ func JUnitReportXML(report *parser.Report, noXMLHeader bool, goVersion string, w
 				Failure:   nil,
 			}
 
-			if test.Result == parser.FAIL {
+			switch test.Result {
+			case parser.FAIL:
 				ts.Failures++
 				testCase.Failure = &JUnitFailure{
 					Message:  "Failed",
 					Type:     "",
 					Contents: strings.Join(test.Output, "\n"),
 				}
-			}
-
-			if test.Result == parser.SKIP {
+			case parser.ERROR:
+				ts.Errors++
+				testCase.Error = &JUnitFailure{
+					Message:  "Error",
+					Type:     "",
+					Contents: strings.Join(test.Output, "\n"),
+				}
+			case parser.SKIP:
 				testCase.SkipMessage = &JUnitSkipMessage{strings.Join(test.Output, "\n")}
+			case parser.PASS:
+				testCase.SysOut = html.EscapeString(strings.Join(test.Output, "\n"))
 			}
 
 			ts.TestCases = append(ts.TestCases, testCase)
