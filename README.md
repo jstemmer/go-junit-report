@@ -12,7 +12,7 @@ Go version 1.2 or higher is required. Install or update using the `go get`
 command:
 
 ```bash
-go get -u github.com/jstemmer/go-junit-report
+go get -u github.com/lyubenkov/go-junit-report
 ```
 
 ## Usage
@@ -32,7 +32,7 @@ go test -v -bench . -count 5 2>&1 | go-junit-report > report.xml
 ## Contribution
 
 Create an Issue and discuss the fix or feature, then fork the package.
-Clone to github.com/jstemmer/go-junit-report.  This is necessary because go import uses this path.
+Clone to github.com/lyubenkov/go-junit-report.  This is necessary because go import uses this path.
 Fix or implement feature. Test and then commit change.
 Specify #Issue and describe change in the commit message.
 Create Pull Request. It can be merged by owner or administrator then.
@@ -45,5 +45,5 @@ go test
 
 [travis-badge]: https://travis-ci.org/jstemmer/go-junit-report.svg?branch=master
 [travis-link]: https://travis-ci.org/jstemmer/go-junit-report
-[report-badge]: https://goreportcard.com/badge/github.com/jstemmer/go-junit-report
-[report-link]: https://goreportcard.com/report/github.com/jstemmer/go-junit-report
+[report-badge]: https://goreportcard.com/badge/github.com/lyubenkov/go-junit-report
+[report-link]: https://goreportcard.com/report/github.com/lyubenkov/go-junit-report
