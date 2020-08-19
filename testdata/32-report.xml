@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-	<testsuite tests="2" failures="1" time="0.005" name="github.com/lyubenkov/test/failedsummary">
+	<testsuite tests="2" failures="1" time="0.005" name="github.com/jstemmer/test/failedsummary">
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>

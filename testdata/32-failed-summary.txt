@@ -2,4 +2,4 @@
 --- PASS: TestOne (0.00s)
 PASS
 panic: panic
-FAIL	github.com/lyubenkov/test/failedsummary	0.005s
+FAIL	github.com/jstemmer/test/failedsummary	0.005s
