@@ -66,6 +66,7 @@ var (
 	regexResult   = regexp.MustCompile(`^(ok|FAIL)\s+([^ ]+)\s+(?:(\d+\.\d+)s|\(cached\)|(\[\w+ failed]))(?:\s+coverage:\s+(\d+\.\d+)%\sof\sstatements(?:\sin\s.+)?)?$`)
 	// regexBenchmark captures 3-5 groups: benchmark name, number of times ran, ns/op (with or without decimal), B/op (optional), and allocs/op (optional).
 	regexBenchmark       = regexp.MustCompile(`^(Benchmark[^ -]+)(?:-\d+\s+|\s+)(\d+)\s+(\d+|\d+\.\d+)\sns/op(?:\s+(\d+)\sB/op)?(?:\s+(\d+)\sallocs/op)?`)
+	regexNamedOutput     = regexp.MustCompile(`\s*(Test[^\s]*):.*`)
 	regexOutput          = regexp.MustCompile(`(    )*\t(.*)`)
 	regexSummary         = regexp.MustCompile(`^(PASS|FAIL|SKIP)$`)
 	regexPackageWithTest = regexp.MustCompile(`^# ([^\[\]]+) \[[^\]]+\]$`)
@@ -238,6 +239,11 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 			// summary is captured separately.
 			cur = ""
 		} else {
+			// change current test if stdout indicates the test Name
+			if match := regexNamedOutput.FindStringSubmatch(line); len(match) > 0 {
+				cur = match[1]
+			}
+
 			// buffer anything else that we didn't recognize
 			buffers[cur] = append(buffers[cur], line)
 
