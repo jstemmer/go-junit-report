@@ -12,8 +12,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jstemmer/go-junit-report/formatter"
-	"github.com/jstemmer/go-junit-report/parser"
+	"github.com/yafenger/go-junit-report/formatter"
+	"github.com/yafenger/go-junit-report/parser"
 )
 
 var matchTest = flag.String("match", "", "only test testdata matching this pattern")
@@ -1647,7 +1647,7 @@ func TestJUnitFormatter(t *testing.T) {
 }
 
 func TestVersionFlag(t *testing.T) {
-	testJUnitFormatter(t, "custom-version")
+	testJUnitFormatter(t, "go1.13")
 }
 
 func testJUnitFormatter(t *testing.T, goVersion string) {
