@@ -12,7 +12,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/yafenger/go-junit-report/formatter"
+	"github.com/jstemmer/go-junit-report/formatter"
 	"github.com/jstemmer/go-junit-report/parser"
 )
 
