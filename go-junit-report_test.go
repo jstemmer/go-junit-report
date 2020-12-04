@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"github.com/yafenger/go-junit-report/formatter"
-	"github.com/yafenger/go-junit-report/parser"
+	"github.com/jstemmer/go-junit-report/parser"
 )
 
 var matchTest = flag.String("match", "", "only test testdata matching this pattern")

@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/yafenger/go-junit-report/formatter"
-	"github.com/yafenger/go-junit-report/parser"
+	"github.com/jstemmer/go-junit-report/parser"
 )
 
 var (
