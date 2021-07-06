@@ -3,6 +3,7 @@ package parser
 import (
 	"bufio"
 	"io"
+	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -74,7 +75,7 @@ var (
 // Parse parses go test output from reader r and returns a report with the
 // results. An optional pkgName can be given, which is used in case a package
 // result line is missing.
-func Parse(r io.Reader, pkgName string) (*Report, error) {
+func Parse(r io.Reader, pkgName string, showOutput bool) (*Report, error) {
 	reader := bufio.NewReader(r)
 
 	report := &Report{make([]Package, 0)}
@@ -113,6 +114,10 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 		}
 
 		line := string(l)
+
+		if showOutput {
+			fmt.Println(line)
+		}
 
 		if strings.HasPrefix(line, "=== RUN ") {
 			// new test
