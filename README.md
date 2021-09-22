@@ -23,6 +23,7 @@ junit compatible XML to standard out.
 ```bash
 go test -v 2>&1 | go-junit-report > report.xml
 ```
+(Skip the `2>&1` for powershell runners, or you will experience weird "process completed with exit code 1" errors)
 
 Note that it also can parse benchmark output with `-bench` flag:
 ```bash
