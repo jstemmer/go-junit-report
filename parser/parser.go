@@ -307,10 +307,23 @@ func containsFailures(tests []*Test) bool {
 func (r *Report) Failures() int {
 	count := 0
 
+	nameResult := map[string]Result{}
 	for _, p := range r.Packages {
 		for _, t := range p.Tests {
-			if t.Result == FAIL {
-				count++
+			key := p.Name+"$$"+t.Name
+			if res, exists := nameResult[key]; !exists {
+				if t.Result == FAIL {
+					count = count + 1
+				}
+				nameResult[key] = t.Result
+			} else {
+				if res == PASS {
+					continue
+				}
+				if t.Result == PASS {
+					count = count - 1
+					nameResult[key] = PASS
+				}
 			}
 		}
 	}
