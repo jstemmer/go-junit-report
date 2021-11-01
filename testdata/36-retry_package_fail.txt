@@ -1,0 +1,17 @@
+running tests for  package/name1
+FAIL	package/name1	0.141s
+FAIL
+running tests for  package/name1
+=== RUN TestOne
+--- FAIL: TestOne (0.02 seconds)
+	file_test.go:11: Error message
+	file_test.go:11: Longer
+		error
+		message.
+=== RUN TestTwo
+--- PASS: TestTwo (0.13 seconds)
+FAIL
+FAIL	package/name1 0.151s
+running tests for  package/name1
+FAIL	package/name1	0.183s
+FAIL

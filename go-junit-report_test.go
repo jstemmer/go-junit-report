@@ -1685,113 +1685,237 @@ var testCases = []TestCase{
 		},
 		noXMLHeader: true,
 	},
+	{
+		name:       "35-retry_package_pass.txt",
+		reportName: "35-report.xml",
+		report: &parser.Report{
+			Packages: []parser.Package{
+				{
+					Name:     "vitess.io/vitess/go/test/endtoend/vtgate/queries/aggregation",
+					Duration: 21630 * time.Millisecond,
+					Time:     21630,
+					Tests: []*parser.Test{
+						{
+							Name:     "Failure",
+							Duration: 0 * time.Millisecond,
+							Time:     0,
+							Result:   parser.FAIL,
+							Output: []string{
+								"running tests for  vitess.io/vitess/go/test/endtoend/vtgate/queries/aggregation",
+								"E1101 10:02:58.832465   21079 tablet.go:242] unable to connect to tablet cell:\"test_union\" uid:5559: node doesn't exist: /test_union/tablets/test_union-0000005559/Tablet",
+								"F1101 10:02:58.842306   21079 run.go:50] listen tcp :16022: bind: address already in use",
+								"E1101 10:02:59.023686   17409 cluster_process.go:334] error starting vttablet for tablet uid 5559, grpc port 16023: process 'vttablet' timed out after 10s (err: process 'vttablet' exited prematurely (err: exit status 1))",
+							},
+						},
+					},
+				},
+				{
+					Name:     "vitess.io/vitess/go/test/endtoend/vtgate/queries/aggregation",
+					Duration: 32140 * time.Millisecond,
+					Time:     32140,
+					Tests: []*parser.Test{
+						{
+							Name:     "TestAggregateTypes",
+							Duration: 130 * time.Millisecond,
+							Time:     130,
+							Result:   parser.PASS,
+							Output: []string{},
+						},
+						{
+							Name:     "TestGroupBy",
+							Duration: 50 * time.Millisecond,
+							Time:     50,
+							Result:   parser.PASS,
+							Output:   []string{},
+						},
+						{
+							Name:     "TestDistinct",
+							Duration: 70 * time.Millisecond,
+							Time:     70,
+							Result:   parser.PASS,
+							Output:   []string{},
+						},
+					},
+				},
+			},
+		},
+	},
+	{
+		name:       "36-retry_package_fail.txt",
+		reportName: "36-report.xml",
+		failCount: 1,
+		report: &parser.Report{
+			Packages: []parser.Package{
+				{
+					Name:     "package/name1",
+					Duration: 141 * time.Millisecond,
+					Time:     141,
+					Tests: []*parser.Test{
+						{
+							Name:     "Failure",
+							Duration: 0 * time.Millisecond,
+							Time:     0,
+							Result:   parser.FAIL,
+							Output: []string{
+								"running tests for  package/name1",
+							},
+						},
+					},
+				},
+				{
+					Name:     "package/name1",
+					Duration: 151 * time.Millisecond,
+					Time:     151,
+					Tests: []*parser.Test{
+						{
+							Name:     "TestOne",
+							Duration: 20 * time.Millisecond,
+							Time:     20,
+							Result:   parser.FAIL,
+							Output: []string{
+								"file_test.go:11: Error message",
+								"file_test.go:11: Longer",
+								"\terror",
+								"\tmessage.",
+							},
+						},
+						{
+							Name:     "TestTwo",
+							Duration: 130 * time.Millisecond,
+							Time:     130,
+							Result:   parser.PASS,
+							Output: []string{},
+						},
+					},
+				},
+				{
+					Name:     "package/name1",
+					Duration: 183 * time.Millisecond,
+					Time:     183,
+					Tests: []*parser.Test{
+						{
+							Name:     "Failure",
+							Duration: 0 * time.Millisecond,
+							Time:     0,
+							Result:   parser.FAIL,
+							Output: []string{
+								"running tests for  package/name1",
+							},
+						},
+					},
+				},
+			},
+		},
+	},
 }
 
 func TestParser(t *testing.T) {
 	matchRegex := compileMatch(t)
 	for _, testCase := range testCases {
-		if !matchRegex.MatchString(testCase.name) {
-			continue
-		}
-
-		file, err := os.Open("testdata/" + testCase.name)
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		report, err := parser.Parse(file, testCase.packageName)
-		if err != nil {
-			t.Fatalf("error parsing: %s", err)
-		}
-
-		if report == nil {
-			t.Fatalf("Report == nil")
-		}
-
-		expected := testCase.report
-		if len(report.Packages) != len(expected.Packages) {
-			t.Fatalf("Report packages == %d, want %d", len(report.Packages), len(expected.Packages))
-		}
-
-		for i, pkg := range report.Packages {
-			expPkg := expected.Packages[i]
-
-			if pkg.Name != expPkg.Name {
-				t.Errorf("Package.Name == %s, want %s", pkg.Name, expPkg.Name)
+		t.Run(testCase.name, func(t *testing.T) {
+			if !matchRegex.MatchString(testCase.name) {
+				return
 			}
 
-			if pkg.Duration != expPkg.Duration {
-				t.Errorf("Package.Duration == %s, want %s", pkg.Duration, expPkg.Duration)
+			file, err := os.Open("testdata/" + testCase.name)
+			if err != nil {
+				t.Fatal(err)
 			}
 
-			// pkg.Time is deprecated
-			if pkg.Time != expPkg.Time {
-				t.Errorf("Package.Time == %d, want %d", pkg.Time, expPkg.Time)
+			report, err := parser.Parse(file, testCase.packageName)
+			if err != nil {
+				t.Fatalf("error parsing: %s", err)
 			}
 
-			if len(pkg.Tests) != len(expPkg.Tests) {
-				t.Fatalf("Package Tests == %d, want %d", len(pkg.Tests), len(expPkg.Tests))
+			if report == nil {
+				t.Fatalf("Report == nil")
 			}
 
-			for j, test := range pkg.Tests {
-				expTest := expPkg.Tests[j]
+			expected := testCase.report
+			if len(report.Packages) != len(expected.Packages) {
+				t.Fatalf("Report packages == %d, want %d", len(report.Packages), len(expected.Packages))
+			}
 
-				if test.Name != expTest.Name {
-					t.Errorf("Test.Name == %s, want %s", test.Name, expTest.Name)
+			for i, pkg := range report.Packages {
+				expPkg := expected.Packages[i]
+
+				if pkg.Name != expPkg.Name {
+					t.Errorf("Package.Name == %s, want %s", pkg.Name, expPkg.Name)
 				}
 
-				if test.Duration != expTest.Duration {
-					t.Errorf("Test.Duration == %s, want %s", test.Duration, expTest.Duration)
+				if pkg.Duration != expPkg.Duration {
+					t.Errorf("Package.Duration == %s, want %s", pkg.Duration, expPkg.Duration)
 				}
 
-				// test.Time is deprecated
-				if test.Time != expTest.Time {
-					t.Errorf("Test.Time == %d, want %d", test.Time, expTest.Time)
+				// pkg.Time is deprecated
+				if pkg.Time != expPkg.Time {
+					t.Errorf("Package.Time == %d, want %d", pkg.Time, expPkg.Time)
 				}
 
-				if test.Result != expTest.Result {
-					t.Errorf("Test.Result == %d, want %d", test.Result, expTest.Result)
+				if len(pkg.Tests) != len(expPkg.Tests) {
+					t.Fatalf("Package Tests == %d, want %d", len(pkg.Tests), len(expPkg.Tests))
 				}
 
-				testOutput := strings.Join(test.Output, "\n")
-				expTestOutput := strings.Join(expTest.Output, "\n")
-				if testOutput != expTestOutput {
-					t.Errorf("Test.Output (%s) ==\n%s\n, want\n%s", test.Name, testOutput, expTestOutput)
+				for j, test := range pkg.Tests {
+					expTest := expPkg.Tests[j]
+
+					if test.Name != expTest.Name {
+						t.Errorf("Test.Name == %s, want %s", test.Name, expTest.Name)
+					}
+
+					if test.Duration != expTest.Duration {
+						t.Errorf("Test.Duration == %s, want %s", test.Duration, expTest.Duration)
+					}
+
+					// test.Time is deprecated
+					if test.Time != expTest.Time {
+						t.Errorf("Test.Time == %d, want %d", test.Time, expTest.Time)
+					}
+
+					if test.Result != expTest.Result {
+						t.Errorf("Test.Result == %d, want %d", test.Result, expTest.Result)
+					}
+
+					testOutput := strings.Join(test.Output, "\n")
+					expTestOutput := strings.Join(expTest.Output, "\n")
+					if testOutput != expTestOutput {
+						t.Errorf("Test.Output (%s) ==\n%s\n, want\n%s", test.Name, testOutput, expTestOutput)
+					}
+				}
+
+				if len(pkg.Benchmarks) != len(expPkg.Benchmarks) {
+					t.Fatalf("Package Benchmarks == %d, want %d", len(pkg.Benchmarks), len(expPkg.Benchmarks))
+				}
+
+				for j, benchmark := range pkg.Benchmarks {
+					expBenchmark := expPkg.Benchmarks[j]
+
+					if benchmark.Name != expBenchmark.Name {
+						t.Errorf("Test.Name == %s, want %s", benchmark.Name, expBenchmark.Name)
+					}
+
+					if benchmark.Duration != expBenchmark.Duration {
+						t.Errorf("benchmark.Duration == %s, want %s", benchmark.Duration, expBenchmark.Duration)
+					}
+
+					if benchmark.Bytes != expBenchmark.Bytes {
+						t.Errorf("benchmark.Bytes == %d, want %d", benchmark.Bytes, expBenchmark.Bytes)
+					}
+
+					if benchmark.Allocs != expBenchmark.Allocs {
+						t.Errorf("benchmark.Allocs == %d, want %d", benchmark.Allocs, expBenchmark.Allocs)
+					}
+				}
+
+				if pkg.CoveragePct != expPkg.CoveragePct {
+					t.Errorf("Package.CoveragePct == %s, want %s", pkg.CoveragePct, expPkg.CoveragePct)
 				}
 			}
 
-			if len(pkg.Benchmarks) != len(expPkg.Benchmarks) {
-				t.Fatalf("Package Benchmarks == %d, want %d", len(pkg.Benchmarks), len(expPkg.Benchmarks))
+			if report.Failures() != testCase.failCount {
+				t.Errorf("%s: failure count does not match: got %d, want %d", testCase.name, report.Failures(), testCase.failCount)
 			}
-
-			for j, benchmark := range pkg.Benchmarks {
-				expBenchmark := expPkg.Benchmarks[j]
-
-				if benchmark.Name != expBenchmark.Name {
-					t.Errorf("Test.Name == %s, want %s", benchmark.Name, expBenchmark.Name)
-				}
-
-				if benchmark.Duration != expBenchmark.Duration {
-					t.Errorf("benchmark.Duration == %s, want %s", benchmark.Duration, expBenchmark.Duration)
-				}
-
-				if benchmark.Bytes != expBenchmark.Bytes {
-					t.Errorf("benchmark.Bytes == %d, want %d", benchmark.Bytes, expBenchmark.Bytes)
-				}
-
-				if benchmark.Allocs != expBenchmark.Allocs {
-					t.Errorf("benchmark.Allocs == %d, want %d", benchmark.Allocs, expBenchmark.Allocs)
-				}
-			}
-
-			if pkg.CoveragePct != expPkg.CoveragePct {
-				t.Errorf("Package.CoveragePct == %s, want %s", pkg.CoveragePct, expPkg.CoveragePct)
-			}
-		}
-
-		if report.Failures() != testCase.failCount {
-			t.Errorf("%s: failure count does not match: got %d, want %d", testCase.name, report.Failures(), testCase.failCount)
-		}
+		})
 	}
 }
 

@@ -69,6 +69,9 @@ var (
 	regexOutput          = regexp.MustCompile(`(    )*\t(.*)`)
 	regexSummary         = regexp.MustCompile(`^(PASS|FAIL|SKIP)$`)
 	regexPackageWithTest = regexp.MustCompile(`^# ([^\[\]]+) \[[^\]]+\]$`)
+
+	// if not test is found in a failed package.
+	zeroTestName = "Failure"
 )
 
 // Parse parses go test output from reader r and returns a report with the
@@ -157,7 +160,7 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 				// failed with some output. Create a dummy test with the
 				// output.
 				tests = append(tests, &Test{
-					Name:   "Failure",
+					Name:   zeroTestName,
 					Result: FAIL,
 					Output: buffers[cur],
 				})
@@ -307,10 +310,19 @@ func containsFailures(tests []*Test) bool {
 func (r *Report) Failures() int {
 	count := 0
 
+	pkgSeenZeroT := map[string]int{}
 	nameResult := map[string]Result{}
 	for _, p := range r.Packages {
+		if len(p.Tests) == 1 && p.Tests[0].Name == zeroTestName {
+			pkgSeenZeroT[p.Name] = pkgSeenZeroT[p.Name] + 1
+		} else {
+			if seenCnt, exists := pkgSeenZeroT[p.Name]; exists {
+				count = count - seenCnt
+				pkgSeenZeroT[p.Name] = 0
+			}
+		}
 		for _, t := range p.Tests {
-			key := p.Name+"$$"+t.Name
+			key := p.Name + "$$" + t.Name
 			if res, exists := nameResult[key]; !exists {
 				if t.Result == FAIL {
 					count = count + 1

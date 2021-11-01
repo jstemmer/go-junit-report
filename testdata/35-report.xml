@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+	<testsuite tests="1" failures="1" time="21.630" name="vitess.io/vitess/go/test/endtoend/vtgate/queries/aggregation">
+		<properties>
+			<property name="go.version" value="1.0"></property>
+		</properties>
+		<testcase classname="aggregation" name="Failure" time="0.000">
+			<failure message="Failed" type="">running tests for  vitess.io/vitess/go/test/endtoend/vtgate/queries/aggregation&#xA;E1101 10:02:58.832465   21079 tablet.go:242] unable to connect to tablet cell:&#34;test_union&#34; uid:5559: node doesn&#39;t exist: /test_union/tablets/test_union-0000005559/Tablet&#xA;F1101 10:02:58.842306   21079 run.go:50] listen tcp :16022: bind: address already in use&#xA;E1101 10:02:59.023686   17409 cluster_process.go:334] error starting vttablet for tablet uid 5559, grpc port 16023: process &#39;vttablet&#39; timed out after 10s (err: process &#39;vttablet&#39; exited prematurely (err: exit status 1))</failure>
+		</testcase>
+	</testsuite>
+	<testsuite tests="3" failures="0" time="32.140" name="vitess.io/vitess/go/test/endtoend/vtgate/queries/aggregation">
+		<properties>
+			<property name="go.version" value="1.0"></property>
+		</properties>
+		<testcase classname="aggregation" name="TestAggregateTypes" time="0.130"></testcase>
+		<testcase classname="aggregation" name="TestGroupBy" time="0.050"></testcase>
+		<testcase classname="aggregation" name="TestDistinct" time="0.070"></testcase>
+	</testsuite>
+</testsuites>

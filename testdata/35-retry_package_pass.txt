@@ -1,0 +1,15 @@
+running tests for  vitess.io/vitess/go/test/endtoend/vtgate/queries/aggregation
+E1101 10:02:58.832465   21079 tablet.go:242] unable to connect to tablet cell:"test_union" uid:5559: node doesn't exist: /test_union/tablets/test_union-0000005559/Tablet
+F1101 10:02:58.842306   21079 run.go:50] listen tcp :16022: bind: address already in use
+E1101 10:02:59.023686   17409 cluster_process.go:334] error starting vttablet for tablet uid 5559, grpc port 16023: process 'vttablet' timed out after 10s (err: process 'vttablet' exited prematurely (err: exit status 1))
+FAIL	vitess.io/vitess/go/test/endtoend/vtgate/queries/aggregation	21.630s
+FAIL
+running tests for  vitess.io/vitess/go/test/endtoend/vtgate/queries/aggregation
+=== RUN   TestAggregateTypes
+--- PASS: TestAggregateTypes (0.13s)
+=== RUN   TestGroupBy
+--- PASS: TestGroupBy (0.05s)
+=== RUN   TestDistinct
+--- PASS: TestDistinct (0.07s)
+PASS
+ok  	vitess.io/vitess/go/test/endtoend/vtgate/queries/aggregation	32.140s
