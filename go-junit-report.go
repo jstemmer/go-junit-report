@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/jstemmer/go-junit-report/formatter"
-	"github.com/jstemmer/go-junit-report/parser"
+	"github.com/vitessio/go-junit-report/formatter"
+	"github.com/vitessio/go-junit-report/parser"
 )
 
 var (
