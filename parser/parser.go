@@ -45,6 +45,7 @@ var (
 		"marking it as not failed":      PASS,
 		"FATAL ERROR!":                  FAIL,
 		"ERROR!":                        FAIL,
+		"ERROR:":                        FAIL,
 		"TEST CASE FAILED!":             FAIL,
 		"Marking it as failed!":         FAIL,
 		"marking it as failed!":         FAIL,
