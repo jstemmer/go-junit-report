@@ -1,0 +1,34 @@
+name: Go
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.17
+
+  build:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build
+        run: ./build.sh doctest-junit-report
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            dist/linux_386_doctest-junit-report.zip
+            dist/linux_64_doctest-junit-report.zip
+            dist/windows_386_doctest-junit-report.zip
+            dist/windows_64_doctest-junit-report.zip
+            dist/darwin_64_doctest-junit-report.zip
+            dist/darwin_arm64_doctest-junit-report.zip
