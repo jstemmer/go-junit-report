@@ -1,49 +1,56 @@
 # go-junit-report
 
-Converts `go test` output to an xml report, suitable for applications that
-expect junit xml reports (e.g. [Jenkins](http://jenkins-ci.org)).
+go-junit-report is a tool that converts [`go test`] output to an XML report,
+suitable for applications that expect JUnit-style XML reports (e.g.
+[Jenkins](http://jenkins-ci.org)).
+
+The test output [parser] and JUnit report [formatter] are also available as Go
+packages.
 
 [![Build Status][travis-badge]][travis-link]
-[![Report Card][report-badge]][report-link]
 
-## Installation
+## Install from package (recommended)
 
-Go version 1.2 or higher is required. Install or update using the `go get`
-command:
+Pre-built packages for Windows, macOS and Linux are found on the [Releases]
+page.
+
+## Install from source
+
+Download and install the latest stable version from source by running:
 
 ```bash
-go get -u github.com/jstemmer/go-junit-report
+go install github.com/jstemmer/go-junit-report@latest
 ```
 
 ## Usage
 
-go-junit-report reads the `go test` verbose output from standard in and writes
-junit compatible XML to standard out.
+go-junit-report reads the full `go test` output from stdin and writes JUnit
+compatible XML to stdout. In order to capture build errors as well as test
+output, redirect both stdout and stderr to go-junit-report.
 
 ```bash
 go test -v 2>&1 | go-junit-report > report.xml
 ```
 
-Note that it also can parse benchmark output with `-bench` flag:
+Parsing benchmark output is also supported, for example:
+
 ```bash
 go test -v -bench . -count 5 2>&1 | go-junit-report > report.xml
 ```
 
-## Contribution
+If you want go-junit-report to exit with a non-zero exit code when it encounters
+build errors or test failures, set the `-set-exit-code` flag.
 
-Create an Issue and discuss the fix or feature, then fork the package.
-Clone to github.com/jstemmer/go-junit-report.  This is necessary because go import uses this path.
-Fix or implement feature. Test and then commit change.
-Specify #Issue and describe change in the commit message.
-Create Pull Request. It can be merged by owner or administrator then.
+Run `go-junit-report -help` for a list of all supported flags.
 
-### Run Tests
+## Contributing
 
-```bash
-go test
-```
+See [CONTRIBUTING.md].
 
+[`go test`]: https://pkg.go.dev/cmd/go#hdr-Test_packages
+[parser]: https://pkg.go.dev/github.com/jstemmer/go-junit-report/parser
+[formatter]: https://pkg.go.dev/github.com/jstemmer/go-junit-report/formatter
 [travis-badge]: https://travis-ci.org/jstemmer/go-junit-report.svg?branch=master
 [travis-link]: https://travis-ci.org/jstemmer/go-junit-report
-[report-badge]: https://goreportcard.com/badge/github.com/jstemmer/go-junit-report
-[report-link]: https://goreportcard.com/report/github.com/jstemmer/go-junit-report
+[Releases]: https://github.com/jstemmer/go-junit-report/releases
+[CONTRIBUTING.md]: https://github.com/jstemmer/go-junit-report/blob/master/CONTRIBUTING.md
