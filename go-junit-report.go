@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	Version   = "v0.9.1-dev"
+	Version   = "v1.0.0-dev"
 	Revision  = "HEAD"
 	BuildTime string
 )
