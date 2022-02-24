@@ -69,6 +69,10 @@ func (t *Testsuite) AddTestcase(tc Testcase) {
 	if tc.Failure != nil {
 		t.Failures += 1
 	}
+
+	if tc.Skipped != nil {
+		t.Skipped += 1
+	}
 }
 
 func (ts *Testsuite) SetTimestamp(t time.Time) {
