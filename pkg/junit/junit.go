@@ -34,13 +34,13 @@ func (t *Testsuites) AddSuite(ts Testsuite) {
 // Testsuite is a single JUnit testsuite containing testcases.
 type Testsuite struct {
 	// required attributes
-	Name  string `xml:"name,attr"`
-	Tests int    `xml:"tests,attr"`
+	Name     string `xml:"name,attr"`
+	Tests    int    `xml:"tests,attr"`
+	Failures int    `xml:"failures,attr"`
+	Errors   int    `xml:"errors,attr"`
 
 	// optional attributes
 	Disabled  int    `xml:"disabled,attr,omitempty"`
-	Errors    int    `xml:"errors,attr"`
-	Failures  int    `xml:"failures,attr"`
 	Hostname  string `xml:"hostname,attr,omitempty"`
 	ID        int    `xml:"id,attr,omitempty"`
 	Package   string `xml:"package,attr,omitempty"`
