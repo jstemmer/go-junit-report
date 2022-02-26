@@ -1,13 +1,12 @@
 # go-junit-report
 
 go-junit-report is a tool that converts [`go test`] output to an XML report,
-suitable for applications that expect JUnit-style XML reports (e.g.
-[Jenkins](http://jenkins-ci.org)).
+suitable for applications that expect JUnit-style XML reports (e.g. [Jenkins]).
 
 The test output [parser] and JUnit report [formatter] are also available as Go
 packages.
 
-[![Build Status][travis-badge]][travis-link]
+[![Build status][github-actions-badge]][github-actions-link]
 
 ## Install from package (recommended)
 
@@ -48,9 +47,10 @@ Run `go-junit-report -help` for a list of all supported flags.
 See [CONTRIBUTING.md].
 
 [`go test`]: https://pkg.go.dev/cmd/go#hdr-Test_packages
+[Jenkins]: https://www.jenkins.io/
 [parser]: https://pkg.go.dev/github.com/jstemmer/go-junit-report/parser
 [formatter]: https://pkg.go.dev/github.com/jstemmer/go-junit-report/formatter
-[travis-badge]: https://travis-ci.org/jstemmer/go-junit-report.svg?branch=master
-[travis-link]: https://travis-ci.org/jstemmer/go-junit-report
+[github-actions-badge]: https://github.com/jstemmer/go-junit-report/actions/workflows/main.yml/badge.svg
+[github-actions-link]: https://github.com/jstemmer/go-junit-report/actions
 [Releases]: https://github.com/jstemmer/go-junit-report/releases
 [CONTRIBUTING.md]: https://github.com/jstemmer/go-junit-report/blob/master/CONTRIBUTING.md
