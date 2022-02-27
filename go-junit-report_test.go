@@ -19,11 +19,12 @@ import (
 var matchTest = flag.String("match", "", "only test testdata matching this pattern")
 
 type TestCase struct {
-	name        string
-	reportName  string
-	report      *parser.Report
-	noXMLHeader bool
-	packageName string
+	name          string
+	reportName    string
+	report        *parser.Report
+	noXMLHeader   bool
+	packageName   string
+	packagePrefix string
 }
 
 var testCases = []TestCase{
@@ -1535,6 +1536,29 @@ var testCases = []TestCase{
 			},
 		},
 	},
+	{
+		name:       "33-package-prefix.txt",
+		reportName: "33-report.xml",
+		report: &parser.Report{
+			Packages: []parser.Package{
+				{
+					Name:     "pkg/pass",
+					Duration: 5 * time.Millisecond,
+					Time:     5,
+					Tests: []*parser.Test{
+						{
+							Name:     "TestOne",
+							Duration: 0,
+							Time:     0,
+							Result:   parser.PASS,
+							Output:   []string{},
+						},
+					},
+				},
+			},
+		},
+		packagePrefix: "linux/arm64/",
+	},
 }
 
 func TestParser(t *testing.T) {
@@ -1664,7 +1688,12 @@ func testJUnitFormatter(t *testing.T, goVersion string) {
 
 		var junitReport bytes.Buffer
 
-		if err = formatter.JUnitReportXML(testCase.report, testCase.noXMLHeader, goVersion, &junitReport); err != nil {
+		testCaseReport := testCase.report
+		if testCase.packagePrefix != "" {
+			testCaseReport = testCase.report.PrefixPackage(testCase.packagePrefix)
+		}
+
+		if err = formatter.JUnitReportXML(testCaseReport, testCase.noXMLHeader, goVersion, &junitReport); err != nil {
 			t.Fatal(err)
 		}
 
