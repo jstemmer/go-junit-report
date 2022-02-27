@@ -19,7 +19,7 @@ var (
 	regexCoverage  = regexp.MustCompile(`^coverage:\s+(\d+|\d+\.\d+)%\s+of\s+statements(?:\sin\s(.+))?$`)
 	regexEndTest   = regexp.MustCompile(`((?:    )*)--- (PASS|FAIL|SKIP): ([^ ]+) \((\d+\.\d+)(?: seconds|s)\)`)
 	regexStatus    = regexp.MustCompile(`^(PASS|FAIL|SKIP)$`)
-	regexSummary   = regexp.MustCompile(`^(ok|FAIL)\s+([^ ]+)\s+` + `(?:(\d+\.\d+)s|(\(cached\)|\[\w+ failed]))` + `(?:\s+coverage:\s+(\d+\.\d+)%\sof\sstatements(?:\sin\s(.+))?)?$`)
+	regexSummary   = regexp.MustCompile(`^(ok|FAIL)\s+([^ ]+)\s+(?:(\d+\.\d+)s|(\(cached\)|\[\w+ failed]))(?:\s+coverage:\s+(\d+\.\d+)%\sof\sstatements(?:\sin\s(.+))?)?$`)
 )
 
 // Parse parses Go test output from the given io.Reader r.
