@@ -68,14 +68,19 @@ func (b *ReportBuilder) ContinueTest(name string) {
 }
 
 func (b *ReportBuilder) EndTest(name, result string, duration time.Duration, level int) {
-	id := b.findTest(name)
-	b.lastId = id
+	b.lastId = b.findTest(name)
+	if b.lastId < 0 {
+		// test did not exist, create one
+		// TODO: Likely reason is that the user ran go test without the -v
+		// flag, should we report this somewhere?
+		b.CreateTest(name)
+	}
 
-	t := b.tests[id]
+	t := b.tests[b.lastId]
 	t.Result = parseResult(result)
 	t.Duration = duration
 	t.Level = level
-	b.tests[id] = t
+	b.tests[b.lastId] = t
 }
 
 func (b *ReportBuilder) End() {
@@ -229,7 +234,7 @@ func (b *ReportBuilder) findBenchmark(name string) int {
 
 func (b *ReportBuilder) containsFailingTest() bool {
 	for _, test := range b.tests {
-		if test.Result == Fail {
+		if test.Result == Fail || test.Result == Unknown {
 			return true
 		}
 	}

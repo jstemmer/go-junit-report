@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites tests="2" failures="2">
-	<testsuite tests="1" failures="1" errors="0" time="0.003" name="package/panic" hostname="hostname" timestamp="2022-01-01T00:00:00Z">
+<testsuites tests="2" errors="2">
+	<testsuite tests="1" failures="0" errors="1" time="0.003" name="package/panic" hostname="hostname" timestamp="2022-01-01T00:00:00Z">
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
 		<testcase classname="panic" name="Failure" time="0.000">
-			<failure message="Failed" type="">panic: init&#xA;stacktrace</failure>
+			<error message="Run error" type="">panic: init&#xA;stacktrace</error>
 		</testcase>
 	</testsuite>
-	<testsuite tests="1" failures="1" errors="0" time="0.003" name="package/panic2" hostname="hostname" timestamp="2022-01-01T00:00:00Z">
+	<testsuite tests="1" failures="0" errors="1" time="0.003" name="package/panic2" hostname="hostname" timestamp="2022-01-01T00:00:00Z">
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
 		<testcase classname="panic2" name="Failure" time="0.000">
-			<failure message="Failed" type="">panic: init&#xA;stacktrace</failure>
+			<error message="Run error" type="">panic: init&#xA;stacktrace</error>
 		</testcase>
 	</testsuite>
 </testsuites>

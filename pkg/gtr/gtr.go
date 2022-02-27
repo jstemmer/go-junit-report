@@ -143,6 +143,11 @@ func JUnit(report Report, hostname string, now time.Time) junit.Testsuites {
 				tc.Skipped = &junit.Result{
 					Message: formatOutput(test.Output, test.Level),
 				}
+			} else if test.Result == Unknown {
+				tc.Error = &junit.Result{
+					Message: "No test result found",
+					Data:    formatOutput(test.Output, test.Level),
+				}
 			}
 
 			suite.AddTestcase(tc)
@@ -172,8 +177,8 @@ func JUnit(report Report, hostname string, now time.Time) junit.Testsuites {
 				Classname: pkg.BuildError.Name,
 				Name:      pkg.BuildError.Cause,
 				Time:      junit.FormatDuration(0),
-				Failure: &junit.Result{
-					Message: "Failed",
+				Error: &junit.Result{
+					Message: "Build error",
 					Data:    strings.Join(pkg.BuildError.Output, "\n"),
 				},
 			}
@@ -185,8 +190,8 @@ func JUnit(report Report, hostname string, now time.Time) junit.Testsuites {
 				Classname: pkg.RunError.Name,
 				Name:      "Failure",
 				Time:      junit.FormatDuration(0),
-				Failure: &junit.Result{
-					Message: "Failed",
+				Error: &junit.Result{
+					Message: "Run error",
 					Data:    strings.Join(pkg.RunError.Output, "\n"),
 				},
 			}
