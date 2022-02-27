@@ -5,5 +5,6 @@
 			<property name="go.version" value="1.0"></property>
 		</properties>
 		<testcase classname="cpu" name="BenchmarkRing" time="0.000000074"></testcase>
+		<system-out><![CDATA[pkg: single/cpu]]></system-out>
 	</testsuite>
 </testsuites>

@@ -6,6 +6,7 @@
 		</properties>
 		<testcase classname="common" name="BenchmarkParse" time="0.000001591"></testcase>
 		<testcase classname="common" name="BenchmarkNewTask" time="0.000000391"></testcase>
+		<system-out><![CDATA[pkg: mycode/common]]></system-out>
 	</testsuite>
 	<testsuite tests="4" failures="0" errors="0" time="47.084" name="mycode/benchmarks/channels" hostname="hostname" timestamp="2022-01-01T00:00:00Z">
 		<properties>
@@ -15,5 +16,6 @@
 		<testcase classname="channels" name="BenchmarkFanout/Channel/100" time="0.000024965"></testcase>
 		<testcase classname="channels" name="BenchmarkFanout/Channel/1000" time="0.000195672"></testcase>
 		<testcase classname="channels" name="BenchmarkFanout/Channel/10000" time="0.002410200"></testcase>
+		<system-out><![CDATA[pkg: mycode/benchmarks/channels]]></system-out>
 	</testsuite>
 </testsuites>

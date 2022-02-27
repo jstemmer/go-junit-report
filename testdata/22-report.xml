@@ -6,5 +6,8 @@
 		</properties>
 		<testcase classname="basic" name="BenchmarkParse" time="0.000000604"></testcase>
 		<testcase classname="basic" name="BenchmarkReadingList" time="0.000001425"></testcase>
+		<system-out><![CDATA[goos: darwin
+goarch: amd64
+pkg: code.internal/state]]></system-out>
 	</testsuite>
 </testsuites>

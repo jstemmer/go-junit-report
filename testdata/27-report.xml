@@ -7,5 +7,8 @@
 		<testcase classname="small" name="BenchmarkItsy" time="0.000000045"></testcase>
 		<testcase classname="small" name="BenchmarkTeeny" time="0.000000002"></testcase>
 		<testcase classname="small" name="BenchmarkWeeny" time="0.000000000"></testcase>
+		<system-out><![CDATA[goos: darwin
+goarch: amd64
+pkg: really/small]]></system-out>
 	</testsuite>
 </testsuites>

@@ -13,5 +13,6 @@
 		<testcase classname="parallel" name="ThirdTest" time="0.010">
 			<failure message="Failed" type="">Message from third&#xA;parallel_test.go:32: ThirdTest error</failure>
 		</testcase>
+		<system-out><![CDATA[exit status 1]]></system-out>
 	</testsuite>
 </testsuites>

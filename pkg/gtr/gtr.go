@@ -115,6 +115,10 @@ func JUnit(report Report, hostname string, now time.Time) junit.Testsuites {
 			Hostname:  hostname,
 		}
 
+		if len(pkg.Output) > 0 {
+			suite.SystemOut = &junit.Output{Data: formatOutput(pkg.Output, 0)}
+		}
+
 		if pkg.Coverage > 0 {
 			suite.AddProperty("coverage.statements.pct", fmt.Sprintf("%.2f", pkg.Coverage))
 		}

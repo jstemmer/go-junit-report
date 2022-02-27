@@ -6,5 +6,8 @@
 		</properties>
 		<testcase classname="one" name="BenchmarkIpsHistoryInsert" time="0.000052568"></testcase>
 		<testcase classname="one" name="BenchmarkIpsHistoryLookup" time="0.000015208"></testcase>
+		<system-out><![CDATA[goos: darwin
+goarch: amd64
+pkg: code.internal/state]]></system-out>
 	</testsuite>
 </testsuites>
