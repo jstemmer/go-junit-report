@@ -1,7 +1,6 @@
 package gtr
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -201,7 +200,6 @@ func (b *ReportBuilder) AppendOutput(line string) {
 		be.Output = append(be.Output, line)
 		b.buildErrors[b.lastId] = be
 	} else {
-		fmt.Printf("DEBUG output else\n")
 		b.output = append(b.output, line)
 	}
 }
