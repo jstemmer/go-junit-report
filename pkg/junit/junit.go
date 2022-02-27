@@ -50,8 +50,8 @@ type Testsuite struct {
 
 	Properties []Property `xml:"properties>property,omitempty"`
 	Testcases  []Testcase `xml:"testcase,omitempty"`
-	SystemOut  string     `xml:"system-out,omitempty"`
-	SystemErr  string     `xml:"system-err,omitempty"`
+	SystemOut  *Output    `xml:"system-out,omitempty"`
+	SystemErr  *Output    `xml:"system-err,omitempty"`
 }
 
 func (t *Testsuite) AddProperty(name, value string) {
@@ -92,8 +92,8 @@ type Testcase struct {
 	Skipped   *Result `xml:"skipped,omitempty"`
 	Error     *Result `xml:"error,omitempty"`
 	Failure   *Result `xml:"failure,omitempty"`
-	SystemOut string  `xml:"system-out,omitempty"`
-	SystemErr string  `xml:"system-err,omitempty"`
+	SystemOut *Output `xml:"system-out,omitempty"`
+	SystemErr *Output `xml:"system-err,omitempty"`
 }
 
 // Property represents a key/value pair.
@@ -107,6 +107,11 @@ type Result struct {
 	Message string `xml:"message,attr"`
 	Type    string `xml:"type,attr,omitempty"`
 	Data    string `xml:",cdata"`
+}
+
+// Output represents output written to stdout or sderr.
+type Output struct {
+	Data string `xml:",cdata"`
 }
 
 // FormatDuration returns the JUnit string representation of the given

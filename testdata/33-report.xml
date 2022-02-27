@@ -6,5 +6,8 @@
 		</properties>
 		<testcase classname="flate" name="BenchmarkDecode/Digits/Huffman/1e4" time="0.000104427"></testcase>
 		<testcase classname="flate" name="BenchmarkEncode/Digits/Huffman/1e4" time="0.000028334"></testcase>
+		<system-out><![CDATA[goos: linux
+goarch: amd64
+pkg: compress/flate]]></system-out>
 	</testsuite>
 </testsuites>
