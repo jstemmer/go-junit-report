@@ -102,7 +102,7 @@ type Property struct {
 type Result struct {
 	Message string `xml:"message,attr"`
 	Type    string `xml:"type,attr,omitempty"`
-	Data    string `xml:",chardata"`
+	Data    string `xml:",cdata"`
 }
 
 // FormatDuration returns the JUnit string representation of the given
