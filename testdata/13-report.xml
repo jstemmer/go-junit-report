@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites tests="5" errors="3">
-	<testsuite tests="1" failures="0" time="0.100" name="package/name/passing1">
+	<testsuite tests="1" failures="0" time="0.100" name="package/name/passing1" hostname="hostname" timestamp="2022-01-01T00:00:00Z">
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
 		<testcase classname="passing1" name="TestA" time="0.100"></testcase>
 	</testsuite>
-	<testsuite tests="1" failures="0" time="0.100" name="package/name/passing2">
+	<testsuite tests="1" failures="0" time="0.100" name="package/name/passing2" hostname="hostname" timestamp="2022-01-01T00:00:00Z">
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
 		<testcase classname="passing2" name="TestB" time="0.100"></testcase>
 	</testsuite>
-	<testsuite tests="1" failures="1" time="0.000" name="package/name/failing1">
+	<testsuite tests="1" failures="1" time="0.000" name="package/name/failing1" hostname="hostname" timestamp="2022-01-01T00:00:00Z">
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
@@ -20,7 +20,7 @@
 			<failure message="Failed" type="">failing1/failing_test.go:15: undefined: x</failure>
 		</testcase>
 	</testsuite>
-	<testsuite tests="1" failures="1" time="0.000" name="package/name/failing2">
+	<testsuite tests="1" failures="1" time="0.000" name="package/name/failing2" hostname="hostname" timestamp="2022-01-01T00:00:00Z">
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
@@ -28,7 +28,7 @@
 			<failure message="Failed" type="">failing2/another_failing_test.go:20: undefined: y</failure>
 		</testcase>
 	</testsuite>
-	<testsuite tests="1" failures="1" time="0.000" name="package/name/setupfailing1">
+	<testsuite tests="1" failures="1" time="0.000" name="package/name/setupfailing1" hostname="hostname" timestamp="2022-01-01T00:00:00Z">
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>

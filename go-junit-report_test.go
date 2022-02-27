@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/jstemmer/go-junit-report/v2/pkg/gtr"
 	"github.com/jstemmer/go-junit-report/v2/pkg/junit"
@@ -198,7 +199,8 @@ func testReport(input, reportFile, packageName string, t *testing.T) {
 		}
 	}
 
-	actual := gtr.JUnit(gtr.FromEvents(events, packageName))
+	testTime := time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
+	actual := gtr.JUnit(gtr.FromEvents(events, packageName), "hostname", testTime)
 	// Remove any new properties for backwards compatibility
 	actual = dropNewProperties(actual)
 

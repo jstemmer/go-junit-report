@@ -103,11 +103,17 @@ func FromEvents(events []Event, packageName string) Report {
 }
 
 // JUnit converts the given report to a collection of JUnit Testsuites.
-func JUnit(report Report) junit.Testsuites {
+func JUnit(report Report, hostname string, now time.Time) junit.Testsuites {
+	timestamp := now.Format(time.RFC3339)
+
 	var suites junit.Testsuites
 	for _, pkg := range report.Packages {
 		var duration time.Duration
-		suite := junit.Testsuite{Name: pkg.Name}
+		suite := junit.Testsuite{
+			Name:      pkg.Name,
+			Timestamp: timestamp,
+			Hostname:  hostname,
+		}
 
 		if pkg.Coverage > 0 {
 			suite.AddProperty("coverage.statements.pct", fmt.Sprintf("%.2f", pkg.Coverage))

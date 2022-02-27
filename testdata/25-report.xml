@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites tests="2">
-	<testsuite tests="2" failures="0" time="14.211" name="pkg/count">
+	<testsuite tests="2" failures="0" time="14.211" name="pkg/count" hostname="hostname" timestamp="2022-01-01T00:00:00Z">
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>

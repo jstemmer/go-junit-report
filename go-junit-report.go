@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/jstemmer/go-junit-report/v2/pkg/gtr"
 	"github.com/jstemmer/go-junit-report/v2/pkg/parser/gotest"
@@ -55,13 +56,16 @@ func main() {
 	}
 	report := gtr.FromEvents(events, *packageName)
 
+	hostname, _ := os.Hostname() // ignore error
+	testsuites := gtr.JUnit(report, hostname, time.Now())
+
 	if !*noXMLHeader {
 		fmt.Fprintf(os.Stdout, xml.Header)
 	}
 
 	enc := xml.NewEncoder(os.Stdout)
 	enc.Indent("", "\t")
-	if err := enc.Encode(gtr.JUnit(report)); err != nil {
+	if err := enc.Encode(testsuites); err != nil {
 		fmt.Fprintf(os.Stderr, "Error writing XML: %s\n", err)
 		os.Exit(1)
 	}
