@@ -4,7 +4,14 @@ import (
 	"time"
 )
 
-// ReportBuilder builds Reports.
+// ReportBuilder helps build a test Report from a collection of events.
+//
+// The ReportBuilder keeps track of the active context whenever a test,
+// benchmark or build error is created. This is necessary because the test
+// parser do not contain any state themselves and simply just emit an event for
+// every line that is read. By tracking the active context, any output that is
+// appended to the ReportBuilder gets attributed to the correct test, benchmark
+// or build error.
 type ReportBuilder struct {
 	packages    []Package
 	tests       map[int]Test
@@ -13,16 +20,16 @@ type ReportBuilder struct {
 	runErrors   map[int]Error
 
 	// state
-	nextId   int // next free id
-	lastId   int // last test id // TODO: stack?
-	output   []string
-	coverage float64
+	nextId   int      // next free unused id
+	lastId   int      // most recently created id
+	output   []string // output that does not belong to any test
+	coverage float64  // coverage percentage
 
-	// defaults
+	// default values
 	packageName string
 }
 
-// TODO: move gtr.FromEvents to ReportBuilder so we could have report builders for different parsers.
+// NewReportBuilder creates a new ReportBuilder.
 func NewReportBuilder(packageName string) *ReportBuilder {
 	return &ReportBuilder{
 		tests:       make(map[int]Test),
@@ -34,6 +41,7 @@ func NewReportBuilder(packageName string) *ReportBuilder {
 	}
 }
 
+// newId returns a new unique id and sets the active context this id.
 func (b *ReportBuilder) newId() int {
 	id := b.nextId
 	b.lastId = id
@@ -41,31 +49,46 @@ func (b *ReportBuilder) newId() int {
 	return id
 }
 
+// flush creates a new package in this report containing any tests or
+// benchmarks we've collected so far. This is necessary when a test or
+// benchmark did not end with a summary.
 func (b *ReportBuilder) flush() {
-	// Create package in case we have tests or benchmarks that didn't get a
-	// summary.
 	if len(b.tests) > 0 || len(b.benchmarks) > 0 {
 		b.CreatePackage(b.packageName, "", 0, "")
 	}
 }
 
+// Build returns the new Report containing all the tests, benchmarks and output
+// created so far.
 func (b *ReportBuilder) Build() Report {
 	b.flush()
 	return Report{Packages: b.packages}
 }
 
+// CreateTest adds a test with the given name to the report, and marks it as
+// active.
 func (b *ReportBuilder) CreateTest(name string) {
 	b.tests[b.newId()] = Test{Name: name}
 }
 
+// PauseTest marks the active context as no longer active. Any results or
+// output added to the report after calling PauseTest will no longer be assumed
+// to belong to this test.
 func (b *ReportBuilder) PauseTest(name string) {
 	b.lastId = 0
 }
 
+// ContinueTest finds the test with the given name and marks it as active. If
+// more than one test exist with this name, the most recently created test will
+// be used.
 func (b *ReportBuilder) ContinueTest(name string) {
 	b.lastId = b.findTest(name)
 }
 
+// EndTest finds the test with the given name, sets the result, duration and
+// level, and marks it as active. If more than one test exists with this name,
+// the most recently created test will be used. If no test exists with this
+// name, a new test is created.
 func (b *ReportBuilder) EndTest(name, result string, duration time.Duration, level int) {
 	b.lastId = b.findTest(name)
 	if b.lastId < 0 {
@@ -82,10 +105,12 @@ func (b *ReportBuilder) EndTest(name, result string, duration time.Duration, lev
 	b.tests[b.lastId] = t
 }
 
+// End marks the active context as no longer active.
 func (b *ReportBuilder) End() {
 	b.lastId = 0
 }
 
+// Benchmark adds a new Benchmark to the report and marks it as active.
 func (b *ReportBuilder) Benchmark(name string, iterations int64, nsPerOp, mbPerSec float64, bytesPerOp, allocsPerOp int64) {
 	b.benchmarks[b.newId()] = Benchmark{
 		Name:        name,
@@ -98,10 +123,14 @@ func (b *ReportBuilder) Benchmark(name string, iterations int64, nsPerOp, mbPerS
 	}
 }
 
+// CreateBuildError creates a new build error and marks it as active.
 func (b *ReportBuilder) CreateBuildError(packageName string) {
 	b.buildErrors[b.newId()] = Error{Name: packageName}
 }
 
+// CreatePackage adds a new package with the given name to the Report. This
+// package contains all the build errors, output, tests and benchmarks created
+// so far. Afterwards all state is reset.
 func (b *ReportBuilder) CreatePackage(name, result string, duration time.Duration, data string) {
 	pkg := Package{
 		Name:     name,
@@ -172,6 +201,7 @@ func (b *ReportBuilder) CreatePackage(name, result string, duration time.Duratio
 	pkg.Benchmarks = benchmarks
 	b.packages = append(b.packages, pkg)
 
+	// reset state
 	b.nextId = 1
 	b.lastId = 0
 	b.output = nil
@@ -180,11 +210,15 @@ func (b *ReportBuilder) CreatePackage(name, result string, duration time.Duratio
 	b.benchmarks = make(map[int]Benchmark)
 }
 
+// Coverage sets the code coverage percentage.
 func (b *ReportBuilder) Coverage(pct float64, packages []string) {
 	b.coverage = pct
 }
 
+// AppendOutput appends the given line to the currently active context. If no
+// active context exists, the output is assumed to belong to the package.
 func (b *ReportBuilder) AppendOutput(line string) {
+	// TODO(jstemmer): check if output is potentially a build error
 	if b.lastId <= 0 {
 		b.output = append(b.output, line)
 		return
@@ -204,6 +238,8 @@ func (b *ReportBuilder) AppendOutput(line string) {
 	}
 }
 
+// findTest returns the id of the most recently created test with the given
+// name, or -1 if no such test exists.
 func (b *ReportBuilder) findTest(name string) int {
 	// check if this test was lastId
 	if t, ok := b.tests[b.lastId]; ok && t.Name == name {
@@ -217,6 +253,8 @@ func (b *ReportBuilder) findTest(name string) int {
 	return -1
 }
 
+// findBenchmark returns the id of the most recently created benchmark with the
+// given name, or -1 if no such benchmark exists.
 func (b *ReportBuilder) findBenchmark(name string) int {
 	// check if this benchmark was lastId
 	if bm, ok := b.benchmarks[b.lastId]; ok && bm.Name == name {
@@ -230,6 +268,8 @@ func (b *ReportBuilder) findBenchmark(name string) int {
 	return -1
 }
 
+// containsFailingTest return true if the current list of tests contains at
+// least one failing test or an unknown result.
 func (b *ReportBuilder) containsFailingTest() bool {
 	for _, test := range b.tests {
 		if test.Result == Fail || test.Result == Unknown {
@@ -239,6 +279,7 @@ func (b *ReportBuilder) containsFailingTest() bool {
 	return false
 }
 
+// parseResult returns a Result for the given string r.
 func parseResult(r string) Result {
 	switch r {
 	case "PASS":
