@@ -253,21 +253,6 @@ func (b *ReportBuilder) findTest(name string) int {
 	return -1
 }
 
-// findBenchmark returns the id of the most recently created benchmark with the
-// given name, or -1 if no such benchmark exists.
-func (b *ReportBuilder) findBenchmark(name string) int {
-	// check if this benchmark was lastId
-	if bm, ok := b.benchmarks[b.lastId]; ok && bm.Name == name {
-		return b.lastId
-	}
-	for id := len(b.benchmarks); id >= 0; id-- {
-		if b.benchmarks[id].Name == name {
-			return id
-		}
-	}
-	return -1
-}
-
 // containsFailingTest return true if the current list of tests contains at
 // least one failing test or an unknown result.
 func (b *ReportBuilder) containsFailingTest() bool {
