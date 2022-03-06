@@ -55,6 +55,7 @@ func (p *parser) parseLine(line string) {
 	} else if matches := regexBenchmark.FindStringSubmatch(line); len(matches) == 7 {
 		p.benchmark(matches[1], matches[2], matches[3], matches[4], matches[5], matches[6])
 	} else if strings.HasPrefix(line, "# ") {
+		// TODO(jstemmer): this should just be output; we should detect build output when building report
 		fields := strings.Fields(strings.TrimPrefix(line, "# "))
 		if len(fields) == 1 || len(fields) == 2 {
 			p.buildOutput(fields[0])
