@@ -54,10 +54,12 @@ type Testsuite struct {
 	SystemErr  *Output    `xml:"system-err,omitempty"`
 }
 
+// AddProperty adds a property with the given name and value to this Testsuite.
 func (t *Testsuite) AddProperty(name, value string) {
 	t.Properties = append(t.Properties, Property{Name: name, Value: value})
 }
 
+// AddTestcase adds Testcase tc to this Testsuite.
 func (t *Testsuite) AddTestcase(tc Testcase) {
 	t.Testcases = append(t.Testcases, tc)
 	t.Tests += 1
@@ -75,6 +77,7 @@ func (t *Testsuite) AddTestcase(tc Testcase) {
 	}
 }
 
+// SetTimestamp sets the timestamp in this Testsuite.
 func (ts *Testsuite) SetTimestamp(t time.Time) {
 	ts.Timestamp = t.Format(time.RFC3339)
 }
