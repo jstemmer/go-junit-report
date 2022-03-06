@@ -1664,23 +1664,6 @@ func getProperty(name string, properties []junit.Property) (int, junit.Property)
 	return -1, junit.Property{}
 }
 
-func toXML(testsuites junit.Testsuites) (string, error) {
-	var buf bytes.Buffer
-
-	fmt.Fprintf(&buf, xml.Header)
-
-	enc := xml.NewEncoder(&buf)
-	enc.Indent("", "\t")
-
-	if err := enc.Encode(testsuites); err != nil {
-		return "", err
-	}
-	if err := enc.Flush(); err != nil {
-		return "", err
-	}
-	return buf.String(), nil
-}
-
 func TestParser(t *testing.T) {
 	matchRegex := compileMatch(t)
 	for _, testCase := range testCases {
@@ -1811,8 +1794,8 @@ func testJUnitFormatter(t *testing.T, goVersion string) {
 			t.Fatal(err)
 		}
 
-		if string(junitReport.Bytes()) != report {
-			t.Errorf("Fail: %s Report xml ==\n%s, want\n%s", testCase.name, string(junitReport.Bytes()), report)
+		if junitReport.String() != report {
+			t.Errorf("Fail: %s Report xml ==\n%s, want\n%s", testCase.name, junitReport.String(), report)
 		}
 	}
 }
