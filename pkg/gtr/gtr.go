@@ -19,15 +19,18 @@ type Report struct {
 	Packages []Package
 }
 
-func (r *Report) HasFailures() bool {
+func (r *Report) IsSuccessful() bool {
 	for _, pkg := range r.Packages {
+		if pkg.BuildError.Name != "" || pkg.RunError.Name != "" {
+			return false
+		}
 		for _, t := range pkg.Tests {
-			if t.Result == Fail {
-				return true
+			if t.Result != Pass && t.Result != Skip {
+				return false
 			}
 		}
 	}
-	return false
+	return true
 }
 
 type Package struct {

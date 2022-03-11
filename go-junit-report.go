@@ -102,7 +102,7 @@ func main() {
 	}
 	fmt.Fprintf(out, "\n")
 
-	if *setExitCode && report.HasFailures() {
+	if *setExitCode && !report.IsSuccessful() {
 		os.Exit(1)
 	}
 }
