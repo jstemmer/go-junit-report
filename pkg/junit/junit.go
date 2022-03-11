@@ -48,15 +48,21 @@ type Testsuite struct {
 	Time      string `xml:"time,attr"`                // duration in seconds
 	Timestamp string `xml:"timestamp,attr,omitempty"` // date and time in ISO8601
 
-	Properties []Property `xml:"properties>property,omitempty"`
-	Testcases  []Testcase `xml:"testcase,omitempty"`
-	SystemOut  *Output    `xml:"system-out,omitempty"`
-	SystemErr  *Output    `xml:"system-err,omitempty"`
+	Properties *[]Property `xml:"properties>property,omitempty"`
+	Testcases  []Testcase  `xml:"testcase,omitempty"`
+	SystemOut  *Output     `xml:"system-out,omitempty"`
+	SystemErr  *Output     `xml:"system-err,omitempty"`
 }
 
 // AddProperty adds a property with the given name and value to this Testsuite.
 func (t *Testsuite) AddProperty(name, value string) {
-	t.Properties = append(t.Properties, Property{Name: name, Value: value})
+	prop := Property{Name: name, Value: value}
+	if t.Properties == nil {
+		t.Properties = &[]Property{prop}
+		return
+	}
+	props := append(*t.Properties, prop)
+	t.Properties = &props
 }
 
 // AddTestcase adds Testcase tc to this Testsuite.

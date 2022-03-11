@@ -223,14 +223,16 @@ func testReport(input, reportFile, packageName string, t *testing.T) {
 func modifyForBackwardsCompat(testsuites junit.Testsuites) junit.Testsuites {
 	testsuites.XMLName.Local = ""
 	for i, suite := range testsuites.Suites {
-		if covIdx, covProp := getProperty("coverage.statements.pct", suite.Properties); covIdx > -1 {
-			pct, _ := strconv.ParseFloat(covProp.Value, 64)
-			testsuites.Suites[i].Properties[covIdx].Value = fmt.Sprintf("%.2f", pct)
-		}
-		testsuites.Suites[i].Properties = dropProperty("go.version", suite.Properties)
-
 		for j := range suite.Testcases {
 			testsuites.Suites[i].Testcases[j].Classname = suite.Name
+		}
+
+		if suite.Properties != nil {
+			if covIdx, covProp := getProperty("coverage.statements.pct", *suite.Properties); covIdx > -1 {
+				pct, _ := strconv.ParseFloat(covProp.Value, 64)
+				(*testsuites.Suites[i].Properties)[covIdx].Value = fmt.Sprintf("%.2f", pct)
+			}
+			testsuites.Suites[i].Properties = dropProperty("go.version", suite.Properties)
 		}
 	}
 	return testsuites
@@ -238,6 +240,9 @@ func modifyForBackwardsCompat(testsuites junit.Testsuites) junit.Testsuites {
 
 func dropNewProperties(testsuites junit.Testsuites) junit.Testsuites {
 	for i, suite := range testsuites.Suites {
+		if suite.Properties == nil {
+			continue
+		}
 		ps := suite.Properties
 		ps = dropProperty("goos", ps)
 		ps = dropProperty("goarch", ps)
@@ -247,14 +252,20 @@ func dropNewProperties(testsuites junit.Testsuites) junit.Testsuites {
 	return testsuites
 }
 
-func dropProperty(name string, properties []junit.Property) []junit.Property {
+func dropProperty(name string, properties *[]junit.Property) *[]junit.Property {
+	if properties == nil {
+		return nil
+	}
 	var props []junit.Property
-	for _, prop := range properties {
+	for _, prop := range *properties {
 		if prop.Name != name {
 			props = append(props, prop)
 		}
 	}
-	return props
+	if len(props) == 0 {
+		return nil
+	}
+	return &props
 }
 
 func getProperty(name string, properties []junit.Property) (int, junit.Property) {
