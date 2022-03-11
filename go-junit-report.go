@@ -39,14 +39,13 @@ func main() {
 	if flag.NArg() != 0 {
 		fmt.Fprintf(os.Stderr, "%s does not accept positional arguments\n", os.Args[0])
 		flag.Usage()
-		os.Exit(1)
+		exitf("")
 	}
 
 	// Read input
 	events, err := gotest.Parse(os.Stdin)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error reading input: %s\n", err)
-		os.Exit(1)
+		exitf("error reading input: %s\n", err)
 	}
 
 	if *printEvents {
@@ -66,16 +65,21 @@ func main() {
 	enc := xml.NewEncoder(os.Stdout)
 	enc.Indent("", "\t")
 	if err := enc.Encode(testsuites); err != nil {
-		fmt.Fprintf(os.Stderr, "Error writing XML: %s\n", err)
-		os.Exit(1)
+		exitf("error writing XML: %v", err)
 	}
 	if err := enc.Flush(); err != nil {
-		fmt.Fprintf(os.Stderr, "Error flusing XML: %s\n", err)
-		os.Exit(1)
+		exitf("error flusing XML: %v", err)
 	}
 	fmt.Fprintf(os.Stdout, "\n")
 
 	if *setExitCode && report.HasFailures() {
 		os.Exit(1)
 	}
+}
+
+func exitf(msg string, args ...interface{}) {
+	if msg != "" {
+		fmt.Fprintf(os.Stderr, msg+"\n", args...)
+	}
+	os.Exit(2)
 }
