@@ -27,16 +27,24 @@ func (r *Report) IsSuccessful() bool {
 }
 
 type Package struct {
-	Name     string
-	Duration time.Duration
-	Coverage float64
-	Output   []string
+	Name       string
+	Duration   time.Duration
+	Coverage   float64
+	Output     []string
+	Properties map[string]string
 
 	Tests      []Test
 	Benchmarks []Benchmark
 
 	BuildError Error
 	RunError   Error
+}
+
+func (p *Package) AddProperty(key, value string) {
+	if p.Properties == nil {
+		p.Properties = make(map[string]string)
+	}
+	p.Properties[key] = value
 }
 
 type Test struct {

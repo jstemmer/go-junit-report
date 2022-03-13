@@ -139,6 +139,10 @@ func CreateFromReport(report gtr.Report, hostname string, timestamp time.Time) T
 			Hostname:  hostname,
 		}
 
+		for k, v := range pkg.Properties {
+			suite.AddProperty(k, v)
+		}
+
 		if len(pkg.Output) > 0 {
 			suite.SystemOut = &Output{Data: formatOutput(pkg.Output, 0)}
 		}
