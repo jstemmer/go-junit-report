@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/jstemmer/go-junit-report/v2/pkg/gtr"
+	"github.com/jstemmer/go-junit-report/v2/pkg/junit"
 	"github.com/jstemmer/go-junit-report/v2/pkg/parser/gotest"
 )
 
@@ -77,7 +78,7 @@ func main() {
 	report := gtr.FromEvents(events, *packageName)
 
 	hostname, _ := os.Hostname() // ignore error
-	testsuites := gtr.JUnit(report, hostname, time.Now())
+	testsuites := junit.CreateFromReport(report, hostname, time.Now())
 
 	var out io.Writer = os.Stdout
 	if *output != "" {

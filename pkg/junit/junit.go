@@ -5,7 +5,10 @@ package junit
 import (
 	"encoding/xml"
 	"fmt"
+	"strings"
 	"time"
+
+	"github.com/jstemmer/go-junit-report/v2/pkg/gtr"
 )
 
 // Testsuites is a collection of JUnit testsuites.
@@ -123,14 +126,156 @@ type Output struct {
 	Data string `xml:",cdata"`
 }
 
-// FormatDuration returns the JUnit string representation of the given
+// CreateFromReport creates a JUnit representation of the given gtr.Report.
+func CreateFromReport(report gtr.Report, hostname string, timestamp time.Time) Testsuites {
+	ts := timestamp.Format(time.RFC3339)
+
+	var suites Testsuites
+	for _, pkg := range report.Packages {
+		var duration time.Duration
+		suite := Testsuite{
+			Name:      pkg.Name,
+			Timestamp: ts,
+			Hostname:  hostname,
+		}
+
+		if len(pkg.Output) > 0 {
+			suite.SystemOut = &Output{Data: formatOutput(pkg.Output, 0)}
+		}
+
+		if pkg.Coverage > 0 {
+			suite.AddProperty("coverage.statements.pct", fmt.Sprintf("%.2f", pkg.Coverage))
+		}
+
+		for _, test := range pkg.Tests {
+			duration += test.Duration
+
+			tc := Testcase{
+				Classname: pkg.Name,
+				Name:      test.Name,
+				Time:      formatDuration(test.Duration),
+			}
+
+			if test.Result == gtr.Fail {
+				tc.Failure = &Result{
+					Message: "Failed",
+					Data:    formatOutput(test.Output, test.Level),
+				}
+			} else if test.Result == gtr.Skip {
+				tc.Skipped = &Result{
+					Message: formatOutput(test.Output, test.Level),
+				}
+			} else if test.Result == gtr.Unknown {
+				tc.Error = &Result{
+					Message: "No test result found",
+					Data:    formatOutput(test.Output, test.Level),
+				}
+			}
+
+			suite.AddTestcase(tc)
+		}
+
+		for _, bm := range groupBenchmarksByName(pkg.Benchmarks) {
+			tc := Testcase{
+				Classname: pkg.Name,
+				Name:      bm.Name,
+				Time:      formatBenchmarkTime(time.Duration(bm.NsPerOp)),
+			}
+
+			if bm.Result == gtr.Fail {
+				tc.Failure = &Result{
+					Message: "Failed",
+				}
+			}
+
+			suite.AddTestcase(tc)
+		}
+
+		// JUnit doesn't have a good way of dealing with build or runtime
+		// errors that happen before a test has started, so we create a single
+		// failing test that contains the build error details.
+		if pkg.BuildError.Name != "" {
+			tc := Testcase{
+				Classname: pkg.BuildError.Name,
+				Name:      pkg.BuildError.Cause,
+				Time:      formatDuration(0),
+				Error: &Result{
+					Message: "Build error",
+					Data:    strings.Join(pkg.BuildError.Output, "\n"),
+				},
+			}
+			suite.AddTestcase(tc)
+		}
+
+		if pkg.RunError.Name != "" {
+			tc := Testcase{
+				Classname: pkg.RunError.Name,
+				Name:      "Failure",
+				Time:      formatDuration(0),
+				Error: &Result{
+					Message: "Run error",
+					Data:    strings.Join(pkg.RunError.Output, "\n"),
+				},
+			}
+			suite.AddTestcase(tc)
+		}
+
+		if (pkg.Duration) == 0 {
+			suite.Time = formatDuration(duration)
+		} else {
+			suite.Time = formatDuration(pkg.Duration)
+		}
+		suites.AddSuite(suite)
+	}
+	return suites
+}
+
+// formatDuration returns the JUnit string representation of the given
 // duration.
-func FormatDuration(d time.Duration) string {
+func formatDuration(d time.Duration) string {
 	return fmt.Sprintf("%.3f", d.Seconds())
 }
 
-// FormatBenchmarkTime returns the JUnit string representation of the given
+// formatBenchmarkTime returns the JUnit string representation of the given
 // benchmark time.
-func FormatBenchmarkTime(d time.Duration) string {
+func formatBenchmarkTime(d time.Duration) string {
 	return fmt.Sprintf("%.9f", d.Seconds())
+}
+
+// formatOutput trims the test whitespace prefix from each line and joins all
+// the lines.
+func formatOutput(output []string, indent int) string {
+	var lines []string
+	for _, line := range output {
+		lines = append(lines, gtr.TrimPrefixSpaces(line, indent))
+	}
+	return strings.Join(lines, "\n")
+}
+
+func groupBenchmarksByName(benchmarks []gtr.Benchmark) []gtr.Benchmark {
+	var grouped []gtr.Benchmark
+
+	benchmap := make(map[string][]gtr.Benchmark)
+	for _, bm := range benchmarks {
+		if _, ok := benchmap[bm.Name]; !ok {
+			grouped = append(grouped, gtr.Benchmark{Name: bm.Name})
+		}
+		benchmap[bm.Name] = append(benchmap[bm.Name], bm)
+	}
+
+	for i, bm := range grouped {
+		for _, b := range benchmap[bm.Name] {
+			bm.NsPerOp += b.NsPerOp
+			bm.MBPerSec += b.MBPerSec
+			bm.BytesPerOp += b.BytesPerOp
+			bm.AllocsPerOp += b.AllocsPerOp
+		}
+		n := len(benchmap[bm.Name])
+		grouped[i].NsPerOp = bm.NsPerOp / float64(n)
+		grouped[i].MBPerSec = bm.MBPerSec / float64(n)
+		grouped[i].BytesPerOp = bm.BytesPerOp / int64(n)
+		grouped[i].AllocsPerOp = bm.AllocsPerOp / int64(n)
+	}
+
+	return grouped
 }

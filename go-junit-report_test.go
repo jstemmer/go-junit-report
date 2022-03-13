@@ -204,7 +204,8 @@ func testReport(input, reportFile, packageName string, t *testing.T) {
 	}
 
 	testTime := time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
-	actual := gtr.JUnit(gtr.FromEvents(events, packageName), "hostname", testTime)
+	report := gtr.FromEvents(events, packageName)
+	actual := junit.CreateFromReport(report, "hostname", testTime)
 
 	expectedXML, err := loadTestReport(reportFile, "")
 	if err != nil {
