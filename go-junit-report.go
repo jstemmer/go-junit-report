@@ -55,6 +55,7 @@ func main() {
 	}
 
 	if flag.NArg() != 0 {
+		fmt.Fprintf(os.Stderr, "invalid argument(s): %s\n", strings.Join(flag.Args(), " "))
 		fmt.Fprintf(os.Stderr, "%s does not accept positional arguments\n", os.Args[0])
 		flag.Usage()
 		exitf("")
