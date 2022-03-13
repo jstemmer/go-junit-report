@@ -166,6 +166,10 @@ var testCases = []TestCase{
 		name:       "33-bench-mb.txt",
 		reportName: "33-report.xml",
 	},
+	{
+		name:       "34-notest.txt",
+		reportName: "34-report.xml",
+	},
 }
 
 func TestNewOutput(t *testing.T) {

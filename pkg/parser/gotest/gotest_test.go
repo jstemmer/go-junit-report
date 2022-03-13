@@ -76,12 +76,22 @@ var tests = []struct {
 			"FAIL    package/name/failing [build failed]",
 			"FAIL    package/other/failing [setup failed]",
 			"ok package/other     (cached)",
+			"ok  	package/name 0.400s  coverage: 10.0% of statements",
+			"ok  	package/name 4.200s  coverage: 99.8% of statements in fmt, encoding/xml",
+			"?   	package/name	[no test files]",
+			"ok  	package/name	0.001s [no tests to run]",
+			"ok  	package/name	(cached) [no tests to run]",
 		),
 		[]gtr.Event{
 			{Type: "summary", Name: "package/name/ok", Result: "ok", Duration: 100 * time.Millisecond},
 			{Type: "summary", Name: "package/name/failing", Result: "FAIL", Data: "[build failed]"},
 			{Type: "summary", Name: "package/other/failing", Result: "FAIL", Data: "[setup failed]"},
 			{Type: "summary", Name: "package/other", Result: "ok", Data: "(cached)"},
+			{Type: "summary", Name: "package/name", Result: "ok", Duration: 400 * time.Millisecond, CovPct: 10},
+			{Type: "summary", Name: "package/name", Result: "ok", Duration: 4200 * time.Millisecond, CovPct: 99.8, CovPackages: []string{"fmt", "encoding/xml"}},
+			{Type: "summary", Name: "package/name", Result: "?", Data: "[no test files]"},
+			{Type: "summary", Name: "package/name", Result: "ok", Duration: 1 * time.Millisecond, Data: "[no tests to run]"},
+			{Type: "summary", Name: "package/name", Result: "ok", Data: "(cached) [no tests to run]"},
 		},
 	},
 	{
@@ -162,7 +172,7 @@ func testParse(t *testing.T, name, input string, want []gtr.Event) {
 	}
 
 	if diff := cmp.Diff(got, want); diff != "" {
-		t.Errorf("Parse returned unexpected events, diff (-got, +want):\n%v", diff)
+		t.Errorf("Parse returned unexpected events, input:\n%s\ndiff (-got, +want):\n%v", input, diff)
 	}
 }
 

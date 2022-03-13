@@ -19,7 +19,20 @@ var (
 	regexCoverage  = regexp.MustCompile(`^coverage:\s+(\d+|\d+\.\d+)%\s+of\s+statements(?:\sin\s(.+))?$`)
 	regexEndTest   = regexp.MustCompile(`((?:    )*)--- (PASS|FAIL|SKIP): ([^ ]+) \((\d+\.\d+)(?: seconds|s)\)`)
 	regexStatus    = regexp.MustCompile(`^(PASS|FAIL|SKIP)$`)
-	regexSummary   = regexp.MustCompile(`^(ok|FAIL)\s+([^ ]+)\s+(?:(\d+\.\d+)s|(\(cached\)|\[\w+ failed]))(?:\s+coverage:\s+(\d+\.\d+)%\sof\sstatements(?:\sin\s(.+))?)?$`)
+	regexSummary   = regexp.MustCompile(`` +
+		// 1: result
+		`^(\?|ok|FAIL)` +
+		// 2: package name
+		`\s+([^ \t]+)` +
+		// 3: duration (optional)
+		`(?:\s+(\d+\.\d+)s)?` +
+		// 4: cached indicator (optional)
+		`(?:\s+(\(cached\)))?` +
+		// 5: [status message] (optional)
+		`(?:\s+(\[[^\]]+\]))?` +
+		// 6: coverage percentage (optional)
+		// 7: coverage package list (optional)
+		`(?:\s+coverage:\s+(\d+\.\d+)%\sof\sstatements(?:\sin\s(.+))?)?$`)
 )
 
 // Parse parses Go test output from the given io.Reader r.
@@ -48,8 +61,8 @@ func (p *parser) parseLine(line string) {
 		p.endTest(line, matches[1], matches[2], matches[3], matches[4])
 	} else if matches := regexStatus.FindStringSubmatch(line); len(matches) == 2 {
 		p.status(matches[1])
-	} else if matches := regexSummary.FindStringSubmatch(line); len(matches) == 7 {
-		p.summary(matches[1], matches[2], matches[3], matches[4], matches[5], matches[6])
+	} else if matches := regexSummary.FindStringSubmatch(line); len(matches) == 8 {
+		p.summary(matches[1], matches[2], matches[3], matches[4], matches[5], matches[6], matches[7])
 	} else if matches := regexCoverage.FindStringSubmatch(line); len(matches) == 3 {
 		p.coverage(matches[1], matches[2])
 	} else if matches := regexBenchmark.FindStringSubmatch(line); len(matches) == 7 {
@@ -101,13 +114,13 @@ func (p *parser) status(result string) {
 	p.add(gtr.Event{Type: "status", Result: result})
 }
 
-func (p *parser) summary(result, name, duration, data, covpct, packages string) {
+func (p *parser) summary(result, name, duration, cached, status, covpct, packages string) {
 	p.add(gtr.Event{
 		Type:        "summary",
 		Result:      result,
 		Name:        name,
 		Duration:    parseSeconds(duration),
-		Data:        data,
+		Data:        strings.TrimSpace(cached + " " + status),
 		CovPct:      parseFloat(covpct),
 		CovPackages: parsePackages(packages),
 	})

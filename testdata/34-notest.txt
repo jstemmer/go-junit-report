@@ -1,0 +1,5 @@
+?   	package/name	[no test files]
+testing: warning: no tests to run
+PASS
+ok  	package/name	0.001s [no tests to run]
+ok  	package/name	(cached) [no tests to run]
