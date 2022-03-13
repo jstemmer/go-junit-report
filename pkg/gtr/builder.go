@@ -218,7 +218,6 @@ func (b *ReportBuilder) Coverage(pct float64, packages []string) {
 // AppendOutput appends the given line to the currently active context. If no
 // active context exists, the output is assumed to belong to the package.
 func (b *ReportBuilder) AppendOutput(line string) {
-	// TODO(jstemmer): check if output is potentially a build error
 	if b.lastId <= 0 {
 		b.output = append(b.output, line)
 		return
