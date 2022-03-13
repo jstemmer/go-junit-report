@@ -10,11 +10,6 @@ import (
 	"github.com/jstemmer/go-junit-report/v2/pkg/junit"
 )
 
-var (
-	propPrefixes   = map[string]bool{"goos": true, "goarch": true, "pkg": true}
-	propFieldsFunc = func(r rune) bool { return r == ':' || r == ' ' }
-)
-
 type Report struct {
 	Packages []Package
 }
@@ -124,12 +119,6 @@ func JUnit(report Report, hostname string, now time.Time) junit.Testsuites {
 
 		if pkg.Coverage > 0 {
 			suite.AddProperty("coverage.statements.pct", fmt.Sprintf("%.2f", pkg.Coverage))
-		}
-
-		for _, line := range pkg.Output {
-			if fields := strings.FieldsFunc(line, propFieldsFunc); len(fields) == 2 && propPrefixes[fields[0]] {
-				suite.AddProperty(fields[0], fields[1])
-			}
 		}
 
 		for _, test := range pkg.Tests {

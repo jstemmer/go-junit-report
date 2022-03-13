@@ -205,8 +205,6 @@ func testReport(input, reportFile, packageName string, t *testing.T) {
 
 	testTime := time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
 	actual := gtr.JUnit(gtr.FromEvents(events, packageName), "hostname", testTime)
-	// Remove any new properties for backwards compatibility
-	actual = dropNewProperties(actual)
 
 	expectedXML, err := loadTestReport(reportFile, "")
 	if err != nil {
@@ -238,20 +236,6 @@ func modifyForBackwardsCompat(testsuites junit.Testsuites) junit.Testsuites {
 			}
 			testsuites.Suites[i].Properties = dropProperty("go.version", suite.Properties)
 		}
-	}
-	return testsuites
-}
-
-func dropNewProperties(testsuites junit.Testsuites) junit.Testsuites {
-	for i, suite := range testsuites.Suites {
-		if suite.Properties == nil {
-			continue
-		}
-		ps := suite.Properties
-		ps = dropProperty("goos", ps)
-		ps = dropProperty("goarch", ps)
-		ps = dropProperty("pkg", ps)
-		testsuites.Suites[i].Properties = ps
 	}
 	return testsuites
 }
