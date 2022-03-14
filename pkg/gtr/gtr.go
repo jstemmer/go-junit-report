@@ -8,10 +8,14 @@ import (
 	"time"
 )
 
+// Report contains the build, test and/or benchmark results of a collection of
+// packages.
 type Report struct {
 	Packages []Package
 }
 
+// IsSuccessful returns true if none of the packages in this report have build
+// or runtime errors and all tests passed without failures or were skipped.
 func (r *Report) IsSuccessful() bool {
 	for _, pkg := range r.Packages {
 		if pkg.BuildError.Name != "" || pkg.RunError.Name != "" {
@@ -26,6 +30,7 @@ func (r *Report) IsSuccessful() bool {
 	return true
 }
 
+// Package contains build, test and/or benchmark results for a single package.
 type Package struct {
 	Name       string
 	Duration   time.Duration
@@ -40,6 +45,9 @@ type Package struct {
 	RunError   Error
 }
 
+// SetProperty stores a key/value property in the current package. If a
+// property with the given key already exists, its old value will be
+// overwritten with the given value.
 func (p *Package) SetProperty(key, value string) {
 	if p.Properties == nil {
 		p.Properties = make(map[string]string)
@@ -47,6 +55,7 @@ func (p *Package) SetProperty(key, value string) {
 	p.Properties[key] = value
 }
 
+// Test contains the results of a single test.
 type Test struct {
 	Name     string
 	Duration time.Duration
@@ -55,6 +64,7 @@ type Test struct {
 	Output   []string
 }
 
+// Benchmark contains the results of a single benchmark.
 type Benchmark struct {
 	Name        string
 	Result      Result
@@ -66,6 +76,7 @@ type Benchmark struct {
 	AllocsPerOp int64
 }
 
+// Error contains details of a build or runtime error.
 type Error struct {
 	Name     string
 	Duration time.Duration
