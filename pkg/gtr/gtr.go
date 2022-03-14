@@ -40,7 +40,7 @@ type Package struct {
 	RunError   Error
 }
 
-func (p *Package) AddProperty(key, value string) {
+func (p *Package) SetProperty(key, value string) {
 	if p.Properties == nil {
 		p.Properties = make(map[string]string)
 	}

@@ -89,7 +89,7 @@ func main() {
 	report := gtr.FromEvents(events, *packageName)
 	for i := range report.Packages {
 		for k, v := range properties {
-			report.Packages[i].AddProperty(k, v)
+			report.Packages[i].SetProperty(k, v)
 		}
 	}
 
