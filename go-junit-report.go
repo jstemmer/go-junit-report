@@ -9,7 +9,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jstemmer/go-junit-report/v2/pkg/gtr"
 	"github.com/jstemmer/go-junit-report/v2/pkg/junit"
 	"github.com/jstemmer/go-junit-report/v2/pkg/parser/gotest"
 )
@@ -76,18 +75,18 @@ func main() {
 		in = io.TeeReader(in, os.Stdout)
 	}
 
-	parser := gotest.New()
-	events, err := parser.Parse(in)
+	parser := gotest.New(gotest.PackageName(*packageName))
+
+	report, err := parser.Parse(in)
 	if err != nil {
-		exitf("error reading input: %s\n", err)
+		exitf("error parsing input: %s\n", err)
 	}
 
 	if *printEvents {
-		for i, ev := range events {
+		for i, ev := range parser.Events() {
 			fmt.Printf("%02d: %#v\n", i, ev)
 		}
 	}
-	report := gtr.FromEvents(events, *packageName)
 	for i := range report.Packages {
 		for k, v := range properties {
 			report.Packages[i].SetProperty(k, v)

@@ -26,18 +26,17 @@ type ReportBuilder struct {
 	coverage float64  // coverage percentage
 
 	// default values
-	packageName string
+	PackageName string
 }
 
 // NewReportBuilder creates a new ReportBuilder.
-func NewReportBuilder(packageName string) *ReportBuilder {
+func NewReportBuilder() *ReportBuilder {
 	return &ReportBuilder{
 		tests:       make(map[int]Test),
 		benchmarks:  make(map[int]Benchmark),
 		buildErrors: make(map[int]Error),
 		runErrors:   make(map[int]Error),
 		nextId:      1,
-		packageName: packageName,
 	}
 }
 
@@ -54,7 +53,7 @@ func (b *ReportBuilder) newId() int {
 // benchmark did not end with a summary.
 func (b *ReportBuilder) flush() {
 	if len(b.tests) > 0 || len(b.benchmarks) > 0 {
-		b.CreatePackage(b.packageName, "", 0, "")
+		b.CreatePackage(b.PackageName, "", 0, "")
 	}
 }
 

@@ -3,10 +3,34 @@
 package gtr
 
 import (
-	"fmt"
 	"strings"
 	"time"
 )
+
+// Result is the result of a test or benchmark.
+type Result int
+
+const (
+	Unknown Result = iota
+	Pass
+	Fail
+	Skip
+)
+
+func (r Result) String() string {
+	switch r {
+	case Unknown:
+		return "UNKNOWN"
+	case Pass:
+		return "PASS"
+	case Fail:
+		return "FAIL"
+	case Skip:
+		return "SKIP"
+	default:
+		panic("invalid Result")
+	}
+}
 
 // Report contains the build, test and/or benchmark results of a collection of
 // packages.
@@ -82,39 +106,6 @@ type Error struct {
 	Duration time.Duration
 	Cause    string
 	Output   []string
-}
-
-// FromEvents creates a Report from the given list of events.
-// TODO: make packageName optional option
-func FromEvents(events []Event, packageName string) Report {
-	report := NewReportBuilder(packageName)
-	for _, ev := range events {
-		switch ev.Type {
-		case "run_test":
-			report.CreateTest(ev.Name)
-		case "pause_test":
-			report.PauseTest(ev.Name)
-		case "cont_test":
-			report.ContinueTest(ev.Name)
-		case "end_test":
-			report.EndTest(ev.Name, ev.Result, ev.Duration, ev.Indent)
-		case "benchmark":
-			report.Benchmark(ev.Name, ev.Iterations, ev.NsPerOp, ev.MBPerSec, ev.BytesPerOp, ev.AllocsPerOp)
-		case "status":
-			report.End()
-		case "summary":
-			report.CreatePackage(ev.Name, ev.Result, ev.Duration, ev.Data)
-		case "coverage":
-			report.Coverage(ev.CovPct, ev.CovPackages)
-		case "build_output":
-			report.CreateBuildError(ev.Name)
-		case "output":
-			report.AppendOutput(ev.Data)
-		default:
-			fmt.Printf("unhandled event type: %v\n", ev.Type)
-		}
-	}
-	return report.Build()
 }
 
 // TrimPrefixSpaces trims the leading whitespace of the given line using the

@@ -13,7 +13,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jstemmer/go-junit-report/v2/pkg/gtr"
 	"github.com/jstemmer/go-junit-report/v2/pkg/junit"
 	"github.com/jstemmer/go-junit-report/v2/pkg/parser/gotest"
 
@@ -192,20 +191,20 @@ func testReport(input, reportFile, packageName string, t *testing.T) {
 	}
 	defer file.Close()
 
-	parser := gotest.New()
-	events, err := parser.Parse(file)
+	parser := gotest.New(gotest.PackageName(packageName))
+
+	report, err := parser.Parse(file)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	if *printEvents {
-		for _, event := range events {
+		for _, event := range parser.Events() {
 			t.Logf("Event: %+v", event)
 		}
 	}
 
 	testTime := time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
-	report := gtr.FromEvents(events, packageName)
 	actual := junit.CreateFromReport(report, "hostname", testTime)
 
 	expectedXML, err := loadTestReport(reportFile, "")

@@ -59,16 +59,58 @@ func New(options ...Option) *Parser {
 type Parser struct {
 	packageName string
 
-	events []gtr.Event
+	events []Event
 }
 
-// Parse parses Go test output from the given io.Reader r.
-func (p *Parser) Parse(r io.Reader) ([]gtr.Event, error) {
+// Parse parses Go test output from the given io.Reader r and returns
+// gtr.Report.
+func (p *Parser) Parse(r io.Reader) (gtr.Report, error) {
+	p.events = nil
 	s := bufio.NewScanner(r)
 	for s.Scan() {
 		p.parseLine(s.Text())
 	}
-	return p.events, s.Err()
+	return p.report(p.events), s.Err()
+}
+
+// report generates a gtr.Report from the given list of events.
+func (p *Parser) report(events []Event) gtr.Report {
+	rb := gtr.NewReportBuilder()
+	rb.PackageName = p.packageName
+	for _, ev := range events {
+		switch ev.Type {
+		case "run_test":
+			rb.CreateTest(ev.Name)
+		case "pause_test":
+			rb.PauseTest(ev.Name)
+		case "cont_test":
+			rb.ContinueTest(ev.Name)
+		case "end_test":
+			rb.EndTest(ev.Name, ev.Result, ev.Duration, ev.Indent)
+		case "benchmark":
+			rb.Benchmark(ev.Name, ev.Iterations, ev.NsPerOp, ev.MBPerSec, ev.BytesPerOp, ev.AllocsPerOp)
+		case "status":
+			rb.End()
+		case "summary":
+			rb.CreatePackage(ev.Name, ev.Result, ev.Duration, ev.Data)
+		case "coverage":
+			rb.Coverage(ev.CovPct, ev.CovPackages)
+		case "build_output":
+			rb.CreateBuildError(ev.Name)
+		case "output":
+			rb.AppendOutput(ev.Data)
+		default:
+			fmt.Printf("unhandled event type: %v\n", ev.Type)
+		}
+	}
+	return rb.Build()
+}
+
+// Events returns the events created by the parser.
+func (p *Parser) Events() []Event {
+	events := make([]Event, len(p.events))
+	copy(events, p.events)
+	return events
 }
 
 func (p *Parser) parseLine(line string) {
@@ -101,20 +143,20 @@ func (p *Parser) parseLine(line string) {
 	}
 }
 
-func (p *Parser) add(event gtr.Event) {
+func (p *Parser) add(event Event) {
 	p.events = append(p.events, event)
 }
 
 func (p *Parser) runTest(name string) {
-	p.add(gtr.Event{Type: "run_test", Name: name})
+	p.add(Event{Type: "run_test", Name: name})
 }
 
 func (p *Parser) pauseTest(name string) {
-	p.add(gtr.Event{Type: "pause_test", Name: name})
+	p.add(Event{Type: "pause_test", Name: name})
 }
 
 func (p *Parser) contTest(name string) {
-	p.add(gtr.Event{Type: "cont_test", Name: name})
+	p.add(Event{Type: "cont_test", Name: name})
 }
 
 func (p *Parser) endTest(line, indent, result, name, duration string) {
@@ -122,7 +164,7 @@ func (p *Parser) endTest(line, indent, result, name, duration string) {
 		p.output(line[:idx])
 	}
 	_, n := stripIndent(indent)
-	p.add(gtr.Event{
+	p.add(Event{
 		Type:     "end_test",
 		Name:     name,
 		Result:   result,
@@ -132,11 +174,11 @@ func (p *Parser) endTest(line, indent, result, name, duration string) {
 }
 
 func (p *Parser) status(result string) {
-	p.add(gtr.Event{Type: "status", Result: result})
+	p.add(Event{Type: "status", Result: result})
 }
 
 func (p *Parser) summary(result, name, duration, cached, status, covpct, packages string) {
-	p.add(gtr.Event{
+	p.add(Event{
 		Type:        "summary",
 		Result:      result,
 		Name:        name,
@@ -148,7 +190,7 @@ func (p *Parser) summary(result, name, duration, cached, status, covpct, package
 }
 
 func (p *Parser) coverage(percent, packages string) {
-	p.add(gtr.Event{
+	p.add(Event{
 		Type:        "coverage",
 		CovPct:      parseFloat(percent),
 		CovPackages: parsePackages(packages),
@@ -156,7 +198,7 @@ func (p *Parser) coverage(percent, packages string) {
 }
 
 func (p *Parser) benchmark(name, iterations, nsPerOp, mbPerSec, bytesPerOp, allocsPerOp string) {
-	p.add(gtr.Event{
+	p.add(Event{
 		Type:        "benchmark",
 		Name:        name,
 		Iterations:  parseInt(iterations),
@@ -168,14 +210,14 @@ func (p *Parser) benchmark(name, iterations, nsPerOp, mbPerSec, bytesPerOp, allo
 }
 
 func (p *Parser) buildOutput(packageName string) {
-	p.add(gtr.Event{
+	p.add(Event{
 		Type: "build_output",
 		Name: packageName,
 	})
 }
 
 func (p *Parser) output(line string) {
-	p.add(gtr.Event{Type: "output", Data: line})
+	p.add(Event{Type: "output", Data: line})
 }
 
 func parseSeconds(s string) time.Duration {

@@ -6,9 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jstemmer/go-junit-report/v2/pkg/gtr"
-
 	"github.com/google/go-cmp/cmp"
+	"github.com/jstemmer/go-junit-report/v2/pkg/gtr"
 )
 
 type parseLineTest struct {
@@ -19,160 +18,160 @@ type parseLineTest struct {
 var parseLineTests = []parseLineTest{
 	{
 		"=== RUN TestOne",
-		gtr.Event{Type: "run_test", Name: "TestOne"},
+		Event{Type: "run_test", Name: "TestOne"},
 	},
 	{
 		"=== RUN   TestTwo/Subtest",
-		gtr.Event{Type: "run_test", Name: "TestTwo/Subtest"},
+		Event{Type: "run_test", Name: "TestTwo/Subtest"},
 	},
 	{
 		"=== PAUSE TestOne",
-		gtr.Event{Type: "pause_test", Name: "TestOne"},
+		Event{Type: "pause_test", Name: "TestOne"},
 	},
 	{
 		"=== CONT  TestOne",
-		gtr.Event{Type: "cont_test", Name: "TestOne"},
+		Event{Type: "cont_test", Name: "TestOne"},
 	},
 	{
 		"--- PASS: TestOne (12.34 seconds)",
-		gtr.Event{Type: "end_test", Name: "TestOne", Result: "PASS", Duration: 12_340 * time.Millisecond},
+		Event{Type: "end_test", Name: "TestOne", Result: "PASS", Duration: 12_340 * time.Millisecond},
 	},
 	{
 		"    --- SKIP: TestOne/Subtest (0.00s)",
-		gtr.Event{Type: "end_test", Name: "TestOne/Subtest", Result: "SKIP", Indent: 1},
+		Event{Type: "end_test", Name: "TestOne/Subtest", Result: "SKIP", Indent: 1},
 	},
 	{
 		"        --- FAIL: TestOne/Subtest/#01 (0.35s)",
-		gtr.Event{Type: "end_test", Name: "TestOne/Subtest/#01", Result: "FAIL", Duration: 350 * time.Millisecond, Indent: 2},
+		Event{Type: "end_test", Name: "TestOne/Subtest/#01", Result: "FAIL", Duration: 350 * time.Millisecond, Indent: 2},
 	},
 	{
 		"some text--- PASS: TestTwo (0.06 seconds)",
-		[]gtr.Event{
+		[]Event{
 			{Type: "output", Data: "some text"},
 			{Type: "end_test", Name: "TestTwo", Result: "PASS", Duration: 60 * time.Millisecond},
 		},
 	},
 	{
 		"PASS",
-		gtr.Event{Type: "status", Result: "PASS"},
+		Event{Type: "status", Result: "PASS"},
 	},
 	{
 		"FAIL",
-		gtr.Event{Type: "status", Result: "FAIL"},
+		Event{Type: "status", Result: "FAIL"},
 	},
 	{
 		"SKIP",
-		gtr.Event{Type: "status", Result: "SKIP"},
+		Event{Type: "status", Result: "SKIP"},
 	},
 	{
 		"ok      package/name/ok 0.100s",
-		gtr.Event{Type: "summary", Name: "package/name/ok", Result: "ok", Duration: 100 * time.Millisecond},
+		Event{Type: "summary", Name: "package/name/ok", Result: "ok", Duration: 100 * time.Millisecond},
 	},
 	{
 		"FAIL    package/name/failing [build failed]",
-		gtr.Event{Type: "summary", Name: "package/name/failing", Result: "FAIL", Data: "[build failed]"},
+		Event{Type: "summary", Name: "package/name/failing", Result: "FAIL", Data: "[build failed]"},
 	},
 	{
 		"FAIL    package/other/failing [setup failed]",
-		gtr.Event{Type: "summary", Name: "package/other/failing", Result: "FAIL", Data: "[setup failed]"},
+		Event{Type: "summary", Name: "package/other/failing", Result: "FAIL", Data: "[setup failed]"},
 	},
 	{
 		"ok package/other     (cached)",
-		gtr.Event{Type: "summary", Name: "package/other", Result: "ok", Data: "(cached)"},
+		Event{Type: "summary", Name: "package/other", Result: "ok", Data: "(cached)"},
 	},
 	{
 		"ok  	package/name 0.400s  coverage: 10.0% of statements",
-		gtr.Event{Type: "summary", Name: "package/name", Result: "ok", Duration: 400 * time.Millisecond, CovPct: 10},
+		Event{Type: "summary", Name: "package/name", Result: "ok", Duration: 400 * time.Millisecond, CovPct: 10},
 	},
 	{
 		"ok  	package/name 4.200s  coverage: 99.8% of statements in fmt, encoding/xml",
-		gtr.Event{Type: "summary", Name: "package/name", Result: "ok", Duration: 4200 * time.Millisecond, CovPct: 99.8, CovPackages: []string{"fmt", "encoding/xml"}},
+		Event{Type: "summary", Name: "package/name", Result: "ok", Duration: 4200 * time.Millisecond, CovPct: 99.8, CovPackages: []string{"fmt", "encoding/xml"}},
 	},
 	{
 		"?   	package/name	[no test files]",
-		gtr.Event{Type: "summary", Name: "package/name", Result: "?", Data: "[no test files]"},
+		Event{Type: "summary", Name: "package/name", Result: "?", Data: "[no test files]"},
 	},
 	{
 		"ok  	package/name	0.001s [no tests to run]",
-		gtr.Event{Type: "summary", Name: "package/name", Result: "ok", Duration: 1 * time.Millisecond, Data: "[no tests to run]"},
+		Event{Type: "summary", Name: "package/name", Result: "ok", Duration: 1 * time.Millisecond, Data: "[no tests to run]"},
 	},
 	{
 		"ok  	package/name	(cached) [no tests to run]",
-		gtr.Event{Type: "summary", Name: "package/name", Result: "ok", Data: "(cached) [no tests to run]"},
+		Event{Type: "summary", Name: "package/name", Result: "ok", Data: "(cached) [no tests to run]"},
 	},
 	{
 		"coverage: 10% of statements",
-		gtr.Event{Type: "coverage", CovPct: 10},
+		Event{Type: "coverage", CovPct: 10},
 	},
 	{
 		"coverage: 10% of statements in fmt, encoding/xml",
-		gtr.Event{Type: "coverage", CovPct: 10, CovPackages: []string{"fmt", "encoding/xml"}},
+		Event{Type: "coverage", CovPct: 10, CovPackages: []string{"fmt", "encoding/xml"}},
 	},
 	{
 		"coverage: 13.37% of statements",
-		gtr.Event{Type: "coverage", CovPct: 13.37},
+		Event{Type: "coverage", CovPct: 13.37},
 	},
 	{
 		"coverage: 99.8% of statements in fmt, encoding/xml",
-		gtr.Event{Type: "coverage", CovPct: 99.8, CovPackages: []string{"fmt", "encoding/xml"}},
+		Event{Type: "coverage", CovPct: 99.8, CovPackages: []string{"fmt", "encoding/xml"}},
 	},
 	{
 		"BenchmarkOne-8                     2000000	       604 ns/op",
-		gtr.Event{Type: "benchmark", Name: "BenchmarkOne", Iterations: 2_000_000, NsPerOp: 604},
+		Event{Type: "benchmark", Name: "BenchmarkOne", Iterations: 2_000_000, NsPerOp: 604},
 	},
 	{
 		"BenchmarkTwo-16 30000	52568 ns/op	24879 B/op	494 allocs/op",
-		gtr.Event{Type: "benchmark", Name: "BenchmarkTwo", Iterations: 30_000, NsPerOp: 52_568, BytesPerOp: 24_879, AllocsPerOp: 494},
+		Event{Type: "benchmark", Name: "BenchmarkTwo", Iterations: 30_000, NsPerOp: 52_568, BytesPerOp: 24_879, AllocsPerOp: 494},
 	},
 	{
 		"BenchmarkThree      2000000000	         0.26 ns/op",
-		gtr.Event{Type: "benchmark", Name: "BenchmarkThree", Iterations: 2_000_000_000, NsPerOp: 0.26},
+		Event{Type: "benchmark", Name: "BenchmarkThree", Iterations: 2_000_000_000, NsPerOp: 0.26},
 	},
 	{
 		"BenchmarkFour-8         	   10000	    104427 ns/op	  95.76 MB/s	   40629 B/op	       5 allocs/op",
-		gtr.Event{Type: "benchmark", Name: "BenchmarkFour", Iterations: 10_000, NsPerOp: 104_427, MBPerSec: 95.76, BytesPerOp: 40_629, AllocsPerOp: 5},
+		Event{Type: "benchmark", Name: "BenchmarkFour", Iterations: 10_000, NsPerOp: 104_427, MBPerSec: 95.76, BytesPerOp: 40_629, AllocsPerOp: 5},
 	},
 	{
 		"# package/name/failing1",
-		gtr.Event{Type: "build_output", Name: "package/name/failing1"},
+		Event{Type: "build_output", Name: "package/name/failing1"},
 	},
 	{
 		"# package/name/failing2 [package/name/failing2.test]",
-		gtr.Event{Type: "build_output", Name: "package/name/failing2"},
+		Event{Type: "build_output", Name: "package/name/failing2"},
 	},
 	{
 		"single line stdout",
-		gtr.Event{Type: "output", Data: "single line stdout"},
+		Event{Type: "output", Data: "single line stdout"},
 	},
 	{
 		"# some more output",
-		gtr.Event{Type: "output", Data: "# some more output"},
+		Event{Type: "output", Data: "# some more output"},
 	},
 	{
 		"\tfile_test.go:11: Error message",
-		gtr.Event{Type: "output", Data: "\tfile_test.go:11: Error message"},
+		Event{Type: "output", Data: "\tfile_test.go:11: Error message"},
 	},
 	{
 		"\tfile_test.go:12: Longer",
-		gtr.Event{Type: "output", Data: "\tfile_test.go:12: Longer"},
+		Event{Type: "output", Data: "\tfile_test.go:12: Longer"},
 	},
 	{
 		"\t\terror",
-		gtr.Event{Type: "output", Data: "\t\terror"},
+		Event{Type: "output", Data: "\t\terror"},
 	},
 	{
 		"\t\tmessage.",
-		gtr.Event{Type: "output", Data: "\t\tmessage."},
+		Event{Type: "output", Data: "\t\tmessage."},
 	},
 }
 
 func TestParseLine(t *testing.T) {
 	for i, test := range parseLineTests {
-		var want []gtr.Event
+		var want []Event
 		switch e := test.events.(type) {
-		case gtr.Event:
-			want = []gtr.Event{e}
-		case []gtr.Event:
+		case Event:
+			want = []Event{e}
+		case []Event:
 			want = e
 		default:
 			panic("invalid events type")
@@ -192,5 +191,98 @@ func TestParseLine(t *testing.T) {
 				t.Errorf("parseLine(%q) returned unexpected events, diff (-got, +want):\n%v", test.input, diff)
 			}
 		})
+	}
+}
+
+func TestReport(t *testing.T) {
+	events := []Event{
+		{Type: "run_test", Name: "TestOne"},
+		{Type: "output", Data: "\tHello"},
+		{Type: "end_test", Name: "TestOne", Result: "PASS", Duration: 1 * time.Millisecond},
+		{Type: "status", Result: "PASS"},
+		{Type: "run_test", Name: "TestSkip"},
+		{Type: "end_test", Name: "TestSkip", Result: "SKIP", Duration: 1 * time.Millisecond},
+		{Type: "summary", Result: "ok", Name: "package/name", Duration: 1 * time.Millisecond},
+		{Type: "run_test", Name: "TestOne"},
+		{Type: "output", Data: "\tfile_test.go:10: error"},
+		{Type: "end_test", Name: "TestOne", Result: "FAIL", Duration: 1 * time.Millisecond},
+		{Type: "status", Result: "FAIL"},
+		{Type: "summary", Result: "FAIL", Name: "package/name2", Duration: 1 * time.Millisecond},
+		{Type: "output", Data: "goarch: amd64"},
+		{Type: "benchmark", Name: "BenchmarkOne", NsPerOp: 100},
+		{Type: "benchmark", Name: "BenchmarkOne", NsPerOp: 300},
+		{Type: "status", Result: "PASS"},
+		{Type: "summary", Result: "ok", Name: "package/name3", Duration: 1234 * time.Millisecond},
+		{Type: "build_output", Name: "package/failing1"},
+		{Type: "output", Data: "error message"},
+		{Type: "summary", Result: "FAIL", Name: "package/failing1", Data: "[build failed]"},
+	}
+	expected := gtr.Report{
+		Packages: []gtr.Package{
+			{
+				Name:     "package/name",
+				Duration: 1 * time.Millisecond,
+				Tests: []gtr.Test{
+					{
+						Name:     "TestOne",
+						Duration: 1 * time.Millisecond,
+						Result:   gtr.Pass,
+						Output: []string{
+							"\tHello", // TODO: strip tabs?
+						},
+					},
+					{
+						Name:     "TestSkip",
+						Duration: 1 * time.Millisecond,
+						Result:   gtr.Skip,
+					},
+				},
+			},
+			{
+				Name:     "package/name2",
+				Duration: 1 * time.Millisecond,
+				Tests: []gtr.Test{
+					{
+						Name:     "TestOne",
+						Duration: 1 * time.Millisecond,
+						Result:   gtr.Fail,
+						Output: []string{
+							"\tfile_test.go:10: error",
+						},
+					},
+				},
+			},
+			{
+				Name:     "package/name3",
+				Duration: 1234 * time.Millisecond,
+				Benchmarks: []gtr.Benchmark{
+					{
+						Name:    "BenchmarkOne",
+						Result:  gtr.Pass,
+						NsPerOp: 100,
+					},
+					{
+						Name:    "BenchmarkOne",
+						Result:  gtr.Pass,
+						NsPerOp: 300,
+					},
+				},
+				Output: []string{"goarch: amd64"},
+			},
+			{
+				Name: "package/failing1",
+				BuildError: gtr.Error{
+					Name:   "package/failing1",
+					Cause:  "[build failed]",
+					Output: []string{"error message"},
+				},
+			},
+		},
+	}
+
+	parser := &Parser{}
+	actual := parser.report(events)
+	if diff := cmp.Diff(actual, expected); diff != "" {
+		t.Errorf("FromEvents report incorrect, diff (-got, +want):\n%v", diff)
 	}
 }
