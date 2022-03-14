@@ -76,7 +76,8 @@ func main() {
 		in = io.TeeReader(in, os.Stdout)
 	}
 
-	events, err := gotest.Parse(in)
+	parser := gotest.New()
+	events, err := parser.Parse(in)
 	if err != nil {
 		exitf("error reading input: %s\n", err)
 	}

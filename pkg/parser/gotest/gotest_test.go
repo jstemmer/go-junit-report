@@ -185,15 +185,12 @@ func TestParseLine(t *testing.T) {
 
 		name := fmt.Sprintf("%d %s", i+1, strings.Join(types, ","))
 		t.Run(name, func(t *testing.T) {
-			testParseLine(t, &parser{}, test.input, want)
+			parser := New()
+			parser.parseLine(test.input)
+			got := parser.events
+			if diff := cmp.Diff(got, want); diff != "" {
+				t.Errorf("parseLine(%q) returned unexpected events, diff (-got, +want):\n%v", test.input, diff)
+			}
 		})
-	}
-}
-
-func testParseLine(t *testing.T, parser *parser, input string, want []gtr.Event) {
-	parser.parseLine(input)
-	got := parser.events
-	if diff := cmp.Diff(got, want); diff != "" {
-		t.Errorf("parseLine(%q) returned unexpected events, diff (-got, +want):\n%v", input, diff)
 	}
 }

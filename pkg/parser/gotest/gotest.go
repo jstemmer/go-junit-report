@@ -35,10 +35,35 @@ var (
 		`(?:\s+coverage:\s+(\d+\.\d+)%\sof\sstatements(?:\sin\s(.+))?)?$`)
 )
 
-// Parse parses Go test output from the given io.Reader r.
-func Parse(r io.Reader) ([]gtr.Event, error) {
-	p := &parser{}
+// Option defines options that can be passed to gotest.New.
+type Option func(*Parser)
 
+// PackageName sets the default package name to use when it cannot be
+// determined from the test output.
+func PackageName(name string) Option {
+	return func(p *Parser) {
+		p.packageName = name
+	}
+}
+
+// New returns a new Go test output parser.
+func New(options ...Option) *Parser {
+	p := &Parser{}
+	for _, option := range options {
+		option(p)
+	}
+	return p
+}
+
+// Parser is a Go test output Parser.
+type Parser struct {
+	packageName string
+
+	events []gtr.Event
+}
+
+// Parse parses Go test output from the given io.Reader r.
+func (p *Parser) Parse(r io.Reader) ([]gtr.Event, error) {
 	s := bufio.NewScanner(r)
 	for s.Scan() {
 		p.parseLine(s.Text())
@@ -46,11 +71,7 @@ func Parse(r io.Reader) ([]gtr.Event, error) {
 	return p.events, s.Err()
 }
 
-type parser struct {
-	events []gtr.Event
-}
-
-func (p *parser) parseLine(line string) {
+func (p *Parser) parseLine(line string) {
 	if strings.HasPrefix(line, "=== RUN ") {
 		p.runTest(strings.TrimSpace(line[8:]))
 	} else if strings.HasPrefix(line, "=== PAUSE ") {
@@ -80,23 +101,23 @@ func (p *parser) parseLine(line string) {
 	}
 }
 
-func (p *parser) add(event gtr.Event) {
+func (p *Parser) add(event gtr.Event) {
 	p.events = append(p.events, event)
 }
 
-func (p *parser) runTest(name string) {
+func (p *Parser) runTest(name string) {
 	p.add(gtr.Event{Type: "run_test", Name: name})
 }
 
-func (p *parser) pauseTest(name string) {
+func (p *Parser) pauseTest(name string) {
 	p.add(gtr.Event{Type: "pause_test", Name: name})
 }
 
-func (p *parser) contTest(name string) {
+func (p *Parser) contTest(name string) {
 	p.add(gtr.Event{Type: "cont_test", Name: name})
 }
 
-func (p *parser) endTest(line, indent, result, name, duration string) {
+func (p *Parser) endTest(line, indent, result, name, duration string) {
 	if idx := strings.Index(line, fmt.Sprintf("%s--- %s:", indent, result)); idx > 0 {
 		p.output(line[:idx])
 	}
@@ -110,11 +131,11 @@ func (p *parser) endTest(line, indent, result, name, duration string) {
 	})
 }
 
-func (p *parser) status(result string) {
+func (p *Parser) status(result string) {
 	p.add(gtr.Event{Type: "status", Result: result})
 }
 
-func (p *parser) summary(result, name, duration, cached, status, covpct, packages string) {
+func (p *Parser) summary(result, name, duration, cached, status, covpct, packages string) {
 	p.add(gtr.Event{
 		Type:        "summary",
 		Result:      result,
@@ -126,7 +147,7 @@ func (p *parser) summary(result, name, duration, cached, status, covpct, package
 	})
 }
 
-func (p *parser) coverage(percent, packages string) {
+func (p *Parser) coverage(percent, packages string) {
 	p.add(gtr.Event{
 		Type:        "coverage",
 		CovPct:      parseFloat(percent),
@@ -134,7 +155,7 @@ func (p *parser) coverage(percent, packages string) {
 	})
 }
 
-func (p *parser) benchmark(name, iterations, nsPerOp, mbPerSec, bytesPerOp, allocsPerOp string) {
+func (p *Parser) benchmark(name, iterations, nsPerOp, mbPerSec, bytesPerOp, allocsPerOp string) {
 	p.add(gtr.Event{
 		Type:        "benchmark",
 		Name:        name,
@@ -146,14 +167,14 @@ func (p *parser) benchmark(name, iterations, nsPerOp, mbPerSec, bytesPerOp, allo
 	})
 }
 
-func (p *parser) buildOutput(packageName string) {
+func (p *Parser) buildOutput(packageName string) {
 	p.add(gtr.Event{
 		Type: "build_output",
 		Name: packageName,
 	})
 }
 
-func (p *parser) output(line string) {
+func (p *Parser) output(line string) {
 	p.add(gtr.Event{Type: "output", Data: line})
 }
 

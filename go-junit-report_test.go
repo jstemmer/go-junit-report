@@ -192,7 +192,8 @@ func testReport(input, reportFile, packageName string, t *testing.T) {
 	}
 	defer file.Close()
 
-	events, err := gotest.Parse(file)
+	parser := gotest.New()
+	events, err := parser.Parse(file)
 	if err != nil {
 		t.Fatal(err)
 	}
