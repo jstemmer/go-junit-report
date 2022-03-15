@@ -191,7 +191,12 @@ func testReport(input, reportFile, packageName string, t *testing.T) {
 	}
 	defer file.Close()
 
-	parser := gotest.New(gotest.PackageName(packageName))
+	parser := gotest.New(
+		gotest.PackageName(packageName),
+		gotest.TimestampFunc(func() time.Time {
+			return time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
+		}),
+	)
 
 	report, err := parser.Parse(file)
 	if err != nil {
@@ -204,8 +209,7 @@ func testReport(input, reportFile, packageName string, t *testing.T) {
 		}
 	}
 
-	testTime := time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
-	actual := junit.CreateFromReport(report, "hostname", testTime)
+	actual := junit.CreateFromReport(report, "hostname")
 
 	expectedXML, err := loadTestReport(reportFile, "")
 	if err != nil {

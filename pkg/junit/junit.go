@@ -127,16 +127,17 @@ type Output struct {
 }
 
 // CreateFromReport creates a JUnit representation of the given gtr.Report.
-func CreateFromReport(report gtr.Report, hostname string, timestamp time.Time) Testsuites {
-	ts := timestamp.Format(time.RFC3339)
-
+func CreateFromReport(report gtr.Report, hostname string) Testsuites {
 	var suites Testsuites
 	for _, pkg := range report.Packages {
 		var duration time.Duration
 		suite := Testsuite{
-			Name:      pkg.Name,
-			Timestamp: ts,
-			Hostname:  hostname,
+			Name:     pkg.Name,
+			Hostname: hostname,
+		}
+
+		if !pkg.Timestamp.IsZero() {
+			suite.SetTimestamp(pkg.Timestamp)
 		}
 
 		for k, v := range pkg.Properties {
