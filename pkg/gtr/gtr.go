@@ -57,6 +57,7 @@ func (r *Report) IsSuccessful() bool {
 // Package contains build, test and/or benchmark results for a single package.
 type Package struct {
 	Name       string
+	Timestamp  time.Time
 	Duration   time.Duration
 	Coverage   float64
 	Output     []string

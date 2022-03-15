@@ -26,17 +26,19 @@ type ReportBuilder struct {
 	coverage float64  // coverage percentage
 
 	// default values
-	PackageName string
+	PackageName   string
+	TimestampFunc func() time.Time
 }
 
 // NewReportBuilder creates a new ReportBuilder.
 func NewReportBuilder() *ReportBuilder {
 	return &ReportBuilder{
-		tests:       make(map[int]Test),
-		benchmarks:  make(map[int]Benchmark),
-		buildErrors: make(map[int]Error),
-		runErrors:   make(map[int]Error),
-		nextId:      1,
+		tests:         make(map[int]Test),
+		benchmarks:    make(map[int]Benchmark),
+		buildErrors:   make(map[int]Error),
+		runErrors:     make(map[int]Error),
+		nextId:        1,
+		TimestampFunc: time.Now,
 	}
 }
 
@@ -134,6 +136,10 @@ func (b *ReportBuilder) CreatePackage(name, result string, duration time.Duratio
 	pkg := Package{
 		Name:     name,
 		Duration: duration,
+	}
+
+	if b.TimestampFunc != nil {
+		pkg.Timestamp = b.TimestampFunc()
 	}
 
 	// Build errors are treated somewhat differently. Rather than having a
