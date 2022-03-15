@@ -38,11 +38,20 @@ var (
 // Option defines options that can be passed to gotest.New.
 type Option func(*Parser)
 
-// PackageName sets the default package name to use when it cannot be
-// determined from the test output.
+// PackageName is an Option that sets the default package name to use when it
+// cannot be determined from the test output.
 func PackageName(name string) Option {
 	return func(p *Parser) {
 		p.packageName = name
+	}
+}
+
+// TimestampFunc is an Option that sets the timestamp function that is used to
+// determine the current time when creating the Report. This can be used to
+// override the default behaviour of using time.Now().
+func TimestampFunc(f func() time.Time) Option {
+	return func(p *Parser) {
+		p.timestampFunc = f
 	}
 }
 
@@ -57,7 +66,8 @@ func New(options ...Option) *Parser {
 
 // Parser is a Go test output Parser.
 type Parser struct {
-	packageName string
+	packageName   string
+	timestampFunc func() time.Time
 
 	events []Event
 }
@@ -77,6 +87,7 @@ func (p *Parser) Parse(r io.Reader) (gtr.Report, error) {
 func (p *Parser) report(events []Event) gtr.Report {
 	rb := gtr.NewReportBuilder()
 	rb.PackageName = p.packageName
+	rb.TimestampFunc = p.timestampFunc
 	for _, ev := range events {
 		switch ev.Type {
 		case "run_test":
