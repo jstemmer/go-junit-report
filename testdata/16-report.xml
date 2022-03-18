@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites tests="3">
-	<testsuite tests="3" failures="0" errors="0" time="0.001" name="package/repeated-names" hostname="hostname" timestamp="2022-01-01T00:00:00Z">
+	<testsuite name="package/repeated-names" tests="3" failures="0" errors="0" hostname="hostname" time="0.001" timestamp="2022-01-01T00:00:00Z">
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
-		<testcase classname="repeated-names" name="TestRepeat" time="0.000"></testcase>
-		<testcase classname="repeated-names" name="TestRepeat" time="0.000"></testcase>
-		<testcase classname="repeated-names" name="TestRepeat" time="0.000"></testcase>
+		<testcase name="TestRepeat" classname="package/repeated-names" time="0.000"></testcase>
+		<testcase name="TestRepeat" classname="package/repeated-names" time="0.000"></testcase>
+		<testcase name="TestRepeat" classname="package/repeated-names" time="0.000"></testcase>
 	</testsuite>
 </testsuites>

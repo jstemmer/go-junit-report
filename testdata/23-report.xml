@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites tests="2">
-	<testsuite tests="2" failures="0" errors="0" time="9.415" name="package/one" hostname="hostname" timestamp="2022-01-01T00:00:00Z">
+	<testsuite name="package/one" tests="2" failures="0" errors="0" hostname="hostname" time="9.415" timestamp="2022-01-01T00:00:00Z">
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
-		<testcase classname="one" name="BenchmarkIpsHistoryInsert" time="0.000052568"></testcase>
-		<testcase classname="one" name="BenchmarkIpsHistoryLookup" time="0.000015208"></testcase>
+		<testcase name="BenchmarkIpsHistoryInsert" classname="package/one" time="0.000052568"></testcase>
+		<testcase name="BenchmarkIpsHistoryLookup" classname="package/one" time="0.000015208"></testcase>
 		<system-out><![CDATA[goos: darwin
 goarch: amd64
 pkg: code.internal/state]]></system-out>

@@ -1,39 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites tests="5" errors="3">
-	<testsuite tests="1" failures="0" errors="0" time="0.100" name="package/name/passing1" hostname="hostname" timestamp="2022-01-01T00:00:00Z">
+	<testsuite name="package/name/passing1" tests="1" failures="0" errors="0" hostname="hostname" time="0.100" timestamp="2022-01-01T00:00:00Z">
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
-		<testcase classname="passing1" name="TestA" time="0.100"></testcase>
+		<testcase name="TestA" classname="package/name/passing1" time="0.100"></testcase>
 	</testsuite>
-	<testsuite tests="1" failures="0" errors="0" time="0.100" name="package/name/passing2" hostname="hostname" timestamp="2022-01-01T00:00:00Z">
+	<testsuite name="package/name/passing2" tests="1" failures="0" errors="0" hostname="hostname" time="0.100" timestamp="2022-01-01T00:00:00Z">
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
-		<testcase classname="passing2" name="TestB" time="0.100"></testcase>
+		<testcase name="TestB" classname="package/name/passing2" time="0.100"></testcase>
 	</testsuite>
-	<testsuite tests="1" failures="0" errors="1" time="0.000" name="package/name/failing1" hostname="hostname" timestamp="2022-01-01T00:00:00Z">
+	<testsuite name="package/name/failing1" tests="1" failures="0" errors="1" hostname="hostname" time="0.000" timestamp="2022-01-01T00:00:00Z">
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
-		<testcase classname="failing1" name="[build failed]" time="0.000">
-			<error message="Build error" type="">failing1/failing_test.go:15: undefined: x</error>
+		<testcase name="[build failed]" classname="package/name/failing1" time="0.000">
+			<error message="Build error"><![CDATA[failing1/failing_test.go:15: undefined: x]]></error>
 		</testcase>
 	</testsuite>
-	<testsuite tests="1" failures="0" errors="1" time="0.000" name="package/name/failing2" hostname="hostname" timestamp="2022-01-01T00:00:00Z">
+	<testsuite name="package/name/failing2" tests="1" failures="0" errors="1" hostname="hostname" time="0.000" timestamp="2022-01-01T00:00:00Z">
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
-		<testcase classname="failing2" name="[build failed]" time="0.000">
-			<error message="Build error" type="">failing2/another_failing_test.go:20: undefined: y</error>
+		<testcase name="[build failed]" classname="package/name/failing2" time="0.000">
+			<error message="Build error"><![CDATA[failing2/another_failing_test.go:20: undefined: y]]></error>
 		</testcase>
 	</testsuite>
-	<testsuite tests="1" failures="0" errors="1" time="0.000" name="package/name/setupfailing1" hostname="hostname" timestamp="2022-01-01T00:00:00Z">
+	<testsuite name="package/name/setupfailing1" tests="1" failures="0" errors="1" hostname="hostname" time="0.000" timestamp="2022-01-01T00:00:00Z">
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
-		<testcase classname="setupfailing1" name="[setup failed]" time="0.000">
-			<error message="Build error" type="">setupfailing1/failing_test.go:4: cannot find package &#34;other/package&#34; in any of:&#xA;&#x9;/path/vendor (vendor tree)&#xA;&#x9;/path/go/root (from $GOROOT)&#xA;&#x9;/path/go/path (from $GOPATH)</error>
+		<testcase name="[setup failed]" classname="package/name/setupfailing1" time="0.000">
+			<error message="Build error"><![CDATA[setupfailing1/failing_test.go:4: cannot find package "other/package" in any of:
+	/path/vendor (vendor tree)
+	/path/go/root (from $GOROOT)
+	/path/go/path (from $GOPATH)]]></error>
 		</testcase>
 	</testsuite>
 </testsuites>

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites tests="2" errors="1">
-	<testsuite tests="2" failures="0" errors="1" time="0.005" name="github.com/jstemmer/test/failedsummary" hostname="hostname" timestamp="2022-01-01T00:00:00Z">
+	<testsuite name="github.com/jstemmer/test/failedsummary" tests="2" failures="0" errors="1" hostname="hostname" time="0.005" timestamp="2022-01-01T00:00:00Z">
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
-		<testcase classname="failedsummary" name="TestOne" time="0.000"></testcase>
-		<testcase classname="failedsummary" name="Failure" time="0.000">
-			<error message="Run error" type="">panic: panic</error>
+		<testcase name="TestOne" classname="github.com/jstemmer/test/failedsummary" time="0.000"></testcase>
+		<testcase name="Failure" classname="github.com/jstemmer/test/failedsummary" time="0.000">
+			<error message="Run error"><![CDATA[panic: panic]]></error>
 		</testcase>
 	</testsuite>
 </testsuites>

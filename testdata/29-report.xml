@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites tests="1">
-	<testsuite tests="1" failures="0" errors="0" time="1.522" name="sixteen/cpu" hostname="hostname" timestamp="2022-01-01T00:00:00Z">
+	<testsuite name="sixteen/cpu" tests="1" failures="0" errors="0" hostname="hostname" time="1.522" timestamp="2022-01-01T00:00:00Z">
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
-		<testcase classname="cpu" name="BenchmarkRingaround" time="0.000013571"></testcase>
+		<testcase name="BenchmarkRingaround" classname="sixteen/cpu" time="0.000013571"></testcase>
 		<system-out><![CDATA[pkg: sixteen/cpu]]></system-out>
 	</testsuite>
 </testsuites>

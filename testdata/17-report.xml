@@ -1,11 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites tests="1" failures="1">
-	<testsuite tests="1" failures="1" errors="0" time="0.015" name="race_test" hostname="hostname" timestamp="2022-01-01T00:00:00Z">
+	<testsuite name="race_test" tests="1" failures="1" errors="0" hostname="hostname" time="0.015" timestamp="2022-01-01T00:00:00Z">
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
-		<testcase classname="race_test" name="TestRace" time="0.000">
-			<failure message="Failed" type="">test output&#xA;2 0xc4200153d0&#xA;==================&#xA;WARNING: DATA RACE&#xA;Write at 0x00c4200153d0 by goroutine 7:&#xA;  race_test.TestRace.func1()&#xA;      race_test.go:13 +0x3b&#xA;&#xA;Previous write at 0x00c4200153d0 by goroutine 6:&#xA;  race_test.TestRace()&#xA;      race_test.go:15 +0x136&#xA;  testing.tRunner()&#xA;      /usr/local/Cellar/go/1.8.3/libexec/src/testing/testing.go:657 +0x107&#xA;&#xA;Goroutine 7 (running) created at:&#xA;  race_test.TestRace()&#xA;      race_test.go:14 +0x125&#xA;  testing.tRunner()&#xA;      /usr/local/Cellar/go/1.8.3/libexec/src/testing/testing.go:657 +0x107&#xA;&#xA;Goroutine 6 (running) created at:&#xA;  testing.(*T).Run()&#xA;      /usr/local/Cellar/go/1.8.3/libexec/src/testing/testing.go:697 +0x543&#xA;  testing.runTests.func1()&#xA;      /usr/local/Cellar/go/1.8.3/libexec/src/testing/testing.go:882 +0xaa&#xA;  testing.tRunner()&#xA;      /usr/local/Cellar/go/1.8.3/libexec/src/testing/testing.go:657 +0x107&#xA;  testing.runTests()&#xA;      /usr/local/Cellar/go/1.8.3/libexec/src/testing/testing.go:888 +0x4e0&#xA;  testing.(*M).Run()&#xA;      /usr/local/Cellar/go/1.8.3/libexec/src/testing/testing.go:822 +0x1c3&#xA;  main.main()&#xA;      _test/_testmain.go:52 +0x20f&#xA;==================&#xA;testing.go:610: race detected during execution of test</failure>
+		<testcase name="TestRace" classname="race_test" time="0.000">
+			<failure message="Failed"><![CDATA[test output
+2 0xc4200153d0
+==================
+WARNING: DATA RACE
+Write at 0x00c4200153d0 by goroutine 7:
+  race_test.TestRace.func1()
+      race_test.go:13 +0x3b
+
+Previous write at 0x00c4200153d0 by goroutine 6:
+  race_test.TestRace()
+      race_test.go:15 +0x136
+  testing.tRunner()
+      /usr/local/Cellar/go/1.8.3/libexec/src/testing/testing.go:657 +0x107
+
+Goroutine 7 (running) created at:
+  race_test.TestRace()
+      race_test.go:14 +0x125
+  testing.tRunner()
+      /usr/local/Cellar/go/1.8.3/libexec/src/testing/testing.go:657 +0x107
+
+Goroutine 6 (running) created at:
+  testing.(*T).Run()
+      /usr/local/Cellar/go/1.8.3/libexec/src/testing/testing.go:697 +0x543
+  testing.runTests.func1()
+      /usr/local/Cellar/go/1.8.3/libexec/src/testing/testing.go:882 +0xaa
+  testing.tRunner()
+      /usr/local/Cellar/go/1.8.3/libexec/src/testing/testing.go:657 +0x107
+  testing.runTests()
+      /usr/local/Cellar/go/1.8.3/libexec/src/testing/testing.go:888 +0x4e0
+  testing.(*M).Run()
+      /usr/local/Cellar/go/1.8.3/libexec/src/testing/testing.go:822 +0x1c3
+  main.main()
+      _test/_testmain.go:52 +0x20f
+==================
+testing.go:610: race detected during execution of test]]></failure>
 		</testcase>
 		<system-out><![CDATA[exit status 1]]></system-out>
 	</testsuite>
