@@ -20,6 +20,7 @@ type Testsuites struct {
 	Tests    int    `xml:"tests,attr,omitempty"`
 	Errors   int    `xml:"errors,attr,omitempty"`
 	Failures int    `xml:"failures,attr,omitempty"`
+	Skipped  int    `xml:"skipped,attr,omitempty"`
 	Disabled int    `xml:"disabled,attr,omitempty"`
 
 	Suites []Testsuite `xml:"testsuite,omitempty"`
@@ -31,6 +32,7 @@ func (t *Testsuites) AddSuite(ts Testsuite) {
 	t.Tests += ts.Tests
 	t.Errors += ts.Errors
 	t.Failures += ts.Failures
+	t.Skipped += ts.Skipped
 	t.Disabled += ts.Disabled
 }
 
