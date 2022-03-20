@@ -25,11 +25,11 @@
 example.go:123: Expected and obtained are different.]]></failure>
 		</testcase>
 		<testcase name="TestFour/#01" classname="package/name" time="0.000">
-			<skipped message="example.go:1234: Not supported yet."></skipped>
+			<skipped message="Skipped"><![CDATA[example.go:1234: Not supported yet.]]></skipped>
 		</testcase>
 		<testcase name="TestFour/#02" classname="package/name" time="0.000"></testcase>
 		<testcase name="TestFive" classname="package/name" time="0.000">
-			<skipped message="example.go:1392: Not supported yet."></skipped>
+			<skipped message="Skipped"><![CDATA[example.go:1392: Not supported yet.]]></skipped>
 		</testcase>
 		<testcase name="TestSix" classname="package/name" time="0.000">
 			<failure message="Failed"><![CDATA[example.go:371: This should not fail!]]></failure>

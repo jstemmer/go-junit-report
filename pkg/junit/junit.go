@@ -170,7 +170,8 @@ func CreateFromReport(report gtr.Report, hostname string) Testsuites {
 				}
 			} else if test.Result == gtr.Skip {
 				tc.Skipped = &Result{
-					Message: formatOutput(test.Output, test.Level),
+					Message: "Skipped",
+					Data:    formatOutput(test.Output, test.Level),
 				}
 			} else if test.Result == gtr.Unknown {
 				tc.Error = &Result{
