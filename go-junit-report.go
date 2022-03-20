@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"encoding/xml"
 	"flag"
 	"fmt"
@@ -82,8 +83,11 @@ func main() {
 	}
 
 	if *printEvents {
-		for i, ev := range parser.Events() {
-			fmt.Printf("%02d: %#v\n", i, ev)
+		enc := json.NewEncoder(os.Stderr)
+		for _, event := range parser.Events() {
+			if err := enc.Encode(event); err != nil {
+				exitf("error printing events: %v\n", err)
+			}
 		}
 	}
 	for i := range report.Packages {
