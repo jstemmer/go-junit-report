@@ -20,11 +20,11 @@ var (
 
 var (
 	noXMLHeader = flag.Bool("no-xml-header", false, "do not print xml header")
-	packageName = flag.String("package-name", "", "specify a package name (compiled test have no package name in output)")
+	packageName = flag.String("package-name", "", "specify a default package `name` to use if output does not contain a package name")
 	setExitCode = flag.Bool("set-exit-code", false, "set exit code to 1 if tests failed")
 	version     = flag.Bool("version", false, "print version")
-	input       = flag.String("in", "", "read go test log from file")
-	output      = flag.String("out", "", "write XML report to file")
+	input       = flag.String("in", "", "read go test log from `file`")
+	output      = flag.String("out", "", "write XML report to `file`")
 	iocopy      = flag.Bool("iocopy", false, "copy input to stdout; can only be used in conjunction with -out")
 	properties  = make(keyValueFlag)
 
@@ -36,7 +36,7 @@ var (
 )
 
 func main() {
-	flag.Var(&properties, "prop", "add property to generated report; properties should be specified as \"key=value\"")
+	flag.Var(&properties, "prop", "add property to generated report; properties should be specified as `key=value`")
 	flag.Parse()
 	if *iocopy && *output == "" {
 		exitf("you must specify an output file with -out when using -iocopy")
