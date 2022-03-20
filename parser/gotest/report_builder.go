@@ -89,9 +89,9 @@ func (b *reportBuilder) ContinueTest(name string) {
 }
 
 // EndTest finds the test with the given name, sets the result, duration and
-// level, and marks it as active. If more than one test exists with this name,
-// the most recently created test will be used. If no test exists with this
-// name, a new test is created.
+// level. If more than one test exists with this name, the most recently
+// created test will be used. If no test exists with this name, a new test is
+// created.
 func (b *reportBuilder) EndTest(name, result string, duration time.Duration, level int) {
 	b.lastId = b.findTest(name)
 	if b.lastId < 0 {
@@ -106,6 +106,7 @@ func (b *reportBuilder) EndTest(name, result string, duration time.Duration, lev
 	t.Duration = duration
 	t.Level = level
 	b.tests[b.lastId] = t
+	b.lastId = 0
 }
 
 // End marks the active context as no longer active.
@@ -144,10 +145,10 @@ func (b *reportBuilder) BenchmarkResult(name string, iterations int64, nsPerOp, 
 	}
 }
 
-// EndBenchmark finds the benchmark with the given name, sets the result and
-// marks it as active. If more than one benchmark exists with this name, the
-// most recently created benchmark will be used. If no benchmark exists with
-// this name, a new benchmark is created.
+// EndBenchmark finds the benchmark with the given name and sets the result. If
+// more than one benchmark exists with this name, the most recently created
+// benchmark will be used. If no benchmark exists with this name, a new
+// benchmark is created.
 func (b *reportBuilder) EndBenchmark(name, result string) {
 	b.lastId = b.findBenchmark(name)
 	if b.lastId < 0 {
@@ -157,6 +158,7 @@ func (b *reportBuilder) EndBenchmark(name, result string) {
 	bm := b.benchmarks[b.lastId]
 	bm.Result = parseResult(result)
 	b.benchmarks[b.lastId] = bm
+	b.lastId = 0
 }
 
 // CreateBuildError creates a new build error and marks it as active.

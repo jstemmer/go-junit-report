@@ -8,5 +8,8 @@
 		<testcase name="TestZ" classname="package/name/bench" time="0.000"></testcase>
 		<testcase name="BenchmarkTest" classname="package/name/bench" time="0.000000000"></testcase>
 		<testcase name="BenchmarkOtherTest" classname="package/name/bench" time="0.000000000"></testcase>
+		<system-out><![CDATA[goos: linux
+goarch: amd64
+pkg: package/name/bench]]></system-out>
 	</testsuite>
 </testsuites>
