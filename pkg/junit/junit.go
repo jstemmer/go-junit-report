@@ -220,7 +220,7 @@ func CreateFromReport(report gtr.Report, hostname string) Testsuites {
 				Name:      "Failure",
 				Time:      formatDuration(0),
 				Error: &Result{
-					Message: "Run error",
+					Message: "Runtime error",
 					Data:    strings.Join(pkg.RunError.Output, "\n"),
 				},
 			}

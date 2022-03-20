@@ -6,7 +6,7 @@
 		</properties>
 		<testcase name="TestOne" classname="github.com/jstemmer/test/failedsummary" time="0.000"></testcase>
 		<testcase name="Failure" classname="github.com/jstemmer/test/failedsummary" time="0.000">
-			<error message="Run error"><![CDATA[panic: panic]]></error>
+			<error message="Runtime error"><![CDATA[panic: panic]]></error>
 		</testcase>
 	</testsuite>
 </testsuites>
