@@ -13,8 +13,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/jstemmer/go-junit-report/v2/pkg/gtr"
 	"github.com/jstemmer/go-junit-report/v2/pkg/junit"
 	"github.com/jstemmer/go-junit-report/v2/pkg/parser/gotest"
+	"github.com/jstemmer/go-junit-report/v2/pkg/parser/gotestjson"
 
 	"github.com/google/go-cmp/cmp"
 )
@@ -23,6 +25,7 @@ var matchTest = flag.String("match", "", "only test testdata matching this patte
 
 type TestCase struct {
 	name        string
+	jsonName    string
 	reportName  string
 	noXMLHeader bool
 	packageName string
@@ -31,10 +34,12 @@ type TestCase struct {
 var testCases = []TestCase{
 	{
 		name:       "01-pass.txt",
+		jsonName:   "01-pass.jsonl",
 		reportName: "01-report.xml",
 	},
 	{
 		name:       "02-fail.txt",
+		jsonName:   "02-fail.jsonl",
 		reportName: "02-report.xml",
 	},
 	{
@@ -179,33 +184,51 @@ func TestNewOutput(t *testing.T) {
 		}
 
 		t.Run(testCase.name, func(t *testing.T) {
-			testReport(testCase.name, testCase.reportName, testCase.packageName, t)
+			testReport(testCase.name, testCase.reportName, testCase.packageName, false, t)
 		})
+
+		if testCase.jsonName != "" {
+			t.Run(testCase.jsonName, func(t *testing.T) {
+				testReport(testCase.jsonName, testCase.reportName, testCase.packageName, true, t)
+			})
+		}
 	}
 }
 
-func testReport(input, reportFile, packageName string, t *testing.T) {
+func testReport(input, reportFile, packageName string, jsonInput bool, t *testing.T) {
 	file, err := os.Open("testdata/" + input)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer file.Close()
 
-	parser := gotest.New(
-		gotest.PackageName(packageName),
-		gotest.TimestampFunc(func() time.Time {
-			return time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
-		}),
-	)
+	var report gtr.Report
+	if !jsonInput {
+		parser := gotest.New(
+			gotest.PackageName(packageName),
+			gotest.TimestampFunc(func() time.Time {
+				return time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
+			}),
+		)
 
-	report, err := parser.Parse(file)
-	if err != nil {
-		t.Fatal(err)
-	}
+		report, err = parser.Parse(file)
+		if err != nil {
+			t.Fatal(err)
+		}
 
-	if *printEvents {
-		for _, event := range parser.Events() {
-			t.Logf("Event: %+v", event)
+		if *printEvents {
+			for _, event := range parser.Events() {
+				t.Logf("Event: %+v", event)
+			}
+		}
+	} else {
+		parser := gotestjson.New(
+			gotestjson.PackageName(packageName),
+		)
+
+		report, err = parser.Parse(file)
+		if err != nil {
+			t.Fatal(err)
 		}
 	}
 
@@ -222,8 +245,8 @@ func testReport(input, reportFile, packageName string, t *testing.T) {
 	}
 
 	expected = modifyForBackwardsCompat(expected)
-	if diff := cmp.Diff(actual, expected); diff != "" {
-		t.Errorf("Unexpected report diff (-got, +want):\n%v", diff)
+	if diff := cmp.Diff(expected, actual); diff != "" {
+		t.Errorf("Unexpected report diff (-want, +got):\n%v", diff)
 	}
 }
 

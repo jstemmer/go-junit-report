@@ -9,8 +9,10 @@ import (
 	"os"
 	"strings"
 
+	"github.com/jstemmer/go-junit-report/v2/pkg/gtr"
 	"github.com/jstemmer/go-junit-report/v2/pkg/junit"
 	"github.com/jstemmer/go-junit-report/v2/pkg/parser/gotest"
+	"github.com/jstemmer/go-junit-report/v2/pkg/parser/gotestjson"
 )
 
 var (
@@ -27,6 +29,7 @@ var (
 	input       = flag.String("in", "", "read go test log from `file`")
 	output      = flag.String("out", "", "write XML report to `file`")
 	iocopy      = flag.Bool("iocopy", false, "copy input to stdout; can only be used in conjunction with -out")
+	jsonFlag    = flag.Bool("json", false, "parse json input")
 	properties  = make(keyValueFlag)
 
 	// debug flags
@@ -75,19 +78,30 @@ func main() {
 		in = io.TeeReader(in, os.Stdout)
 	}
 
-	parser := gotest.New(gotest.PackageName(*packageName))
+	var report gtr.Report
+	var err error
+	if !*jsonFlag {
+		parser := gotest.New(gotest.PackageName(*packageName))
 
-	report, err := parser.Parse(in)
-	if err != nil {
-		exitf("error parsing input: %s\n", err)
-	}
+		report, err = parser.Parse(in)
+		if err != nil {
+			exitf("error parsing input: %s\n", err)
+		}
 
-	if *printEvents {
-		enc := json.NewEncoder(os.Stderr)
-		for _, event := range parser.Events() {
-			if err := enc.Encode(event); err != nil {
-				exitf("error printing events: %v\n", err)
+		if *printEvents {
+			enc := json.NewEncoder(os.Stderr)
+			for _, event := range parser.Events() {
+				if err := enc.Encode(event); err != nil {
+					exitf("error printing events: %v\n", err)
+				}
 			}
+		}
+	} else {
+		parser := gotestjson.New(gotestjson.PackageName(*packageName))
+
+		report, err = parser.Parse(in)
+		if err != nil {
+			exitf("error parsing input: %s\n", err)
 		}
 	}
 	for i := range report.Packages {

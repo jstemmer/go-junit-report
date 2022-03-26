@@ -1,0 +1,11 @@
+{"Time":"2022-01-01T00:00:00Z","Action":"run","Package":"package/name","Test":"TestZ"}
+{"Time":"2022-01-01T00:00:00Z","Action":"output","Package":"package/name","Test":"TestZ","Output":"=== RUN   TestZ\n"}
+{"Time":"2022-01-01T00:00:00Z","Action":"output","Package":"package/name","Test":"TestZ","Output":"--- PASS: TestZ (0.06)\n"}
+{"Time":"2022-01-01T00:00:00Z","Action":"pass","Package":"package/name","Test":"TestZ","Elapsed":0.06}
+{"Time":"2022-01-01T00:00:00Z","Action":"run","Package":"package/name","Test":"TestA"}
+{"Time":"2022-01-01T00:00:00Z","Action":"output","Package":"package/name","Test":"TestA","Output":"=== RUN   TestA\n"}
+{"Time":"2022-01-01T00:00:00Z","Action":"output","Package":"package/name","Test":"TestA","Output":"--- PASS: TestA (0.10)\n"}
+{"Time":"2022-01-01T00:00:00Z","Action":"pass","Package":"package/name","Test":"TestA","Elapsed":0.1}
+{"Time":"2022-01-01T00:00:00Z","Action":"output","Package":"package/name","Output":"PASS\n"}
+{"Time":"2022-01-01T00:00:00Z","Action":"output","Package":"package/name","Output":"ok  \tpackage/name\t0.160s\n"}
+{"Time":"2022-01-01T00:00:00Z","Action":"pass","Package":"package/name","Elapsed":0.16}
