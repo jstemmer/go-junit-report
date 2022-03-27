@@ -85,7 +85,7 @@ func (p *Parser) Parse(r io.Reader) (gtr.Report, error) {
 
 // report generates a gtr.Report from the given list of events.
 func (p *Parser) report(events []Event) gtr.Report {
-	rb := gtr.NewReportBuilder()
+	rb := newReportBuilder()
 	rb.PackageName = p.packageName
 	rb.TimestampFunc = p.timestampFunc
 	for _, ev := range events {
