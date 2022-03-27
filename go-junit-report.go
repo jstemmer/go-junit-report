@@ -108,23 +108,33 @@ func main() {
 		defer f.Close()
 		out = f
 	}
-	if !*noXMLHeader {
-		fmt.Fprintf(out, xml.Header)
-	}
 
-	enc := xml.NewEncoder(out)
-	enc.Indent("", "\t")
-	if err := enc.Encode(testsuites); err != nil {
+	if err := writeXML(out, testsuites, *noXMLHeader); err != nil {
 		exitf("error writing XML: %v", err)
 	}
-	if err := enc.Flush(); err != nil {
-		exitf("error flusing XML: %v", err)
-	}
-	fmt.Fprintf(out, "\n")
 
 	if *setExitCode && !report.IsSuccessful() {
 		os.Exit(1)
 	}
+}
+
+func writeXML(w io.Writer, testsuites junit.Testsuites, skipHeader bool) error {
+	if !skipHeader {
+		_, err := fmt.Fprintf(w, xml.Header)
+		if err != nil {
+			return err
+		}
+	}
+	enc := xml.NewEncoder(w)
+	enc.Indent("", "\t")
+	if err := enc.Encode(testsuites); err != nil {
+		return err
+	}
+	if err := enc.Flush(); err != nil {
+		return err
+	}
+	_, err := fmt.Fprintf(w, "\n")
+	return err
 }
 
 func exitf(msg string, args ...interface{}) {
