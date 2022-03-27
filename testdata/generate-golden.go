@@ -24,9 +24,9 @@ type Settings struct {
 }
 
 var fileSettings = map[string]Settings{
-	"05-no_xml_header.txt": {skipXMLHeader: true},
-	"06-mixed.txt":         {skipXMLHeader: true},
-	"07-compiled_test.txt": {packageName: "test/package"},
+	"005-no_xml_header.txt": {skipXMLHeader: true},
+	"006-mixed.txt":         {skipXMLHeader: true},
+	"007-compiled_test.txt": {packageName: "test/package"},
 }
 
 func main() {
