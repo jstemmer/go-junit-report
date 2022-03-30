@@ -1,0 +1,15 @@
+goos: linux
+goarch: amd64
+pkg: package/name/benchfail
+BenchmarkError
+    bench_test.go:6: error message
+--- FAIL: BenchmarkError
+BenchmarkFatal
+    bench_test.go:10: fatal message
+--- FAIL: BenchmarkFatal
+BenchmarkSkip
+    bench_test.go:14: skip message
+--- SKIP: BenchmarkSkip
+FAIL
+exit status 1
+FAIL	package/name/benchfail	0.002s
