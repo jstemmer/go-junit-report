@@ -87,7 +87,9 @@ func (p *Parser) Parse(r io.Reader) (gtr.Report, error) {
 func (p *Parser) report(events []Event) gtr.Report {
 	rb := newReportBuilder()
 	rb.PackageName = p.packageName
-	rb.TimestampFunc = p.timestampFunc
+	if p.timestampFunc != nil {
+		rb.TimestampFunc = p.timestampFunc
+	}
 	for _, ev := range events {
 		switch ev.Type {
 		case "run_test":

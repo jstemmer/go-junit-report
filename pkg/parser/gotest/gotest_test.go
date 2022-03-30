@@ -10,6 +10,10 @@ import (
 	"github.com/jstemmer/go-junit-report/v2/pkg/gtr"
 )
 
+var (
+	testTimestamp = time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
+)
+
 type parseLineTest struct {
 	input  string
 	events interface{}
@@ -220,8 +224,9 @@ func TestReport(t *testing.T) {
 	expected := gtr.Report{
 		Packages: []gtr.Package{
 			{
-				Name:     "package/name",
-				Duration: 1 * time.Millisecond,
+				Name:      "package/name",
+				Duration:  1 * time.Millisecond,
+				Timestamp: testTimestamp,
 				Tests: []gtr.Test{
 					{
 						Name:     "TestOne",
@@ -239,8 +244,9 @@ func TestReport(t *testing.T) {
 				},
 			},
 			{
-				Name:     "package/name2",
-				Duration: 1 * time.Millisecond,
+				Name:      "package/name2",
+				Duration:  1 * time.Millisecond,
+				Timestamp: testTimestamp,
 				Tests: []gtr.Test{
 					{
 						Name:     "TestOne",
@@ -253,8 +259,9 @@ func TestReport(t *testing.T) {
 				},
 			},
 			{
-				Name:     "package/name3",
-				Duration: 1234 * time.Millisecond,
+				Name:      "package/name3",
+				Duration:  1234 * time.Millisecond,
+				Timestamp: testTimestamp,
 				Benchmarks: []gtr.Benchmark{
 					{
 						Name:    "BenchmarkOne",
@@ -270,7 +277,8 @@ func TestReport(t *testing.T) {
 				Output: []string{"goarch: amd64"},
 			},
 			{
-				Name: "package/failing1",
+				Name:      "package/failing1",
+				Timestamp: testTimestamp,
 				BuildError: gtr.Error{
 					Name:   "package/failing1",
 					Cause:  "[build failed]",
@@ -280,7 +288,7 @@ func TestReport(t *testing.T) {
 		},
 	}
 
-	parser := &Parser{}
+	parser := New(TimestampFunc(func() time.Time { return testTimestamp }))
 	actual := parser.report(events)
 	if diff := cmp.Diff(actual, expected); diff != "" {
 		t.Errorf("FromEvents report incorrect, diff (-got, +want):\n%v", diff)
