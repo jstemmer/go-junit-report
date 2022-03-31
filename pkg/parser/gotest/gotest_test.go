@@ -208,7 +208,7 @@ func TestParseLine(t *testing.T) {
 			parser.parseLine(test.input)
 			got := parser.events
 			if diff := cmp.Diff(got, want); diff != "" {
-				t.Errorf("parseLine(%q) returned unexpected events, diff (-got, +want):\n%v", test.input, diff)
+				t.Errorf("parseLine(%q) returned unexpected events, diff (-want, +got):\n%v", test.input, diff)
 			}
 		})
 	}
@@ -310,6 +310,6 @@ func TestReport(t *testing.T) {
 	parser := New(TimestampFunc(func() time.Time { return testTimestamp }))
 	actual := parser.report(events)
 	if diff := cmp.Diff(actual, expected); diff != "" {
-		t.Errorf("FromEvents report incorrect, diff (-got, +want):\n%v", diff)
+		t.Errorf("FromEvents report incorrect, diff (-want, +got):\n%v", diff)
 	}
 }

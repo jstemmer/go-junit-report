@@ -25,7 +25,7 @@ func TestJSONReaderReadAll(t *testing.T) {
 `
 
 	if diff := cmp.Diff(string(got), want); diff != "" {
-		t.Errorf("unexpected result from jsonReader, diff (-got, +want):\n%s\n", diff)
+		t.Errorf("unexpected result from jsonReader, diff (-want, +got):\n%s\n", diff)
 	}
 }
 
@@ -52,12 +52,12 @@ func TestJSONReaderReadSmallBuffer(t *testing.T) {
 		}
 
 		if diff := cmp.Diff(string(buf[:n]), string(want)); diff != "" {
-			t.Fatalf("unexpected result from jsonReader, diff (-got, +want):\n%s\n", diff)
+			t.Fatalf("unexpected result from jsonReader, diff (-want, +got):\n%s\n", diff)
 		}
 	}
 
 	_, err := r.Read(buf)
 	if err != io.EOF {
-		t.Fatalf("unexpected result from jsonReader: got %v, want %v", err, io.EOF)
+		t.Fatalf("unexpected error from jsonReader: got %v, want %v", err, io.EOF)
 	}
 }
