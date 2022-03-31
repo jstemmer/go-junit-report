@@ -4,8 +4,50 @@ import (
 	"encoding/xml"
 	"testing"
 
+	"github.com/jstemmer/go-junit-report/v2/pkg/gtr"
+
 	"github.com/google/go-cmp/cmp"
 )
+
+func TestCreateFromReport(t *testing.T) {
+	// TODO: complete this report
+	report := gtr.Report{
+		Packages: []gtr.Package{
+			{
+				Benchmarks: []gtr.Benchmark{
+					{
+						Name:   "BenchmarkFail",
+						Result: gtr.Fail,
+					},
+				},
+			},
+		},
+	}
+
+	want := Testsuites{
+		Tests:    1,
+		Failures: 1,
+		Suites: []Testsuite{
+			{
+				Tests:    1,
+				Failures: 1,
+				Time:     "0.000",
+				Testcases: []Testcase{
+					{
+						Name:    "BenchmarkFail",
+						Time:    "0.000000000",
+						Failure: &Result{Message: "Failed"},
+					},
+				},
+			},
+		},
+	}
+
+	got := CreateFromReport(report, "")
+	if diff := cmp.Diff(got, want); diff != "" {
+		t.Errorf("CreateFromReport incorrect, diff (-want, +got):\n%s\n", diff)
+	}
+}
 
 func TestMarshalUnmarshal(t *testing.T) {
 	suites := Testsuites{

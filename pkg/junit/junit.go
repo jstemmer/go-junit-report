@@ -194,6 +194,10 @@ func CreateFromReport(report gtr.Report, hostname string) Testsuites {
 				tc.Failure = &Result{
 					Message: "Failed",
 				}
+			} else if bm.Result == gtr.Skip {
+				tc.Skipped = &Result{
+					Message: "Skipped",
+				}
 			}
 
 			suite.AddTestcase(tc)
@@ -279,6 +283,7 @@ func groupBenchmarksByName(benchmarks []gtr.Benchmark) []gtr.Benchmark {
 			bm.AllocsPerOp += b.AllocsPerOp
 		}
 		n := len(benchmap[bm.Name])
+		grouped[i] = benchmap[bm.Name][0]
 		grouped[i].NsPerOp = bm.NsPerOp / float64(n)
 		grouped[i].MBPerSec = bm.MBPerSec / float64(n)
 		grouped[i].BytesPerOp = bm.BytesPerOp / int64(n)
