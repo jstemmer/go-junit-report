@@ -32,8 +32,10 @@ var fileSettings = map[string]Settings{
 
 func main() {
 	var writeFiles bool
+	var id int
 	flag.BoolVar(&verbose, "v", false, "verbose logging")
 	flag.BoolVar(&writeFiles, "w", false, "write output xml files")
+	flag.IntVar(&id, "id", 0, "generate report for given id only")
 	flag.Parse()
 
 	files, err := filepath.Glob("*.txt")
@@ -41,7 +43,15 @@ func main() {
 		exitf("error listing files: %v\n", err)
 	}
 
+	var idPrefix string
+	if id > 0 {
+		idPrefix = fmt.Sprintf("%03d-", id)
+	}
 	for _, file := range files {
+		if idPrefix != "" && !strings.HasPrefix(file, idPrefix) {
+			continue
+		}
+
 		outName := outputName(file)
 		if err := createReportFromInput(file, outName, writeFiles); err != nil {
 			logf("error creating report: %v\n", err)
