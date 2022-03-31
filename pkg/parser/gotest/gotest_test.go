@@ -120,6 +120,10 @@ var parseLineTests = []parseLineTest{
 		Event{Type: "coverage", CovPct: 99.8, CovPackages: []string{"fmt", "encoding/xml"}},
 	},
 	{
+		"BenchmarkOK",
+		Event{Type: "run_benchmark", Name: "BenchmarkOK"},
+	},
+	{
 		"BenchmarkOne-8                     2000000	       604 ns/op",
 		Event{Type: "benchmark", Name: "BenchmarkOne", Iterations: 2_000_000, NsPerOp: 604},
 	},
@@ -134,6 +138,18 @@ var parseLineTests = []parseLineTest{
 	{
 		"BenchmarkFour-8         	   10000	    104427 ns/op	  95.76 MB/s	   40629 B/op	       5 allocs/op",
 		Event{Type: "benchmark", Name: "BenchmarkFour", Iterations: 10_000, NsPerOp: 104_427, MBPerSec: 95.76, BytesPerOp: 40_629, AllocsPerOp: 5},
+	},
+	{
+		"--- BENCH: BenchmarkOK-8",
+		Event{Type: "end_benchmark", Name: "BenchmarkOK", Result: "BENCH"},
+	},
+	{
+		"--- FAIL: BenchmarkError",
+		Event{Type: "end_benchmark", Name: "BenchmarkError", Result: "FAIL"},
+	},
+	{
+		"--- SKIP: BenchmarkSkip",
+		Event{Type: "end_benchmark", Name: "BenchmarkSkip", Result: "SKIP"},
 	},
 	{
 		"# package/name/failing1",
@@ -213,8 +229,12 @@ func TestReport(t *testing.T) {
 		{Type: "status", Result: "FAIL"},
 		{Type: "summary", Result: "FAIL", Name: "package/name2", Duration: 1 * time.Millisecond},
 		{Type: "output", Data: "goarch: amd64"},
+		{Type: "run_benchmark", Name: "BenchmarkOne"},
 		{Type: "benchmark", Name: "BenchmarkOne", NsPerOp: 100},
-		{Type: "benchmark", Name: "BenchmarkOne", NsPerOp: 300},
+		{Type: "end_benchmark", Name: "BenchmarkOne", Result: "BENCH"},
+		{Type: "run_benchmark", Name: "BenchmarkTwo"},
+		{Type: "benchmark", Name: "BenchmarkTwo"},
+		{Type: "end_benchmark", Name: "BenchmarkTwo", Result: "FAIL"},
 		{Type: "status", Result: "PASS"},
 		{Type: "summary", Result: "ok", Name: "package/name3", Duration: 1234 * time.Millisecond},
 		{Type: "build_output", Name: "package/failing1"},
@@ -269,9 +289,8 @@ func TestReport(t *testing.T) {
 						NsPerOp: 100,
 					},
 					{
-						Name:    "BenchmarkOne",
-						Result:  gtr.Pass,
-						NsPerOp: 300,
+						Name:    "BenchmarkTwo",
+						Result:  gtr.Fail,
 					},
 				},
 				Output: []string{"goarch: amd64"},

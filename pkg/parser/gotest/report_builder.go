@@ -113,9 +113,27 @@ func (b *reportBuilder) End() {
 	b.lastId = 0
 }
 
-// Benchmark adds a new Benchmark to the report and marks it as active.
-func (b *reportBuilder) Benchmark(name string, iterations int64, nsPerOp, mbPerSec float64, bytesPerOp, allocsPerOp int64) {
+// CreateBenchmark adds a benchmark with the given name to the report, and
+// marks it as active. If more than one benchmark exists with this name, the
+// most recently created benchmark will be updated. If no benchmark exists with
+// this name, a new benchmark is created.
+func (b *reportBuilder) CreateBenchmark(name string) {
 	b.benchmarks[b.newId()] = gtr.Benchmark{
+		Name: name,
+	}
+}
+
+// BenchmarkResult updates an existing or adds a new benchmark with the given
+// results and marks it as active. If an existing benchmark with this name
+// exists but without result, then that one is updated. Otherwise a new one is
+// added to the report.
+func (b *reportBuilder) BenchmarkResult(name string, iterations int64, nsPerOp, mbPerSec float64, bytesPerOp, allocsPerOp int64) {
+	b.lastId = b.findBenchmark(name)
+	if b.lastId < 0 || b.benchmarks[b.lastId].Result != gtr.Unknown {
+		b.CreateBenchmark(name)
+	}
+
+	b.benchmarks[b.lastId] = gtr.Benchmark{
 		Name:        name,
 		Result:      gtr.Pass,
 		Iterations:  iterations,
@@ -124,6 +142,21 @@ func (b *reportBuilder) Benchmark(name string, iterations int64, nsPerOp, mbPerS
 		BytesPerOp:  bytesPerOp,
 		AllocsPerOp: allocsPerOp,
 	}
+}
+
+// EndBenchmark finds the benchmark with the given name, sets the result and
+// marks it as active. If more than one benchmark exists with this name, the
+// most recently created benchmark will be used. If no benchmark exists with
+// this name, a new benchmark is created.
+func (b *reportBuilder) EndBenchmark(name, result string) {
+	b.lastId = b.findBenchmark(name)
+	if b.lastId < 0 {
+		b.CreateBenchmark(name)
+	}
+
+	bm := b.benchmarks[b.lastId]
+	bm.Result = parseResult(result)
+	b.benchmarks[b.lastId] = bm
 }
 
 // CreateBuildError creates a new build error and marks it as active.
@@ -259,6 +292,21 @@ func (b *reportBuilder) findTest(name string) int {
 	return -1
 }
 
+// findBenchmark returns the id of the most recently created benchmark with the
+// given name, or -1 if no such benchmark exists.
+func (b *reportBuilder) findBenchmark(name string) int {
+	// check if this benchmark was lastId
+	if bm, ok := b.benchmarks[b.lastId]; ok && bm.Name == name {
+		return b.lastId
+	}
+	for id := len(b.benchmarks); id >= 0; id-- {
+		if b.benchmarks[id].Name == name {
+			return id
+		}
+	}
+	return -1
+}
+
 // containsFailingTest return true if the current list of tests contains at
 // least one failing test or an unknown result.
 func (b *reportBuilder) containsFailingTest() bool {
@@ -279,6 +327,8 @@ func parseResult(r string) gtr.Result {
 		return gtr.Fail
 	case "SKIP":
 		return gtr.Skip
+	case "BENCH":
+		return gtr.Pass
 	default:
 		return gtr.Unknown
 	}

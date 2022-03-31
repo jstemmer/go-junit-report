@@ -14,12 +14,14 @@ import (
 )
 
 var (
-	// regexBenchmark captures 3-5 groups: benchmark name, number of times ran, ns/op (with or without decimal), MB/sec (optional), B/op (optional), and allocs/op (optional).
-	regexBenchmark = regexp.MustCompile(`^(Benchmark[^ -]+)(?:-\d+\s+|\s+)(\d+)\s+(\d+|\d+\.\d+)\sns\/op(?:\s+(\d+|\d+\.\d+)\sMB\/s)?(?:\s+(\d+)\sB\/op)?(?:\s+(\d+)\sallocs/op)?`)
-	regexCoverage  = regexp.MustCompile(`^coverage:\s+(\d+|\d+\.\d+)%\s+of\s+statements(?:\sin\s(.+))?$`)
-	regexEndTest   = regexp.MustCompile(`((?:    )*)--- (PASS|FAIL|SKIP): ([^ ]+) \((\d+\.\d+)(?: seconds|s)\)`)
-	regexStatus    = regexp.MustCompile(`^(PASS|FAIL|SKIP)$`)
-	regexSummary   = regexp.MustCompile(`` +
+	// regexBenchInfo captures 3-5 groups: benchmark name, number of times ran, ns/op (with or without decimal), MB/sec (optional), B/op (optional), and allocs/op (optional).
+	regexBenchmark    = regexp.MustCompile(`^(Benchmark[^ -]+)$`)
+	regexBenchSummary = regexp.MustCompile(`^(Benchmark[^ -]+)(?:-\d+\s+|\s+)(\d+)\s+(\d+|\d+\.\d+)\sns\/op(?:\s+(\d+|\d+\.\d+)\sMB\/s)?(?:\s+(\d+)\sB\/op)?(?:\s+(\d+)\sallocs/op)?`)
+	regexCoverage     = regexp.MustCompile(`^coverage:\s+(\d+|\d+\.\d+)%\s+of\s+statements(?:\sin\s(.+))?$`)
+	regexEndBenchmark = regexp.MustCompile(`^--- (BENCH|FAIL|SKIP): (Benchmark[^ -]+)(?:-\d+)?$`)
+	regexEndTest      = regexp.MustCompile(`((?:    )*)--- (PASS|FAIL|SKIP): ([^ ]+) \((\d+\.\d+)(?: seconds|s)\)`)
+	regexStatus       = regexp.MustCompile(`^(PASS|FAIL|SKIP)$`)
+	regexSummary      = regexp.MustCompile(`` +
 		// 1: result
 		`^(\?|ok|FAIL)` +
 		// 2: package name
@@ -100,8 +102,12 @@ func (p *Parser) report(events []Event) gtr.Report {
 			rb.ContinueTest(ev.Name)
 		case "end_test":
 			rb.EndTest(ev.Name, ev.Result, ev.Duration, ev.Indent)
+		case "run_benchmark":
+			rb.CreateBenchmark(ev.Name)
 		case "benchmark":
-			rb.Benchmark(ev.Name, ev.Iterations, ev.NsPerOp, ev.MBPerSec, ev.BytesPerOp, ev.AllocsPerOp)
+			rb.BenchmarkResult(ev.Name, ev.Iterations, ev.NsPerOp, ev.MBPerSec, ev.BytesPerOp, ev.AllocsPerOp)
+		case "end_benchmark":
+			rb.EndBenchmark(ev.Name, ev.Result)
 		case "status":
 			rb.End()
 		case "summary":
@@ -141,8 +147,12 @@ func (p *Parser) parseLine(line string) {
 		p.summary(matches[1], matches[2], matches[3], matches[4], matches[5], matches[6], matches[7])
 	} else if matches := regexCoverage.FindStringSubmatch(line); len(matches) == 3 {
 		p.coverage(matches[1], matches[2])
-	} else if matches := regexBenchmark.FindStringSubmatch(line); len(matches) == 7 {
-		p.benchmark(matches[1], matches[2], matches[3], matches[4], matches[5], matches[6])
+	} else if matches := regexBenchmark.FindStringSubmatch(line); len(matches) == 2 {
+		p.runBench(matches[1])
+	} else if matches := regexBenchSummary.FindStringSubmatch(line); len(matches) == 7 {
+		p.benchSummary(matches[1], matches[2], matches[3], matches[4], matches[5], matches[6])
+	} else if matches := regexEndBenchmark.FindStringSubmatch(line); len(matches) == 3 {
+		p.endBench(matches[1], matches[2])
 	} else if strings.HasPrefix(line, "# ") {
 		// TODO(jstemmer): this should just be output; we should detect build output when building report
 		fields := strings.Fields(strings.TrimPrefix(line, "# "))
@@ -210,7 +220,14 @@ func (p *Parser) coverage(percent, packages string) {
 	})
 }
 
-func (p *Parser) benchmark(name, iterations, nsPerOp, mbPerSec, bytesPerOp, allocsPerOp string) {
+func (p *Parser) runBench(name string) {
+	p.add(Event{
+		Type: "run_benchmark",
+		Name: name,
+	})
+}
+
+func (p *Parser) benchSummary(name, iterations, nsPerOp, mbPerSec, bytesPerOp, allocsPerOp string) {
 	p.add(Event{
 		Type:        "benchmark",
 		Name:        name,
@@ -219,6 +236,14 @@ func (p *Parser) benchmark(name, iterations, nsPerOp, mbPerSec, bytesPerOp, allo
 		MBPerSec:    parseFloat(mbPerSec),
 		BytesPerOp:  parseInt(bytesPerOp),
 		AllocsPerOp: parseInt(allocsPerOp),
+	})
+}
+
+func (p *Parser) endBench(result, name string) {
+	p.add(Event{
+		Type:   "end_benchmark",
+		Name:   name,
+		Result: result,
 	})
 }
 
