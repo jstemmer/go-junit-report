@@ -4,8 +4,8 @@
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
-		<testcase name="BenchmarkParse" classname="package/basic" time="0.000000604"></testcase>
-		<testcase name="BenchmarkReadingList" classname="package/basic" time="0.000001425"></testcase>
+		<testcase name="BenchmarkParse" classname="package/basic" time="1.208000000"></testcase>
+		<testcase name="BenchmarkReadingList" classname="package/basic" time="1.425000000"></testcase>
 		<system-out><![CDATA[goos: darwin
 goarch: amd64
 pkg: code.internal/state]]></system-out>

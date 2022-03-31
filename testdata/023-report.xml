@@ -4,8 +4,8 @@
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
-		<testcase name="BenchmarkIpsHistoryInsert" classname="package/one" time="0.000052568"></testcase>
-		<testcase name="BenchmarkIpsHistoryLookup" classname="package/one" time="0.000015208"></testcase>
+		<testcase name="BenchmarkIpsHistoryInsert" classname="package/one" time="1.577040000"></testcase>
+		<testcase name="BenchmarkIpsHistoryLookup" classname="package/one" time="1.520800000"></testcase>
 		<system-out><![CDATA[goos: darwin
 goarch: amd64
 pkg: code.internal/state]]></system-out>

@@ -187,7 +187,7 @@ func CreateFromReport(report gtr.Report, hostname string) Testsuites {
 			tc := Testcase{
 				Classname: pkg.Name,
 				Name:      bm.Name,
-				Time:      formatBenchmarkTime(time.Duration(bm.NsPerOp)),
+				Time:      formatBenchmarkTime(time.Duration(bm.NsPerOp) * time.Duration(bm.Iterations)),
 			}
 
 			if bm.Result == gtr.Fail {

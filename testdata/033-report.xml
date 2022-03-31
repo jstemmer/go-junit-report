@@ -4,8 +4,8 @@
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
-		<testcase name="BenchmarkDecode/Digits/Huffman/1e4" classname="compress/flate" time="0.000104427"></testcase>
-		<testcase name="BenchmarkEncode/Digits/Huffman/1e4" classname="compress/flate" time="0.000028334"></testcase>
+		<testcase name="BenchmarkDecode/Digits/Huffman/1e4" classname="compress/flate" time="1.044270000"></testcase>
+		<testcase name="BenchmarkEncode/Digits/Huffman/1e4" classname="compress/flate" time="1.416700000"></testcase>
 		<system-out><![CDATA[goos: linux
 goarch: amd64
 pkg: compress/flate]]></system-out>

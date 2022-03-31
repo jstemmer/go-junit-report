@@ -4,18 +4,18 @@
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
-		<testcase name="BenchmarkParse" classname="mycode/common" time="0.000001591"></testcase>
-		<testcase name="BenchmarkNewTask" classname="mycode/common" time="0.000000391"></testcase>
+		<testcase name="BenchmarkParse" classname="mycode/common" time="1.591000000"></testcase>
+		<testcase name="BenchmarkNewTask" classname="mycode/common" time="1.173000000"></testcase>
 		<system-out><![CDATA[pkg: mycode/common]]></system-out>
 	</testsuite>
 	<testsuite name="mycode/benchmarks/channels" tests="4" failures="0" errors="0" hostname="hostname" time="47.084" timestamp="2022-01-01T00:00:00Z">
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
-		<testcase name="BenchmarkFanout/Channel/10" classname="mycode/benchmarks/channels" time="0.000004673"></testcase>
-		<testcase name="BenchmarkFanout/Channel/100" classname="mycode/benchmarks/channels" time="0.000024965"></testcase>
-		<testcase name="BenchmarkFanout/Channel/1000" classname="mycode/benchmarks/channels" time="0.000195672"></testcase>
-		<testcase name="BenchmarkFanout/Channel/10000" classname="mycode/benchmarks/channels" time="0.002410200"></testcase>
+		<testcase name="BenchmarkFanout/Channel/10" classname="mycode/benchmarks/channels" time="2.336500000"></testcase>
+		<testcase name="BenchmarkFanout/Channel/100" classname="mycode/benchmarks/channels" time="1.248250000"></testcase>
+		<testcase name="BenchmarkFanout/Channel/1000" classname="mycode/benchmarks/channels" time="1.956720000"></testcase>
+		<testcase name="BenchmarkFanout/Channel/10000" classname="mycode/benchmarks/channels" time="1.205100000"></testcase>
 		<system-out><![CDATA[pkg: mycode/benchmarks/channels]]></system-out>
 	</testsuite>
 </testsuites>

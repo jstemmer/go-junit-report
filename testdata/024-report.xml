@@ -8,7 +8,7 @@
 		<testcase name="TestNew/no" classname="package3/baz" time="0.000"></testcase>
 		<testcase name="TestNew/normal" classname="package3/baz" time="0.000"></testcase>
 		<testcase name="TestWriteThis" classname="package3/baz" time="0.000"></testcase>
-		<testcase name="BenchmarkDeepMerge" classname="package3/baz" time="0.000002611"></testcase>
-		<testcase name="BenchmarkNext" classname="package3/baz" time="0.000000100"></testcase>
+		<testcase name="BenchmarkDeepMerge" classname="package3/baz" time="1.305500000"></testcase>
+		<testcase name="BenchmarkNext" classname="package3/baz" time="0.050000000"></testcase>
 	</testsuite>
 </testsuites>

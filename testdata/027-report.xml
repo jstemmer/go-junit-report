@@ -4,8 +4,8 @@
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
-		<testcase name="BenchmarkItsy" classname="really/small" time="0.000000045"></testcase>
-		<testcase name="BenchmarkTeeny" classname="really/small" time="0.000000002"></testcase>
+		<testcase name="BenchmarkItsy" classname="really/small" time="1.350000000"></testcase>
+		<testcase name="BenchmarkTeeny" classname="really/small" time="2.000000000"></testcase>
 		<testcase name="BenchmarkWeeny" classname="really/small" time="0.000000000"></testcase>
 		<system-out><![CDATA[goos: darwin
 goarch: amd64

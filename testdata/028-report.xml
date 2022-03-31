@@ -4,7 +4,7 @@
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
-		<testcase name="BenchmarkRing" classname="single/cpu" time="0.000000074"></testcase>
+		<testcase name="BenchmarkRing" classname="single/cpu" time="1.480000000"></testcase>
 		<system-out><![CDATA[pkg: single/cpu]]></system-out>
 	</testsuite>
 </testsuites>
