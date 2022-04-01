@@ -4,8 +4,12 @@
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
-		<testcase name="TestA" classname="package/name/bench" time="0.000"></testcase>
-		<testcase name="TestZ" classname="package/name/bench" time="0.000"></testcase>
+		<testcase name="TestA" classname="package/name/bench" time="0.000">
+			<system-out><![CDATA[    a_test.go:6: ok]]></system-out>
+		</testcase>
+		<testcase name="TestZ" classname="package/name/bench" time="0.000">
+			<system-out><![CDATA[    z_test.go:6: ok]]></system-out>
+		</testcase>
 		<testcase name="BenchmarkTest" classname="package/name/bench" time="0.000000000"></testcase>
 		<testcase name="BenchmarkOtherTest" classname="package/name/bench" time="0.000000000"></testcase>
 		<system-out><![CDATA[goos: linux

@@ -4,14 +4,90 @@
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
-		<testcase name="TestFlat" classname="package/whitespace" time="0.000"></testcase>
-		<testcase name="TestWithSpace" classname="package/whitespace" time="0.000"></testcase>
-		<testcase name="TestWithTab" classname="package/whitespace" time="0.000"></testcase>
-		<testcase name="TestWithNewlinesFlat" classname="package/whitespace" time="0.000"></testcase>
+		<testcase name="TestFlat" classname="package/whitespace" time="0.000">
+			<system-out><![CDATA[    whitespace_test.go:9: log 1
+    whitespace_test.go:10: log 2
+printf 1
+printf 2]]></system-out>
+		</testcase>
+		<testcase name="TestWithSpace" classname="package/whitespace" time="0.000">
+			<system-out><![CDATA[    whitespace_test.go:16: no-space
+    whitespace_test.go:17:  one-space
+    whitespace_test.go:18:   two-space
+    whitespace_test.go:19:     four-space
+    whitespace_test.go:20:         eight-space
+    whitespace_test.go:21: no-space
+no-space
+ one-space
+  two-space
+    four-space
+        eight-space
+no-space]]></system-out>
+		</testcase>
+		<testcase name="TestWithTab" classname="package/whitespace" time="0.000">
+			<system-out><![CDATA[    whitespace_test.go:31: no-tab
+    whitespace_test.go:32: 	one-tab
+    whitespace_test.go:33: 		two-tab
+no-tab
+	one-tab
+		two-tab]]></system-out>
+		</testcase>
+		<testcase name="TestWithNewlinesFlat" classname="package/whitespace" time="0.000">
+			<system-out><![CDATA[    whitespace_test.go:40: no-newline
+    whitespace_test.go:41: one-newline
+        one-newline
+    whitespace_test.go:42: two-newlines
+        two-newlines
+        two-newlines
+no-newline
+one-newline
+one-newline
+two-newlines
+two-newlines
+two-newlines]]></system-out>
+		</testcase>
 		<testcase name="TestSubTests" classname="package/whitespace" time="0.000"></testcase>
-		<testcase name="TestSubTests/TestFlat" classname="package/whitespace" time="0.000"></testcase>
-		<testcase name="TestSubTests/TestWithSpace" classname="package/whitespace" time="0.000"></testcase>
-		<testcase name="TestSubTests/TestWithTab" classname="package/whitespace" time="0.000"></testcase>
-		<testcase name="TestSubTests/TestWithNewlinesFlat" classname="package/whitespace" time="0.000"></testcase>
+		<testcase name="TestSubTests/TestFlat" classname="package/whitespace" time="0.000">
+			<system-out><![CDATA[    whitespace_test.go:9: log 1
+    whitespace_test.go:10: log 2
+printf 1
+printf 2]]></system-out>
+		</testcase>
+		<testcase name="TestSubTests/TestWithSpace" classname="package/whitespace" time="0.000">
+			<system-out><![CDATA[    whitespace_test.go:16: no-space
+    whitespace_test.go:17:  one-space
+    whitespace_test.go:18:   two-space
+    whitespace_test.go:19:     four-space
+    whitespace_test.go:20:         eight-space
+    whitespace_test.go:21: no-space
+no-space
+ one-space
+  two-space
+    four-space
+        eight-space
+no-space]]></system-out>
+		</testcase>
+		<testcase name="TestSubTests/TestWithTab" classname="package/whitespace" time="0.000">
+			<system-out><![CDATA[    whitespace_test.go:31: no-tab
+    whitespace_test.go:32: 	one-tab
+    whitespace_test.go:33: 		two-tab
+no-tab
+	one-tab
+		two-tab]]></system-out>
+		</testcase>
+		<testcase name="TestSubTests/TestWithNewlinesFlat" classname="package/whitespace" time="0.000">
+			<system-out><![CDATA[    whitespace_test.go:40: no-newline
+    whitespace_test.go:41: one-newline
+        one-newline
+    whitespace_test.go:42: two-newlines
+        two-newlines
+        two-newlines
+no-newline
+one-newline
+one-newline
+two-newlines
+two-newlines
+two-newlines]]></system-out>
+		</testcase>
 	</testsuite>
 </testsuites>

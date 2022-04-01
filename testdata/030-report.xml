@@ -29,9 +29,28 @@ single-line stdout]]></failure>
 		<testcase name="TestFailWithNoTestOutput" classname="package/stdout" time="0.000">
 			<failure message="Failed"></failure>
 		</testcase>
-		<testcase name="TestPassWithStdoutAndTestOutput" classname="package/stdout" time="0.000"></testcase>
-		<testcase name="TestPassWithStdoutAndNoTestOutput" classname="package/stdout" time="0.000"></testcase>
-		<testcase name="TestPassWithTestOutput" classname="package/stdout" time="0.000"></testcase>
+		<testcase name="TestPassWithStdoutAndTestOutput" classname="package/stdout" time="0.000">
+			<system-out><![CDATA[multi
+line
+stdout
+single-line stdout
+    stdout_test.go:33: single-line info
+    stdout_test.go:34: multi
+        line
+        info]]></system-out>
+		</testcase>
+		<testcase name="TestPassWithStdoutAndNoTestOutput" classname="package/stdout" time="0.000">
+			<system-out><![CDATA[multi
+line
+stdout
+single-line stdout]]></system-out>
+		</testcase>
+		<testcase name="TestPassWithTestOutput" classname="package/stdout" time="0.000">
+			<system-out><![CDATA[    stdout_test.go:43: single-line info
+    stdout_test.go:44: multi
+        line
+        info]]></system-out>
+		</testcase>
 		<testcase name="TestPassWithNoTestOutput" classname="package/stdout" time="0.000"></testcase>
 		<testcase name="TestSubtests" classname="package/stdout" time="0.000">
 			<failure message="Failed"></failure>
@@ -61,9 +80,28 @@ single-line stdout]]></failure>
 		<testcase name="TestSubtests/TestFailWithNoTestOutput" classname="package/stdout" time="0.000">
 			<failure message="Failed"></failure>
 		</testcase>
-		<testcase name="TestSubtests/TestPassWithStdoutAndTestOutput" classname="package/stdout" time="0.000"></testcase>
-		<testcase name="TestSubtests/TestPassWithStdoutAndNoTestOutput" classname="package/stdout" time="0.000"></testcase>
-		<testcase name="TestSubtests/TestPassWithTestOutput" classname="package/stdout" time="0.000"></testcase>
+		<testcase name="TestSubtests/TestPassWithStdoutAndTestOutput" classname="package/stdout" time="0.000">
+			<system-out><![CDATA[multi
+line
+stdout
+single-line stdout
+    stdout_test.go:33: single-line info
+    stdout_test.go:34: multi
+        line
+        info]]></system-out>
+		</testcase>
+		<testcase name="TestSubtests/TestPassWithStdoutAndNoTestOutput" classname="package/stdout" time="0.000">
+			<system-out><![CDATA[multi
+line
+stdout
+single-line stdout]]></system-out>
+		</testcase>
+		<testcase name="TestSubtests/TestPassWithTestOutput" classname="package/stdout" time="0.000">
+			<system-out><![CDATA[    stdout_test.go:43: single-line info
+    stdout_test.go:44: multi
+        line
+        info]]></system-out>
+		</testcase>
 		<testcase name="TestSubtests/TestPassWithNoTestOutput" classname="package/stdout" time="0.000"></testcase>
 		<system-out><![CDATA[exit status 1]]></system-out>
 	</testsuite>

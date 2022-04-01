@@ -7,7 +7,9 @@
 		<testcase name="TestSubtests" classname="package/subtests" time="0.000">
 			<failure message="Failed"></failure>
 		</testcase>
-		<testcase name="TestSubtests/Subtest" classname="package/subtests" time="0.000"></testcase>
+		<testcase name="TestSubtests/Subtest" classname="package/subtests" time="0.000">
+			<system-out><![CDATA[    subtests_test.go:7: ok]]></system-out>
+		</testcase>
 		<testcase name="TestSubtests/Subtest#01" classname="package/subtests" time="0.000">
 			<failure message="Failed"><![CDATA[    subtests_test.go:10: error message]]></failure>
 		</testcase>
@@ -24,7 +26,9 @@
 		<testcase name="TestFailingSubtestWithNestedSubtest/Subtest" classname="package/subtests" time="0.000">
 			<failure message="Failed"><![CDATA[    subtests_test.go:31: Subtest error message]]></failure>
 		</testcase>
-		<testcase name="TestFailingSubtestWithNestedSubtest/Subtest/Subsubtest" classname="package/subtests" time="0.000"></testcase>
+		<testcase name="TestFailingSubtestWithNestedSubtest/Subtest/Subsubtest" classname="package/subtests" time="0.000">
+			<system-out><![CDATA[    subtests_test.go:29: ok]]></system-out>
+		</testcase>
 		<system-out><![CDATA[exit status 1]]></system-out>
 	</testsuite>
 </testsuites>

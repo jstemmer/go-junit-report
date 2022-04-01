@@ -178,6 +178,8 @@ func CreateFromReport(report gtr.Report, hostname string) Testsuites {
 					Message: "No test result found",
 					Data:    formatOutput(test.Output, test.Level),
 				}
+			} else if len(test.Output) > 0 {
+				tc.SystemOut = &Output{Data: formatOutput(test.Output, test.Level)}
 			}
 
 			suite.AddTestcase(tc)
@@ -198,6 +200,8 @@ func CreateFromReport(report gtr.Report, hostname string) Testsuites {
 				tc.Skipped = &Result{
 					Message: "Skipped",
 				}
+			} else if len(bm.Output) > 0 {
+				tc.SystemOut = &Output{Data: formatOutput(bm.Output, 0)}
 			}
 
 			suite.AddTestcase(tc)
