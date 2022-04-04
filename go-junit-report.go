@@ -80,9 +80,9 @@ func main() {
 	var parser Parser
 	switch *inputParser {
 	case "gotest":
-		parser = gotest.New(gotest.PackageName(*packageName))
+		parser = gotest.NewParser(gotest.PackageName(*packageName))
 	case "gojson":
-		parser = gotest.NewJSON(gotest.PackageName(*packageName))
+		parser = gotest.NewJSONParser(gotest.PackageName(*packageName))
 	default:
 		fmt.Fprintf(os.Stderr, "invalid parser: %s\n", *inputParser)
 		flag.Usage()

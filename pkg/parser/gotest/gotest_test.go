@@ -204,7 +204,7 @@ func TestParseLine(t *testing.T) {
 
 		name := fmt.Sprintf("%d %s", i+1, strings.Join(types, ","))
 		t.Run(name, func(t *testing.T) {
-			parser := New()
+			parser := NewParser()
 			parser.parseLine(test.input)
 			got := parser.events
 			if diff := cmp.Diff(got, want); diff != "" {
@@ -307,7 +307,7 @@ func TestReport(t *testing.T) {
 		},
 	}
 
-	parser := New(TimestampFunc(func() time.Time { return testTimestamp }))
+	parser := NewParser(TimestampFunc(func() time.Time { return testTimestamp }))
 	actual := parser.report(events)
 	if diff := cmp.Diff(actual, expected); diff != "" {
 		t.Errorf("FromEvents report incorrect, diff (-want, +got):\n%v", diff)

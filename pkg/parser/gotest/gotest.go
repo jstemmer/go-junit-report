@@ -57,8 +57,8 @@ func TimestampFunc(f func() time.Time) Option {
 	}
 }
 
-// New returns a new Go test output parser.
-func New(options ...Option) *Parser {
+// NewParser returns a new Go test output parser.
+func NewParser(options ...Option) *Parser {
 	p := &Parser{}
 	for _, option := range options {
 		option(p)

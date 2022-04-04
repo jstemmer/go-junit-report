@@ -9,9 +9,9 @@ import (
 	"github.com/jstemmer/go-junit-report/v2/pkg/gtr"
 )
 
-// New returns a new Go test json output parser.
-func NewJSON(options ...Option) *JSONParser {
-	return &JSONParser{gp: New(options...)}
+// NewJSONParser returns a new Go test json output parser.
+func NewJSONParser(options ...Option) *JSONParser {
+	return &JSONParser{gp: NewParser(options...)}
 }
 
 // Parser is a Go test json output Parser.

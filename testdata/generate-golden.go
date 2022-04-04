@@ -113,9 +113,9 @@ func createReportFromInput(inputFile, outputFile string, write bool) error {
 
 	var parser Parser
 	if strings.HasSuffix(inputFile, ".gojson.txt") {
-		parser = gotest.NewJSON(options...)
+		parser = gotest.NewJSONParser(options...)
 	} else {
-		parser = gotest.New(options...)
+		parser = gotest.NewParser(options...)
 	}
 
 	report, err := parser.Parse(in)
