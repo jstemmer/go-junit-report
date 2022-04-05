@@ -1,9 +1,8 @@
-//go:generate go run generate-golden.go -w
+//go:generate go run generate-golden-reports.go -w
 
 package main
 
 import (
-	"encoding/xml"
 	"flag"
 	"fmt"
 	"io"
@@ -12,22 +11,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jstemmer/go-junit-report/v2/gtr"
-	"github.com/jstemmer/go-junit-report/v2/junit"
-	"github.com/jstemmer/go-junit-report/v2/parser/gotest"
+	"github.com/jstemmer/go-junit-report/v2/internal/gojunitreport"
 )
 
 var verbose bool
 
-type Settings struct {
-	skipXMLHeader bool
-	packageName   string
-}
-
-var fileSettings = map[string]Settings{
-	"005-no_xml_header.txt": {skipXMLHeader: true},
-	"006-mixed.txt":         {skipXMLHeader: true},
-	"007-compiled_test.txt": {packageName: "test/package"},
+var configs = map[string]gojunitreport.Config{
+	"005-no_xml_header.txt": {SkipXMLHeader: true},
+	"006-mixed.txt":         {SkipXMLHeader: true},
+	"007-compiled_test.txt": {PackageName: "test/package"},
 }
 
 func main() {
@@ -102,53 +94,18 @@ func createReportFromInput(inputFile, outputFile string, write bool) error {
 		out = f
 	}
 
-	settings := fileSettings[inputFile]
-
-	options := []gotest.Option{
-		gotest.PackageName(settings.packageName),
-		gotest.TimestampFunc(func() time.Time {
-			return time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
-		}),
-	}
-
-	var parser Parser
+	config := configs[inputFile]
+	config.Parser = "gotest"
 	if strings.HasSuffix(inputFile, ".gojson.txt") {
-		parser = gotest.NewJSONParser(options...)
-	} else {
-		parser = gotest.NewParser(options...)
+		config.Parser = "gojson"
 	}
 
-	report, err := parser.Parse(in)
-	if err != nil {
-		return err
+	config.Hostname = "hostname"
+	config.TimestampFunc = func() time.Time {
+		return time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
 	}
-	return writeReport(report, out, settings)
-}
+	config.Properties = map[string]string{"go.version": "1.0"}
 
-type Parser interface {
-	Parse(r io.Reader) (gtr.Report, error)
-}
-
-func writeReport(report gtr.Report, out io.Writer, settings Settings) error {
-	for i := range report.Packages {
-		report.Packages[i].SetProperty("go.version", "1.0")
-	}
-	testsuites := junit.CreateFromReport(report, "hostname")
-
-	if !settings.skipXMLHeader {
-		if _, err := fmt.Fprintf(out, xml.Header); err != nil {
-			return err
-		}
-	}
-
-	enc := xml.NewEncoder(out)
-	enc.Indent("", "\t")
-	if err := enc.Encode(testsuites); err != nil {
-		return err
-	}
-	if err := enc.Flush(); err != nil {
-		return err
-	}
-	_, err := fmt.Fprintf(out, "\n")
+	_, err = config.Run(in, out)
 	return err
 }

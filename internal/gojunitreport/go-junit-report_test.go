@@ -1,4 +1,4 @@
-package main
+package gojunitreport
 
 import (
 	"bytes"
@@ -12,25 +12,17 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jstemmer/go-junit-report/v2/junit"
-	"github.com/jstemmer/go-junit-report/v2/parser/gotest"
-
 	"github.com/google/go-cmp/cmp"
 )
 
-const testDataDir = "testdata/"
+const testDataDir = "../../testdata/"
 
 var matchTest = flag.String("match", "", "only test testdata matching this pattern")
 
-type TestConfig struct {
-	noXMLHeader bool
-	packageName string
-}
-
-var testConfigs = map[int]TestConfig{
-	5: {noXMLHeader: true},
-	6: {noXMLHeader: true},
-	7: {packageName: "test/package"},
+var testConfigs = map[int]Config{
+	5: {SkipXMLHeader: true},
+	6: {SkipXMLHeader: true},
+	7: {PackageName: "test/package"},
 }
 
 func TestRun(t *testing.T) {
@@ -58,7 +50,7 @@ func TestRun(t *testing.T) {
 	}
 }
 
-func testRun(inputFile, reportFile string, config TestConfig, t *testing.T) {
+func testRun(inputFile, reportFile string, config Config, t *testing.T) {
 	input, err := os.Open(inputFile)
 	if err != nil {
 		t.Fatalf("error opening input file: %v", err)
@@ -72,33 +64,19 @@ func testRun(inputFile, reportFile string, config TestConfig, t *testing.T) {
 		t.Fatalf("error loading report file: %v", err)
 	}
 
-	options := []gotest.Option{
-		gotest.PackageName(config.packageName),
-		gotest.TimestampFunc(func() time.Time {
-			return time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
-		}),
-	}
-
-	var parser Parser
+	config.Parser = "gotest"
 	if strings.HasSuffix(inputFile, ".gojson.txt") {
-		parser = gotest.NewJSONParser(options...)
-	} else {
-		parser = gotest.NewParser(options...)
+		config.Parser = "gojson"
 	}
-
-	report, err := parser.Parse(input)
-	if err != nil {
-		t.Fatal(err)
+	config.Hostname = "hostname"
+	config.Properties = map[string]string{"go.version": "1.0"}
+	config.TimestampFunc = func() time.Time {
+		return time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
 	}
-
-	for i := range report.Packages {
-		report.Packages[i].SetProperty("go.version", "1.0")
-	}
-	testsuites := junit.CreateFromReport(report, "hostname")
 
 	var output bytes.Buffer
-	if err := writeXML(&output, testsuites, config.noXMLHeader); err != nil {
-		t.Fatalf("error writing XML: %v", err)
+	if _, err := config.Run(input, &output); err != nil {
+		t.Fatal(err)
 	}
 
 	if diff := cmp.Diff(output.String(), string(wantReport)); diff != "" {
@@ -106,16 +84,16 @@ func testRun(inputFile, reportFile string, config TestConfig, t *testing.T) {
 	}
 }
 
-func testFileConfig(filename string) (conf TestConfig, reportFile string, err error) {
+func testFileConfig(filename string) (config Config, reportFile string, err error) {
 	var prefix string
 	if idx := strings.IndexByte(filename, '-'); idx < 0 {
-		return conf, "", fmt.Errorf("testdata file does not contain a dash (-); expected name `{id}-{name}.txt` got `%s`", filename)
+		return config, "", fmt.Errorf("testdata file does not contain a dash (-); expected name `{id}-{name}.txt` got `%s`", filename)
 	} else {
 		prefix = filename[:idx]
 	}
 	id, err := strconv.Atoi(prefix)
 	if err != nil {
-		return conf, "", fmt.Errorf("testdata file did not start with a valid number: %w", err)
+		return config, "", fmt.Errorf("testdata file did not start with a valid number: %w", err)
 	}
 	return testConfigs[id], fmt.Sprintf("%s-report.xml", prefix), nil
 }
