@@ -6,8 +6,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/jstemmer/go-junit-report/v2/gtr"
+
 	"github.com/google/go-cmp/cmp"
-	"github.com/jstemmer/go-junit-report/v2/pkg/gtr"
 )
 
 var (
@@ -289,8 +290,8 @@ func TestReport(t *testing.T) {
 						NsPerOp: 100,
 					},
 					{
-						Name:    "BenchmarkTwo",
-						Result:  gtr.Fail,
+						Name:   "BenchmarkTwo",
+						Result: gtr.Fail,
 					},
 				},
 				Output: []string{"goarch: amd64"},

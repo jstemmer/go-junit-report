@@ -4,7 +4,7 @@ import (
 	"encoding/xml"
 	"testing"
 
-	"github.com/jstemmer/go-junit-report/v2/pkg/gtr"
+	"github.com/jstemmer/go-junit-report/v2/gtr"
 
 	"github.com/google/go-cmp/cmp"
 )

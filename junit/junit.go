@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jstemmer/go-junit-report/v2/pkg/gtr"
+	"github.com/jstemmer/go-junit-report/v2/gtr"
 )
 
 // Testsuites is a collection of JUnit testsuites.

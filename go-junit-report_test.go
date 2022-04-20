@@ -12,8 +12,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jstemmer/go-junit-report/v2/pkg/junit"
-	"github.com/jstemmer/go-junit-report/v2/pkg/parser/gotest"
+	"github.com/jstemmer/go-junit-report/v2/junit"
+	"github.com/jstemmer/go-junit-report/v2/parser/gotest"
 
 	"github.com/google/go-cmp/cmp"
 )

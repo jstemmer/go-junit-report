@@ -12,9 +12,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jstemmer/go-junit-report/v2/pkg/gtr"
-	"github.com/jstemmer/go-junit-report/v2/pkg/junit"
-	"github.com/jstemmer/go-junit-report/v2/pkg/parser/gotest"
+	"github.com/jstemmer/go-junit-report/v2/gtr"
+	"github.com/jstemmer/go-junit-report/v2/junit"
+	"github.com/jstemmer/go-junit-report/v2/parser/gotest"
 )
 
 var verbose bool

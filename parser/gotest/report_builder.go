@@ -3,7 +3,7 @@ package gotest
 import (
 	"time"
 
-	"github.com/jstemmer/go-junit-report/v2/pkg/gtr"
+	"github.com/jstemmer/go-junit-report/v2/gtr"
 )
 
 // reportBuilder helps build a test Report from a collection of events.
