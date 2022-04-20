@@ -79,8 +79,8 @@ Run `go-junit-report -help` for a list of all supported flags.
 | `-no-xml-header`      | do not print xml header                                                         |
 | `-out file`           | write XML report to `file`                                                      |
 | `-package-name name`  | specify a default package name to use if output does not contain a package name |
-| `-parser parser`      | specify the parser to use, available parsers are: `gotest` (default)`, `gojson` |
-| `-prop key=value`     | add property to generated report; properties should be specified as `key=value` |
+| `-parser parser`      | specify the parser to use, available parsers are: `gotest` (default), `gojson`  |
+| `-p key=value`        | add property to generated report; properties should be specified as `key=value` |
 | `-set-exit-code`      | set exit code to 1 if tests failed                                              |
 | `-version`            | print version and exit                                                          |
 
