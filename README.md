@@ -42,6 +42,13 @@ build errors or test failures, set the `-set-exit-code` flag.
 
 Run `go-junit-report -help` for a list of all supported flags.
 
+If you want to know the current version, run:
+
+```bash
+go-junit-report -version
+> go-junit-report v1.0.0-dev  (HEAD)
+```
+
 ## Contributing
 
 See [CONTRIBUTING.md].
