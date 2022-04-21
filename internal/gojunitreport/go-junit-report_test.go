@@ -44,7 +44,7 @@ func TestRun(t *testing.T) {
 			continue
 		}
 
-		t.Run(file, func(t *testing.T) {
+		t.Run(filepath.Base(file), func(t *testing.T) {
 			testRun(file, testDataDir+reportFile, conf, t)
 		})
 	}
