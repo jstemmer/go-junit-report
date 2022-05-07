@@ -44,13 +44,13 @@ func TestCreateFromReport(t *testing.T) {
 	}
 
 	got := CreateFromReport(report, "")
-	if diff := cmp.Diff(got, want); diff != "" {
+	if diff := cmp.Diff(want, got); diff != "" {
 		t.Errorf("CreateFromReport incorrect, diff (-want, +got):\n%s\n", diff)
 	}
 }
 
 func TestMarshalUnmarshal(t *testing.T) {
-	suites := Testsuites{
+	want := Testsuites{
 		Name:     "name",
 		Time:     "12.345",
 		Tests:    1,
@@ -89,18 +89,18 @@ func TestMarshalUnmarshal(t *testing.T) {
 		},
 	}
 
-	data, err := xml.MarshalIndent(suites, "", "\t")
+	data, err := xml.MarshalIndent(want, "", "\t")
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	var unmarshaled Testsuites
-	if err := xml.Unmarshal(data, &unmarshaled); err != nil {
+	var got Testsuites
+	if err := xml.Unmarshal(data, &got); err != nil {
 		t.Fatal(err)
 	}
 
-	suites.XMLName.Local = "testsuites"
-	if diff := cmp.Diff(suites, unmarshaled); diff != "" {
+	want.XMLName.Local = "testsuites"
+	if diff := cmp.Diff(want, got); diff != "" {
 		t.Errorf("Unmarshal result incorrect, diff (-want +got):\n%s\n", diff)
 	}
 }
@@ -152,7 +152,7 @@ func TestGroupBenchmarksByName(t *testing.T) {
 
 	for _, test := range tests {
 		got := groupBenchmarksByName(test.in)
-		if diff := cmp.Diff(got, test.want); diff != "" {
+		if diff := cmp.Diff(test.want, got); diff != "" {
 			t.Errorf("groupBenchmarksByName result incorrect, diff (-want, +got):\n%s\n", diff)
 		}
 	}

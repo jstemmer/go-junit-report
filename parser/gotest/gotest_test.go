@@ -208,7 +208,7 @@ func TestParseLine(t *testing.T) {
 			parser := NewParser()
 			parser.parseLine(test.input)
 			got := parser.events
-			if diff := cmp.Diff(got, want); diff != "" {
+			if diff := cmp.Diff(want, got); diff != "" {
 				t.Errorf("parseLine(%q) returned unexpected events, diff (-want, +got):\n%v", test.input, diff)
 			}
 		})
@@ -242,7 +242,7 @@ func TestReport(t *testing.T) {
 		{Type: "output", Data: "error message"},
 		{Type: "summary", Result: "FAIL", Name: "package/failing1", Data: "[build failed]"},
 	}
-	expected := gtr.Report{
+	want := gtr.Report{
 		Packages: []gtr.Package{
 			{
 				Name:      "package/name",
@@ -309,8 +309,8 @@ func TestReport(t *testing.T) {
 	}
 
 	parser := NewParser(TimestampFunc(func() time.Time { return testTimestamp }))
-	actual := parser.report(events)
-	if diff := cmp.Diff(actual, expected); diff != "" {
+	got := parser.report(events)
+	if diff := cmp.Diff(want, got); diff != "" {
 		t.Errorf("FromEvents report incorrect, diff (-want, +got):\n%v", diff)
 	}
 }
