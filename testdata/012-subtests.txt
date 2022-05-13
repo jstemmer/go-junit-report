@@ -1,0 +1,31 @@
+=== RUN   TestSubtests
+=== RUN   TestSubtests/Subtest
+    subtests_test.go:7: ok
+=== RUN   TestSubtests/Subtest#01
+    subtests_test.go:10: error message
+=== RUN   TestSubtests/Subtest#02
+    subtests_test.go:13: skip message
+--- FAIL: TestSubtests (0.00s)
+    --- PASS: TestSubtests/Subtest (0.00s)
+    --- FAIL: TestSubtests/Subtest#01 (0.00s)
+    --- SKIP: TestSubtests/Subtest#02 (0.00s)
+=== RUN   TestNestedSubtests
+=== RUN   TestNestedSubtests/a#1
+=== RUN   TestNestedSubtests/a#1/b#1
+=== RUN   TestNestedSubtests/a#1/b#1/c#1
+--- PASS: TestNestedSubtests (0.00s)
+    --- PASS: TestNestedSubtests/a#1 (0.00s)
+        --- PASS: TestNestedSubtests/a#1/b#1 (0.00s)
+            --- PASS: TestNestedSubtests/a#1/b#1/c#1 (0.00s)
+=== RUN   TestFailingSubtestWithNestedSubtest
+=== RUN   TestFailingSubtestWithNestedSubtest/Subtest
+=== RUN   TestFailingSubtestWithNestedSubtest/Subtest/Subsubtest
+    subtests_test.go:29: ok
+=== CONT  TestFailingSubtestWithNestedSubtest/Subtest
+    subtests_test.go:31: Subtest error message
+--- FAIL: TestFailingSubtestWithNestedSubtest (0.00s)
+    --- FAIL: TestFailingSubtestWithNestedSubtest/Subtest (0.00s)
+        --- PASS: TestFailingSubtestWithNestedSubtest/Subtest/Subsubtest (0.00s)
+FAIL
+exit status 1
+FAIL	package/subtests	0.001s

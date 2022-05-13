@@ -1,69 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites tests="17" failures="9">
-	<testsuite name="package/name1" tests="17" failures="9" errors="0" hostname="hostname" time="4.567" timestamp="2022-01-01T00:00:00Z">
+	<testsuite name="package/stdout" tests="17" failures="9" errors="0" hostname="hostname" time="0.001" timestamp="2022-01-01T00:00:00Z">
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
-		<testcase name="TestFailWithStdoutAndTestOutput" classname="package/name1" time="0.100">
+		<testcase name="TestFailWithStdoutAndTestOutput" classname="package/stdout" time="0.000">
 			<failure message="Failed"><![CDATA[multi
 line
 stdout
 single-line stdout
-    example_test.go:13: single-line error
-    example_test.go:14: multi
+    stdout_test.go:11: single-line error
+    stdout_test.go:12: multi
         line
         error]]></failure>
 		</testcase>
-		<testcase name="TestFailWithStdoutAndNoTestOutput" classname="package/name1" time="0.150">
+		<testcase name="TestFailWithStdoutAndNoTestOutput" classname="package/stdout" time="0.000">
 			<failure message="Failed"><![CDATA[multi
 line
 stdout
 single-line stdout]]></failure>
 		</testcase>
-		<testcase name="TestFailWithTestOutput" classname="package/name1" time="0.200">
-			<failure message="Failed"><![CDATA[    example_test.go:26: single-line error
-    example_test.go:27: multi
+		<testcase name="TestFailWithTestOutput" classname="package/stdout" time="0.000">
+			<failure message="Failed"><![CDATA[    stdout_test.go:22: single-line error
+    stdout_test.go:23: multi
         line
         error]]></failure>
 		</testcase>
-		<testcase name="TestFailWithNoTestOutput" classname="package/name1" time="0.250">
+		<testcase name="TestFailWithNoTestOutput" classname="package/stdout" time="0.000">
 			<failure message="Failed"></failure>
 		</testcase>
-		<testcase name="TestPassWithStdoutAndTestOutput" classname="package/name1" time="0.300"></testcase>
-		<testcase name="TestPassWithStdoutAndNoTestOutput" classname="package/name1" time="0.350"></testcase>
-		<testcase name="TestPassWithTestOutput" classname="package/name1" time="0.400"></testcase>
-		<testcase name="TestPassWithNoTestOutput" classname="package/name1" time="0.500"></testcase>
-		<testcase name="TestSubtests" classname="package/name1" time="2.270">
+		<testcase name="TestPassWithStdoutAndTestOutput" classname="package/stdout" time="0.000"></testcase>
+		<testcase name="TestPassWithStdoutAndNoTestOutput" classname="package/stdout" time="0.000"></testcase>
+		<testcase name="TestPassWithTestOutput" classname="package/stdout" time="0.000"></testcase>
+		<testcase name="TestPassWithNoTestOutput" classname="package/stdout" time="0.000"></testcase>
+		<testcase name="TestSubtests" classname="package/stdout" time="0.000">
 			<failure message="Failed"></failure>
 		</testcase>
-		<testcase name="TestSubtests/TestFailWithStdoutAndTestOutput" classname="package/name1" time="0.100">
-			<failure message="Failed"><![CDATA[1 multi
+		<testcase name="TestSubtests/TestFailWithStdoutAndTestOutput" classname="package/stdout" time="0.000">
+			<failure message="Failed"><![CDATA[multi
 line
 stdout
-1 single-line stdout
-        example_test.go:65: 1 single-line error
-        example_test.go:66: 1 multi
-            line
-            error]]></failure>
+single-line stdout
+    stdout_test.go:11: single-line error
+    stdout_test.go:12: multi
+        line
+        error]]></failure>
 		</testcase>
-		<testcase name="TestSubtests/TestFailWithStdoutAndNoTestOutput" classname="package/name1" time="0.150">
-			<failure message="Failed"><![CDATA[2 multi
+		<testcase name="TestSubtests/TestFailWithStdoutAndNoTestOutput" classname="package/stdout" time="0.000">
+			<failure message="Failed"><![CDATA[multi
 line
 stdout
-2 single-line stdout]]></failure>
+single-line stdout]]></failure>
 		</testcase>
-		<testcase name="TestSubtests/TestFailWithTestOutput" classname="package/name1" time="0.200">
-			<failure message="Failed"><![CDATA[        example_test.go:78: 3 single-line error
-        example_test.go:79: 3 multi
-            line
-            error]]></failure>
+		<testcase name="TestSubtests/TestFailWithTestOutput" classname="package/stdout" time="0.000">
+			<failure message="Failed"><![CDATA[    stdout_test.go:22: single-line error
+    stdout_test.go:23: multi
+        line
+        error]]></failure>
 		</testcase>
-		<testcase name="TestSubtests/TestFailWithNoTestOutput" classname="package/name1" time="0.250">
+		<testcase name="TestSubtests/TestFailWithNoTestOutput" classname="package/stdout" time="0.000">
 			<failure message="Failed"></failure>
 		</testcase>
-		<testcase name="TestSubtests/TestPassWithStdoutAndTestOutput" classname="package/name1" time="0.300"></testcase>
-		<testcase name="TestSubtests/TestPassWithStdoutAndNoTestOutput" classname="package/name1" time="0.350"></testcase>
-		<testcase name="TestSubtests/TestPassWithTestOutput" classname="package/name1" time="0.400"></testcase>
-		<testcase name="TestSubtests/TestPassWithNoTestOutput" classname="package/name1" time="0.500"></testcase>
+		<testcase name="TestSubtests/TestPassWithStdoutAndTestOutput" classname="package/stdout" time="0.000"></testcase>
+		<testcase name="TestSubtests/TestPassWithStdoutAndNoTestOutput" classname="package/stdout" time="0.000"></testcase>
+		<testcase name="TestSubtests/TestPassWithTestOutput" classname="package/stdout" time="0.000"></testcase>
+		<testcase name="TestSubtests/TestPassWithNoTestOutput" classname="package/stdout" time="0.000"></testcase>
+		<system-out><![CDATA[exit status 1]]></system-out>
 	</testsuite>
 </testsuites>

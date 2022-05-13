@@ -1,46 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites tests="1" failures="1">
-	<testsuite name="race_test" tests="1" failures="1" errors="0" hostname="hostname" time="0.015" timestamp="2022-01-01T00:00:00Z">
+	<testsuite name="package/race" tests="1" failures="1" errors="0" hostname="hostname" time="0.005" timestamp="2022-01-01T00:00:00Z">
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
-		<testcase name="TestRace" classname="race_test" time="0.000">
-			<failure message="Failed"><![CDATA[test output
-2 0xc4200153d0
+		<testcase name="TestRace" classname="package/race" time="0.000">
+			<failure message="Failed"><![CDATA[    race_test.go:13: x = 3
 ==================
 WARNING: DATA RACE
-Write at 0x00c4200153d0 by goroutine 7:
-  race_test.TestRace.func1()
-      race_test.go:13 +0x3b
+Write at 0x00c000138168 by goroutine 8:
+  package/race.TestRace.func1()
+      /src/github.com/jstemmer/go-junit-report/testdata/src/race/race_test.go:9 +0x39
 
-Previous write at 0x00c4200153d0 by goroutine 6:
-  race_test.TestRace()
-      race_test.go:15 +0x136
+Previous write at 0x00c000138168 by goroutine 7:
+  package/race.TestRace()
+      /src/github.com/jstemmer/go-junit-report/testdata/src/race/race_test.go:12 +0x105
   testing.tRunner()
-      /usr/local/Cellar/go/1.8.3/libexec/src/testing/testing.go:657 +0x107
+      /go-src/go1.18/src/testing/testing.go:1439 +0x213
+  testing.(*T).Run.func1()
+      /go-src/go1.18/src/testing/testing.go:1486 +0x47
+
+Goroutine 8 (running) created at:
+  package/race.TestRace()
+      /src/github.com/jstemmer/go-junit-report/testdata/src/race/race_test.go:8 +0xfb
+  testing.tRunner()
+      /go-src/go1.18/src/testing/testing.go:1439 +0x213
+  testing.(*T).Run.func1()
+      /go-src/go1.18/src/testing/testing.go:1486 +0x47
 
 Goroutine 7 (running) created at:
-  race_test.TestRace()
-      race_test.go:14 +0x125
-  testing.tRunner()
-      /usr/local/Cellar/go/1.8.3/libexec/src/testing/testing.go:657 +0x107
-
-Goroutine 6 (running) created at:
   testing.(*T).Run()
-      /usr/local/Cellar/go/1.8.3/libexec/src/testing/testing.go:697 +0x543
+      /go-src/go1.18/src/testing/testing.go:1486 +0x724
   testing.runTests.func1()
-      /usr/local/Cellar/go/1.8.3/libexec/src/testing/testing.go:882 +0xaa
+      /go-src/go1.18/src/testing/testing.go:1839 +0x99
   testing.tRunner()
-      /usr/local/Cellar/go/1.8.3/libexec/src/testing/testing.go:657 +0x107
+      /go-src/go1.18/src/testing/testing.go:1439 +0x213
   testing.runTests()
-      /usr/local/Cellar/go/1.8.3/libexec/src/testing/testing.go:888 +0x4e0
+      /go-src/go1.18/src/testing/testing.go:1837 +0x7e4
   testing.(*M).Run()
-      /usr/local/Cellar/go/1.8.3/libexec/src/testing/testing.go:822 +0x1c3
+      /go-src/go1.18/src/testing/testing.go:1719 +0xa71
   main.main()
-      _test/_testmain.go:52 +0x20f
+      _testmain.go:47 +0x2e4
 ==================
-	testing.go:610: race detected during execution of test]]></failure>
+    testing.go:1312: race detected during execution of test]]></failure>
 		</testcase>
-		<system-out><![CDATA[exit status 1]]></system-out>
+		<system-out><![CDATA[    testing.go:1312: race detected during execution of test
+exit status 1]]></system-out>
 	</testsuite>
 </testsuites>

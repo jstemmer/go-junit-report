@@ -1,0 +1,10 @@
+=== RUN   TestPass
+--- PASS: TestPass (0.06s)
+=== RUN   TestPassLog
+    pass_test.go:9: log line
+    pass_test.go:10: log
+        multi
+        line
+--- PASS: TestPassLog (0.10s)
+PASS
+ok  	package/pass	0.160s

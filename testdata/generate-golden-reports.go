@@ -17,7 +17,7 @@ import (
 var verbose bool
 
 var configs = map[string]gojunitreport.Config{
-	"005-no_xml_header.txt": {SkipXMLHeader: true},
+	"005-no-xml-header.txt": {SkipXMLHeader: true},
 	"006-mixed.txt":         {SkipXMLHeader: true},
 	"007-compiled_test.txt": {PackageName: "test/package"},
 }

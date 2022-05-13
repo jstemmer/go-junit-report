@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites tests="9">
-	<testsuite name="github.com/jstemmer/test/whitespace" tests="9" failures="0" errors="0" hostname="hostname" time="0.001" timestamp="2022-01-01T00:00:00Z">
+	<testsuite name="package/whitespace" tests="9" failures="0" errors="0" hostname="hostname" time="0.001" timestamp="2022-01-01T00:00:00Z">
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
-		<testcase name="TestFlat" classname="github.com/jstemmer/test/whitespace" time="0.000"></testcase>
-		<testcase name="TestWithSpace" classname="github.com/jstemmer/test/whitespace" time="0.000"></testcase>
-		<testcase name="TestWithTab" classname="github.com/jstemmer/test/whitespace" time="0.000"></testcase>
-		<testcase name="TestWithNewlinesFlat" classname="github.com/jstemmer/test/whitespace" time="0.000"></testcase>
-		<testcase name="TestSubTests" classname="github.com/jstemmer/test/whitespace" time="0.000"></testcase>
-		<testcase name="TestSubTests/TestFlat" classname="github.com/jstemmer/test/whitespace" time="0.000"></testcase>
-		<testcase name="TestSubTests/TestWithSpace" classname="github.com/jstemmer/test/whitespace" time="0.000"></testcase>
-		<testcase name="TestSubTests/TestWithTab" classname="github.com/jstemmer/test/whitespace" time="0.000"></testcase>
-		<testcase name="TestSubTests/TestWithNewlinesFlat" classname="github.com/jstemmer/test/whitespace" time="0.000"></testcase>
+		<testcase name="TestFlat" classname="package/whitespace" time="0.000"></testcase>
+		<testcase name="TestWithSpace" classname="package/whitespace" time="0.000"></testcase>
+		<testcase name="TestWithTab" classname="package/whitespace" time="0.000"></testcase>
+		<testcase name="TestWithNewlinesFlat" classname="package/whitespace" time="0.000"></testcase>
+		<testcase name="TestSubTests" classname="package/whitespace" time="0.000"></testcase>
+		<testcase name="TestSubTests/TestFlat" classname="package/whitespace" time="0.000"></testcase>
+		<testcase name="TestSubTests/TestWithSpace" classname="package/whitespace" time="0.000"></testcase>
+		<testcase name="TestSubTests/TestWithTab" classname="package/whitespace" time="0.000"></testcase>
+		<testcase name="TestSubTests/TestWithNewlinesFlat" classname="package/whitespace" time="0.000"></testcase>
 	</testsuite>
 </testsuites>

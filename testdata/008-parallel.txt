@@ -1,10 +1,23 @@
-=== RUN TestDoFoo
-=== RUN TestDoFoo2
---- PASS: TestDoFoo (0.27s)
-	cov_test.go:10: DoFoo log 1
-	cov_test.go:10: DoFoo log 2
---- PASS: TestDoFoo2 (0.16s)
-	cov_test.go:21: DoFoo2 log 1
-	cov_test.go:21: DoFoo2 log 2
-PASS
-ok  	package/name	0.440s
+=== RUN   TestP1
+=== PAUSE TestP1
+=== RUN   TestP2
+=== PAUSE TestP2
+=== RUN   TestP3
+=== PAUSE TestP3
+=== CONT  TestP1
+    pkg_test.go:10: t.Log(P1)
+=== CONT  TestP3
+    pkg_test.go:24: t.Log(P3)
+=== CONT  TestP2
+    pkg_test.go:17: t.Log(P2)
+    pkg_test.go:19: P2 error
+--- FAIL: TestP2 (0.05s)
+=== CONT  TestP3
+    pkg_test.go:26: P3 error
+--- FAIL: TestP3 (0.08s)
+=== CONT  TestP1
+    pkg_test.go:12: P1 error
+--- FAIL: TestP1 (0.10s)
+FAIL
+exit status 1
+FAIL	package/parallel	0.102s

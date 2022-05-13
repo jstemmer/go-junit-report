@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites tests="6">
-	<testsuite name="package3/baz" tests="6" failures="0" errors="0" hostname="hostname" time="1.382" timestamp="2022-01-01T00:00:00Z">
+<testsuites tests="2">
+	<testsuite name="package/bench" tests="2" failures="0" errors="0" hostname="hostname" time="1.642" timestamp="2022-01-01T00:00:00Z">
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
-		<testcase name="TestNew" classname="package3/baz" time="0.000"></testcase>
-		<testcase name="TestNew/no" classname="package3/baz" time="0.000"></testcase>
-		<testcase name="TestNew/normal" classname="package3/baz" time="0.000"></testcase>
-		<testcase name="TestWriteThis" classname="package3/baz" time="0.000"></testcase>
-		<testcase name="BenchmarkDeepMerge" classname="package3/baz" time="1.305500000"></testcase>
-		<testcase name="BenchmarkNext" classname="package3/baz" time="0.050000000"></testcase>
+		<testcase name="BenchmarkOne" classname="package/bench" time="0.000000000"></testcase>
+		<testcase name="BenchmarkTwo" classname="package/bench" time="1.312990536"></testcase>
+		<system-out><![CDATA[goos: linux
+goarch: amd64
+pkg: package/bench
+cpu: Intel(R) Core(TM) i7-6700K CPU @ 4.00GHz]]></system-out>
 	</testsuite>
 </testsuites>

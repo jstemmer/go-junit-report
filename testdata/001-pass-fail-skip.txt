@@ -1,0 +1,27 @@
+=== RUN   TestPass
+--- PASS: TestPass (0.06s)
+=== RUN   TestPassLog
+    pass_test.go:9: log line
+    pass_test.go:10: log
+        multi
+        line
+--- PASS: TestPassLog (0.10s)
+PASS
+ok  	package/pass	0.160s
+=== RUN   TestOne
+    fail_test.go:6: Error message
+    fail_test.go:7: Longer
+        error
+        message.
+--- FAIL: TestOne (0.151s)
+FAIL
+FAIL	package/fail	0.151s
+=== RUN   TestSkip
+    skip_test.go:6: skip message
+--- SKIP: TestSkip (0.02s)
+=== RUN   TestSkipNow
+    skip_test.go:10: log message
+--- SKIP: TestSkipNow (0.13s)
+PASS
+ok  	package/skip	0.150s
+FAIL

@@ -1,10 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites tests="2">
-	<testsuite name="package/name" tests="2" failures="0" errors="0" hostname="hostname" time="0.160" timestamp="2022-01-01T00:00:00Z">
+<testsuites tests="5" failures="1" skipped="2">
+	<testsuite name="package/pass" tests="2" failures="0" errors="0" hostname="hostname" time="0.160" timestamp="2022-01-01T00:00:00Z">
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
-		<testcase name="TestZ" classname="package/name" time="0.060"></testcase>
-		<testcase name="TestA" classname="package/name" time="0.100"></testcase>
+		<testcase name="TestPass" classname="package/pass" time="0.060"></testcase>
+		<testcase name="TestPassLog" classname="package/pass" time="0.100"></testcase>
+	</testsuite>
+	<testsuite name="package/fail" tests="1" failures="1" errors="0" hostname="hostname" time="0.151" timestamp="2022-01-01T00:00:00Z">
+		<properties>
+			<property name="go.version" value="1.0"></property>
+		</properties>
+		<testcase name="TestOne" classname="package/fail" time="0.151">
+			<failure message="Failed"><![CDATA[    fail_test.go:6: Error message
+    fail_test.go:7: Longer
+        error
+        message.]]></failure>
+		</testcase>
+	</testsuite>
+	<testsuite name="package/skip" tests="2" failures="0" errors="0" hostname="hostname" skipped="2" time="0.150" timestamp="2022-01-01T00:00:00Z">
+		<properties>
+			<property name="go.version" value="1.0"></property>
+		</properties>
+		<testcase name="TestSkip" classname="package/skip" time="0.020">
+			<skipped message="Skipped"><![CDATA[    skip_test.go:6: skip message]]></skipped>
+		</testcase>
+		<testcase name="TestSkipNow" classname="package/skip" time="0.130">
+			<skipped message="Skipped"><![CDATA[    skip_test.go:10: log message]]></skipped>
+		</testcase>
 	</testsuite>
 </testsuites>

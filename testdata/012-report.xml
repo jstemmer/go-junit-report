@@ -1,38 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites tests="18" failures="3" skipped="2">
-	<testsuite name="package/name" tests="18" failures="3" errors="0" hostname="hostname" skipped="2" time="0.050" timestamp="2022-01-01T00:00:00Z">
+<testsuites tests="11" failures="4" skipped="1">
+	<testsuite name="package/subtests" tests="11" failures="4" errors="0" hostname="hostname" skipped="1" time="0.001" timestamp="2022-01-01T00:00:00Z">
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
-		<testcase name="TestOne" classname="package/name" time="0.010"></testcase>
-		<testcase name="TestOne/Child" classname="package/name" time="0.020"></testcase>
-		<testcase name="TestOne/Child#01" classname="package/name" time="0.030"></testcase>
-		<testcase name="TestOne/Child=02" classname="package/name" time="0.040"></testcase>
-		<testcase name="TestTwo" classname="package/name" time="0.010"></testcase>
-		<testcase name="TestTwo/Child" classname="package/name" time="0.020"></testcase>
-		<testcase name="TestTwo/Child#01" classname="package/name" time="0.030"></testcase>
-		<testcase name="TestTwo/Child=02" classname="package/name" time="0.040"></testcase>
-		<testcase name="TestThree" classname="package/name" time="0.010"></testcase>
-		<testcase name="TestThree/a#1" classname="package/name" time="0.020"></testcase>
-		<testcase name="TestThree/a#1/b#1" classname="package/name" time="0.030"></testcase>
-		<testcase name="TestThree/a#1/b#1/c#1" classname="package/name" time="0.040"></testcase>
-		<testcase name="TestFour" classname="package/name" time="0.020">
+		<testcase name="TestSubtests" classname="package/subtests" time="0.000">
 			<failure message="Failed"></failure>
 		</testcase>
-		<testcase name="TestFour/#00" classname="package/name" time="0.000">
-			<failure message="Failed"><![CDATA[    	example.go:12: Expected abc  OBTAINED:
-    		xyz
-    	example.go:123: Expected and obtained are different.]]></failure>
+		<testcase name="TestSubtests/Subtest" classname="package/subtests" time="0.000"></testcase>
+		<testcase name="TestSubtests/Subtest#01" classname="package/subtests" time="0.000">
+			<failure message="Failed"><![CDATA[    subtests_test.go:10: error message]]></failure>
 		</testcase>
-		<testcase name="TestFour/#01" classname="package/name" time="0.000">
-			<skipped message="Skipped"><![CDATA[    	example.go:1234: Not supported yet.]]></skipped>
+		<testcase name="TestSubtests/Subtest#02" classname="package/subtests" time="0.000">
+			<skipped message="Skipped"><![CDATA[    subtests_test.go:13: skip message]]></skipped>
 		</testcase>
-		<testcase name="TestFour/#02" classname="package/name" time="0.000"></testcase>
-		<testcase name="TestFive" classname="package/name" time="0.000">
-			<skipped message="Skipped"><![CDATA[	example.go:1392: Not supported yet.]]></skipped>
+		<testcase name="TestNestedSubtests" classname="package/subtests" time="0.000"></testcase>
+		<testcase name="TestNestedSubtests/a#1" classname="package/subtests" time="0.000"></testcase>
+		<testcase name="TestNestedSubtests/a#1/b#1" classname="package/subtests" time="0.000"></testcase>
+		<testcase name="TestNestedSubtests/a#1/b#1/c#1" classname="package/subtests" time="0.000"></testcase>
+		<testcase name="TestFailingSubtestWithNestedSubtest" classname="package/subtests" time="0.000">
+			<failure message="Failed"></failure>
 		</testcase>
-		<testcase name="TestSix" classname="package/name" time="0.000">
-			<failure message="Failed"><![CDATA[	example.go:371: This should not fail!]]></failure>
+		<testcase name="TestFailingSubtestWithNestedSubtest/Subtest" classname="package/subtests" time="0.000">
+			<failure message="Failed"><![CDATA[    subtests_test.go:31: Subtest error message]]></failure>
 		</testcase>
+		<testcase name="TestFailingSubtestWithNestedSubtest/Subtest/Subsubtest" classname="package/subtests" time="0.000"></testcase>
+		<system-out><![CDATA[exit status 1]]></system-out>
 	</testsuite>
 </testsuites>
