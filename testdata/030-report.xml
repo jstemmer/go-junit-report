@@ -9,10 +9,10 @@
 line
 stdout
 single-line stdout
-example_test.go:13: single-line error
-example_test.go:14: multi
-    line
-    error]]></failure>
+    example_test.go:13: single-line error
+    example_test.go:14: multi
+        line
+        error]]></failure>
 		</testcase>
 		<testcase name="TestFailWithStdoutAndNoTestOutput" classname="package/name1" time="0.150">
 			<failure message="Failed"><![CDATA[multi
@@ -21,10 +21,10 @@ stdout
 single-line stdout]]></failure>
 		</testcase>
 		<testcase name="TestFailWithTestOutput" classname="package/name1" time="0.200">
-			<failure message="Failed"><![CDATA[example_test.go:26: single-line error
-example_test.go:27: multi
-    line
-    error]]></failure>
+			<failure message="Failed"><![CDATA[    example_test.go:26: single-line error
+    example_test.go:27: multi
+        line
+        error]]></failure>
 		</testcase>
 		<testcase name="TestFailWithNoTestOutput" classname="package/name1" time="0.250">
 			<failure message="Failed"></failure>
@@ -41,10 +41,10 @@ example_test.go:27: multi
 line
 stdout
 1 single-line stdout
-example_test.go:65: 1 single-line error
-example_test.go:66: 1 multi
-    line
-    error]]></failure>
+        example_test.go:65: 1 single-line error
+        example_test.go:66: 1 multi
+            line
+            error]]></failure>
 		</testcase>
 		<testcase name="TestSubtests/TestFailWithStdoutAndNoTestOutput" classname="package/name1" time="0.150">
 			<failure message="Failed"><![CDATA[2 multi
@@ -53,10 +53,10 @@ stdout
 2 single-line stdout]]></failure>
 		</testcase>
 		<testcase name="TestSubtests/TestFailWithTestOutput" classname="package/name1" time="0.200">
-			<failure message="Failed"><![CDATA[example_test.go:78: 3 single-line error
-example_test.go:79: 3 multi
-    line
-    error]]></failure>
+			<failure message="Failed"><![CDATA[        example_test.go:78: 3 single-line error
+        example_test.go:79: 3 multi
+            line
+            error]]></failure>
 		</testcase>
 		<testcase name="TestSubtests/TestFailWithNoTestOutput" classname="package/name1" time="0.250">
 			<failure message="Failed"></failure>

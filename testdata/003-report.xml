@@ -5,7 +5,7 @@
 			<property name="go.version" value="1.0"></property>
 		</properties>
 		<testcase name="TestOne" classname="package/name" time="0.020">
-			<skipped message="Skipped"><![CDATA[file_test.go:11: Skip message]]></skipped>
+			<skipped message="Skipped"><![CDATA[	file_test.go:11: Skip message]]></skipped>
 		</testcase>
 		<testcase name="TestTwo" classname="package/name" time="0.130"></testcase>
 	</testsuite>

@@ -39,7 +39,7 @@ Goroutine 6 (running) created at:
   main.main()
       _test/_testmain.go:52 +0x20f
 ==================
-testing.go:610: race detected during execution of test]]></failure>
+	testing.go:610: race detected during execution of test]]></failure>
 		</testcase>
 		<system-out><![CDATA[exit status 1]]></system-out>
 	</testsuite>

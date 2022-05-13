@@ -9,7 +9,7 @@
 		</testcase>
 		<testcase name="TestMultiple/Empty_string" classname="package/name/subtest" time="0.000"></testcase>
 		<testcase name="TestMultiple/Single" classname="package/name/subtest" time="0.000">
-			<failure message="Failed"><![CDATA[pkg_test.go:20: Do("a"): got aaaaaaaaaa, want a]]></failure>
+			<failure message="Failed"><![CDATA[    pkg_test.go:20: Do("a"): got aaaaaaaaaa, want a]]></failure>
 		</testcase>
 		<testcase name="TestMultiple/Multi" classname="package/name/subtest" time="0.000"></testcase>
 		<system-out><![CDATA[exit status 1]]></system-out>

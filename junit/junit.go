@@ -259,7 +259,7 @@ func formatBenchmarkTime(d time.Duration) string {
 func formatOutput(output []string, indent int) string {
 	var lines []string
 	for _, line := range output {
-		lines = append(lines, gtr.TrimPrefixSpaces(line, indent))
+		lines = append(lines, line)
 	}
 	return strings.Join(lines, "\n")
 }

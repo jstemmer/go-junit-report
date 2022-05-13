@@ -5,10 +5,10 @@
 			<property name="go.version" value="1.0"></property>
 		</properties>
 		<testcase name="TestOne" classname="package/name/fail" time="0.000">
-			<failure message="Failed"><![CDATA[main_test.go:6: Error message
-main_test.go:7: Longer
-    error
-    message.]]></failure>
+			<failure message="Failed"><![CDATA[    main_test.go:6: Error message
+    main_test.go:7: Longer
+        error
+        message.]]></failure>
 		</testcase>
 		<testcase name="TestTwo" classname="package/name/fail" time="0.000"></testcase>
 		<system-out><![CDATA[exit status 1]]></system-out>

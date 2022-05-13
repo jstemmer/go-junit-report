@@ -45,9 +45,9 @@ Goroutine 7 (running) created at:
   main.main()
       _testmain.go:47 +0x2e4
 ==================
-testing.go:1312: race detected during execution of test]]></failure>
+    testing.go:1312: race detected during execution of test]]></failure>
 		</testcase>
-		<system-out><![CDATA[testing.go:1312: race detected during execution of test
+		<system-out><![CDATA[    testing.go:1312: race detected during execution of test
 exit status 1]]></system-out>
 	</testsuite>
 </testsuites>
