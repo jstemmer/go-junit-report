@@ -27,9 +27,9 @@ type reportBuilder struct {
 	output   []string // output that does not belong to any test
 	coverage float64  // coverage percentage
 
-	// default values
-	PackageName   string
-	TimestampFunc func() time.Time
+	// options
+	packageName   string
+	timestampFunc func() time.Time
 }
 
 // newReportBuilder creates a new reportBuilder.
@@ -40,7 +40,7 @@ func newReportBuilder() *reportBuilder {
 		buildErrors:   make(map[int]gtr.Error),
 		runErrors:     make(map[int]gtr.Error),
 		nextID:        1,
-		TimestampFunc: time.Now,
+		timestampFunc: time.Now,
 	}
 }
 
@@ -57,7 +57,7 @@ func (b *reportBuilder) newID() int {
 // benchmark did not end with a summary.
 func (b *reportBuilder) flush() {
 	if len(b.tests) > 0 || len(b.benchmarks) > 0 {
-		b.CreatePackage(b.PackageName, "", 0, "")
+		b.CreatePackage(b.packageName, "", 0, "")
 	}
 }
 
@@ -175,8 +175,8 @@ func (b *reportBuilder) CreatePackage(name, result string, duration time.Duratio
 		Duration: duration,
 	}
 
-	if b.TimestampFunc != nil {
-		pkg.Timestamp = b.TimestampFunc()
+	if b.timestampFunc != nil {
+		pkg.Timestamp = b.timestampFunc()
 	}
 
 	// Build errors are treated somewhat differently. Rather than having a
