@@ -22,8 +22,8 @@ type reportBuilder struct {
 	runErrors   map[int]gtr.Error
 
 	// state
-	nextId   int      // next free unused id
-	lastId   int      // most recently created id
+	nextID   int      // next free unused id
+	lastID   int      // most recently created id
 	output   []string // output that does not belong to any test
 	coverage float64  // coverage percentage
 
@@ -39,16 +39,16 @@ func newReportBuilder() *reportBuilder {
 		benchmarks:    make(map[int]gtr.Benchmark),
 		buildErrors:   make(map[int]gtr.Error),
 		runErrors:     make(map[int]gtr.Error),
-		nextId:        1,
+		nextID:        1,
 		TimestampFunc: time.Now,
 	}
 }
 
-// newId returns a new unique id and sets the active context this id.
-func (b *reportBuilder) newId() int {
-	id := b.nextId
-	b.lastId = id
-	b.nextId += 1
+// newID returns a new unique id and sets the active context this id.
+func (b *reportBuilder) newID() int {
+	id := b.nextID
+	b.lastID = id
+	b.nextID += 1
 	return id
 }
 
@@ -71,21 +71,21 @@ func (b *reportBuilder) Build() gtr.Report {
 // CreateTest adds a test with the given name to the report, and marks it as
 // active.
 func (b *reportBuilder) CreateTest(name string) {
-	b.tests[b.newId()] = gtr.Test{Name: name}
+	b.tests[b.newID()] = gtr.Test{Name: name}
 }
 
 // PauseTest marks the active context as no longer active. Any results or
 // output added to the report after calling PauseTest will no longer be assumed
 // to belong to this test.
 func (b *reportBuilder) PauseTest(name string) {
-	b.lastId = 0
+	b.lastID = 0
 }
 
 // ContinueTest finds the test with the given name and marks it as active. If
 // more than one test exist with this name, the most recently created test will
 // be used.
 func (b *reportBuilder) ContinueTest(name string) {
-	b.lastId = b.findTest(name)
+	b.lastID = b.findTest(name)
 }
 
 // EndTest finds the test with the given name, sets the result, duration and
@@ -93,25 +93,25 @@ func (b *reportBuilder) ContinueTest(name string) {
 // created test will be used. If no test exists with this name, a new test is
 // created.
 func (b *reportBuilder) EndTest(name, result string, duration time.Duration, level int) {
-	b.lastId = b.findTest(name)
-	if b.lastId < 0 {
+	b.lastID = b.findTest(name)
+	if b.lastID < 0 {
 		// test did not exist, create one
 		// TODO: Likely reason is that the user ran go test without the -v
 		// flag, should we report this somewhere?
 		b.CreateTest(name)
 	}
 
-	t := b.tests[b.lastId]
+	t := b.tests[b.lastID]
 	t.Result = parseResult(result)
 	t.Duration = duration
 	t.Level = level
-	b.tests[b.lastId] = t
-	b.lastId = 0
+	b.tests[b.lastID] = t
+	b.lastID = 0
 }
 
 // End marks the active context as no longer active.
 func (b *reportBuilder) End() {
-	b.lastId = 0
+	b.lastID = 0
 }
 
 // CreateBenchmark adds a benchmark with the given name to the report, and
@@ -119,7 +119,7 @@ func (b *reportBuilder) End() {
 // most recently created benchmark will be updated. If no benchmark exists with
 // this name, a new benchmark is created.
 func (b *reportBuilder) CreateBenchmark(name string) {
-	b.benchmarks[b.newId()] = gtr.Benchmark{
+	b.benchmarks[b.newID()] = gtr.Benchmark{
 		Name: name,
 	}
 }
@@ -129,12 +129,12 @@ func (b *reportBuilder) CreateBenchmark(name string) {
 // exists but without result, then that one is updated. Otherwise a new one is
 // added to the report.
 func (b *reportBuilder) BenchmarkResult(name string, iterations int64, nsPerOp, mbPerSec float64, bytesPerOp, allocsPerOp int64) {
-	b.lastId = b.findBenchmark(name)
-	if b.lastId < 0 || b.benchmarks[b.lastId].Result != gtr.Unknown {
+	b.lastID = b.findBenchmark(name)
+	if b.lastID < 0 || b.benchmarks[b.lastID].Result != gtr.Unknown {
 		b.CreateBenchmark(name)
 	}
 
-	b.benchmarks[b.lastId] = gtr.Benchmark{
+	b.benchmarks[b.lastID] = gtr.Benchmark{
 		Name:        name,
 		Result:      gtr.Pass,
 		Iterations:  iterations,
@@ -150,20 +150,20 @@ func (b *reportBuilder) BenchmarkResult(name string, iterations int64, nsPerOp, 
 // benchmark will be used. If no benchmark exists with this name, a new
 // benchmark is created.
 func (b *reportBuilder) EndBenchmark(name, result string) {
-	b.lastId = b.findBenchmark(name)
-	if b.lastId < 0 {
+	b.lastID = b.findBenchmark(name)
+	if b.lastID < 0 {
 		b.CreateBenchmark(name)
 	}
 
-	bm := b.benchmarks[b.lastId]
+	bm := b.benchmarks[b.lastID]
 	bm.Result = parseResult(result)
-	b.benchmarks[b.lastId] = bm
-	b.lastId = 0
+	b.benchmarks[b.lastID] = bm
+	b.lastID = 0
 }
 
 // CreateBuildError creates a new build error and marks it as active.
 func (b *reportBuilder) CreateBuildError(packageName string) {
-	b.buildErrors[b.newId()] = gtr.Error{Name: packageName}
+	b.buildErrors[b.newID()] = gtr.Error{Name: packageName}
 }
 
 // CreatePackage adds a new package with the given name to the Report. This
@@ -194,7 +194,7 @@ func (b *reportBuilder) CreatePackage(name, result string, duration time.Duratio
 
 			delete(b.buildErrors, id)
 			// TODO: reset state
-			// TODO: buildErrors shouldn't reset/use nextId/lastId, they're more like a global cache
+			// TODO: buildErrors shouldn't reset/use nextID/lastID, they're more like a global cache
 			return
 		}
 	}
@@ -228,7 +228,7 @@ func (b *reportBuilder) CreatePackage(name, result string, duration time.Duratio
 	// Collect tests and benchmarks for this package, maintaining insertion order.
 	var tests []gtr.Test
 	var benchmarks []gtr.Benchmark
-	for id := 1; id < b.nextId; id++ {
+	for id := 1; id < b.nextID; id++ {
 		if t, ok := b.tests[id]; ok {
 			tests = append(tests, t)
 		}
@@ -244,8 +244,8 @@ func (b *reportBuilder) CreatePackage(name, result string, duration time.Duratio
 	b.packages = append(b.packages, pkg)
 
 	// reset state
-	b.nextId = 1
-	b.lastId = 0
+	b.nextID = 1
+	b.lastID = 0
 	b.output = nil
 	b.coverage = 0
 	b.tests = make(map[int]gtr.Test)
@@ -260,20 +260,20 @@ func (b *reportBuilder) Coverage(pct float64, packages []string) {
 // AppendOutput appends the given line to the currently active context. If no
 // active context exists, the output is assumed to belong to the package.
 func (b *reportBuilder) AppendOutput(line string) {
-	if b.lastId <= 0 {
+	if b.lastID <= 0 {
 		b.output = append(b.output, line)
 		return
 	}
 
-	if t, ok := b.tests[b.lastId]; ok {
+	if t, ok := b.tests[b.lastID]; ok {
 		t.Output = append(t.Output, line)
-		b.tests[b.lastId] = t
-	} else if bm, ok := b.benchmarks[b.lastId]; ok {
+		b.tests[b.lastID] = t
+	} else if bm, ok := b.benchmarks[b.lastID]; ok {
 		bm.Output = append(bm.Output, line)
-		b.benchmarks[b.lastId] = bm
-	} else if be, ok := b.buildErrors[b.lastId]; ok {
+		b.benchmarks[b.lastID] = bm
+	} else if be, ok := b.buildErrors[b.lastID]; ok {
 		be.Output = append(be.Output, line)
-		b.buildErrors[b.lastId] = be
+		b.buildErrors[b.lastID] = be
 	} else {
 		b.output = append(b.output, line)
 	}
@@ -282,9 +282,9 @@ func (b *reportBuilder) AppendOutput(line string) {
 // findTest returns the id of the most recently created test with the given
 // name, or -1 if no such test exists.
 func (b *reportBuilder) findTest(name string) int {
-	// check if this test was lastId
-	if t, ok := b.tests[b.lastId]; ok && t.Name == name {
-		return b.lastId
+	// check if this test was lastID
+	if t, ok := b.tests[b.lastID]; ok && t.Name == name {
+		return b.lastID
 	}
 	for id := len(b.tests); id >= 0; id-- {
 		if b.tests[id].Name == name {
@@ -297,9 +297,9 @@ func (b *reportBuilder) findTest(name string) int {
 // findBenchmark returns the id of the most recently created benchmark with the
 // given name, or -1 if no such benchmark exists.
 func (b *reportBuilder) findBenchmark(name string) int {
-	// check if this benchmark was lastId
-	if bm, ok := b.benchmarks[b.lastId]; ok && bm.Name == name {
-		return b.lastId
+	// check if this benchmark was lastID
+	if bm, ok := b.benchmarks[b.lastID]; ok && bm.Name == name {
+		return b.lastID
 	}
 	for id := len(b.benchmarks); id >= 0; id-- {
 		if b.benchmarks[id].Name == name {
