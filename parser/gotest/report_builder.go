@@ -1,7 +1,6 @@
 package gotest
 
 import (
-	"fmt"
 	"strings"
 	"time"
 
@@ -245,7 +244,6 @@ func (b *reportBuilder) CreatePackage(name, result string, duration time.Duratio
 				if b.subtestMode == IgnoreParentResults {
 					t.Result = gtr.Pass
 				} else if b.subtestMode == ExcludeParents {
-					fmt.Printf("excluding test %v\n", t.Name)
 					continue
 				}
 			}
