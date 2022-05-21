@@ -85,7 +85,7 @@ func (b *reportBuilder) PauseTest(name string) {
 // more than one test exist with this name, the most recently created test will
 // be used.
 func (b *reportBuilder) ContinueTest(name string) {
-	b.lastID = b.findTest(name)
+	b.lastID, _ = b.findTest(name)
 }
 
 // EndTest finds the test with the given name, sets the result, duration and
@@ -93,19 +93,20 @@ func (b *reportBuilder) ContinueTest(name string) {
 // created test will be used. If no test exists with this name, a new test is
 // created.
 func (b *reportBuilder) EndTest(name, result string, duration time.Duration, level int) {
-	b.lastID = b.findTest(name)
-	if b.lastID < 0 {
+	id, ok := b.findTest(name)
+	if !ok {
 		// test did not exist, create one
 		// TODO: Likely reason is that the user ran go test without the -v
 		// flag, should we report this somewhere?
 		b.CreateTest(name)
+		id = b.lastID
 	}
 
-	t := b.tests[b.lastID]
+	t := b.tests[id]
 	t.Result = parseResult(result)
 	t.Duration = duration
 	t.Level = level
-	b.tests[b.lastID] = t
+	b.tests[id] = t
 	b.lastID = 0
 }
 
@@ -129,12 +130,13 @@ func (b *reportBuilder) CreateBenchmark(name string) {
 // exists but without result, then that one is updated. Otherwise a new one is
 // added to the report.
 func (b *reportBuilder) BenchmarkResult(name string, iterations int64, nsPerOp, mbPerSec float64, bytesPerOp, allocsPerOp int64) {
-	b.lastID = b.findBenchmark(name)
-	if b.lastID < 0 || b.benchmarks[b.lastID].Result != gtr.Unknown {
+	id, ok := b.findBenchmark(name)
+	if !ok || b.benchmarks[id].Result != gtr.Unknown {
 		b.CreateBenchmark(name)
+		id = b.lastID
 	}
 
-	b.benchmarks[b.lastID] = gtr.Benchmark{
+	b.benchmarks[id] = gtr.Benchmark{
 		Name:        name,
 		Result:      gtr.Pass,
 		Iterations:  iterations,
@@ -150,14 +152,15 @@ func (b *reportBuilder) BenchmarkResult(name string, iterations int64, nsPerOp, 
 // benchmark will be used. If no benchmark exists with this name, a new
 // benchmark is created.
 func (b *reportBuilder) EndBenchmark(name, result string) {
-	b.lastID = b.findBenchmark(name)
-	if b.lastID < 0 {
+	id, ok := b.findBenchmark(name)
+	if !ok {
 		b.CreateBenchmark(name)
+		id = b.lastID
 	}
 
-	bm := b.benchmarks[b.lastID]
+	bm := b.benchmarks[id]
 	bm.Result = parseResult(result)
-	b.benchmarks[b.lastID] = bm
+	b.benchmarks[id] = bm
 	b.lastID = 0
 }
 
@@ -280,33 +283,33 @@ func (b *reportBuilder) AppendOutput(line string) {
 }
 
 // findTest returns the id of the most recently created test with the given
-// name, or -1 if no such test exists.
-func (b *reportBuilder) findTest(name string) int {
+// name if it exists.
+func (b *reportBuilder) findTest(name string) (int, bool) {
 	// check if this test was lastID
 	if t, ok := b.tests[b.lastID]; ok && t.Name == name {
-		return b.lastID
+		return b.lastID, true
 	}
 	for id := len(b.tests); id >= 0; id-- {
 		if b.tests[id].Name == name {
-			return id
+			return id, true
 		}
 	}
-	return -1
+	return 0, false
 }
 
 // findBenchmark returns the id of the most recently created benchmark with the
-// given name, or -1 if no such benchmark exists.
-func (b *reportBuilder) findBenchmark(name string) int {
+// given name if it exists.
+func (b *reportBuilder) findBenchmark(name string) (int, bool) {
 	// check if this benchmark was lastID
 	if bm, ok := b.benchmarks[b.lastID]; ok && bm.Name == name {
-		return b.lastID
+		return b.lastID, true
 	}
 	for id := len(b.benchmarks); id >= 0; id-- {
 		if b.benchmarks[id].Name == name {
-			return id
+			return id, true
 		}
 	}
-	return -1
+	return 0, false
 }
 
 // containsFailingTest return true if the current list of tests contains at
