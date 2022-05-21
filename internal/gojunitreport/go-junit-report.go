@@ -25,10 +25,12 @@ type Config struct {
 	PackageName   string
 	SkipXMLHeader bool
 	Properties    map[string]string
-	TimestampFunc func() time.Time
 
 	// For debugging
 	PrintEvents bool
+
+	// For testing
+	timestampFunc func() time.Time
 }
 
 // Run runs the go-junit-report command and returns the generated report.
@@ -38,12 +40,12 @@ func (c Config) Run(input io.Reader, output io.Writer) (*gtr.Report, error) {
 	case "gotest":
 		p = gotest.NewParser(
 			gotest.PackageName(c.PackageName),
-			gotest.TimestampFunc(c.TimestampFunc),
+			gotest.TimestampFunc(c.timestampFunc),
 		)
 	case "gojson":
 		p = gotest.NewJSONParser(
 			gotest.PackageName(c.PackageName),
-			gotest.TimestampFunc(c.TimestampFunc),
+			gotest.TimestampFunc(c.timestampFunc),
 		)
 	default:
 		return nil, fmt.Errorf("invalid parser: %s", c.Parser)
