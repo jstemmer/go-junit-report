@@ -234,9 +234,12 @@ func (b *reportBuilder) CreatePackage(name, result string, duration time.Duratio
 	for id := 1; id < b.nextID; id++ {
 		if t, ok := b.tests[id]; ok {
 			tests = append(tests, t)
+			continue
 		}
+
 		if bm, ok := b.benchmarks[id]; ok {
 			benchmarks = append(benchmarks, bm)
+			continue
 		}
 	}
 
