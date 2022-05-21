@@ -38,15 +38,9 @@ func (c Config) Run(input io.Reader, output io.Writer) (*gtr.Report, error) {
 	var p parser
 	switch c.Parser {
 	case "gotest":
-		p = gotest.NewParser(
-			gotest.PackageName(c.PackageName),
-			gotest.TimestampFunc(c.timestampFunc),
-		)
+		p = gotest.NewParser(c.gotestOptions()...)
 	case "gojson":
-		p = gotest.NewJSONParser(
-			gotest.PackageName(c.PackageName),
-			gotest.TimestampFunc(c.timestampFunc),
-		)
+		p = gotest.NewJSONParser(c.gotestOptions()...)
 	default:
 		return nil, fmt.Errorf("invalid parser: %s", c.Parser)
 	}
@@ -97,4 +91,11 @@ func (c Config) writeXML(w io.Writer, report gtr.Report) error {
 	}
 	_, err := fmt.Fprintf(w, "\n")
 	return err
+}
+
+func (c Config) gotestOptions() []gotest.Option {
+	return []gotest.Option{
+		gotest.PackageName(c.PackageName),
+		gotest.TimestampFunc(c.timestampFunc),
+	}
 }
