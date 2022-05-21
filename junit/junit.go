@@ -157,55 +157,11 @@ func CreateFromReport(report gtr.Report, hostname string) Testsuites {
 
 		for _, test := range pkg.Tests {
 			duration += test.Duration
-
-			tc := Testcase{
-				Classname: pkg.Name,
-				Name:      test.Name,
-				Time:      formatDuration(test.Duration),
-			}
-
-			if test.Result == gtr.Fail {
-				tc.Failure = &Result{
-					Message: "Failed",
-					Data:    formatOutput(test.Output, test.Level),
-				}
-			} else if test.Result == gtr.Skip {
-				tc.Skipped = &Result{
-					Message: "Skipped",
-					Data:    formatOutput(test.Output, test.Level),
-				}
-			} else if test.Result == gtr.Unknown {
-				tc.Error = &Result{
-					Message: "No test result found",
-					Data:    formatOutput(test.Output, test.Level),
-				}
-			} else if len(test.Output) > 0 {
-				tc.SystemOut = &Output{Data: formatOutput(test.Output, test.Level)}
-			}
-
-			suite.AddTestcase(tc)
+			suite.AddTestcase(createTestcaseForTest(pkg.Name, test))
 		}
 
 		for _, bm := range groupBenchmarksByName(pkg.Benchmarks) {
-			tc := Testcase{
-				Classname: pkg.Name,
-				Name:      bm.Name,
-				Time:      formatBenchmarkTime(time.Duration(bm.NsPerOp) * time.Duration(bm.Iterations)),
-			}
-
-			if bm.Result == gtr.Fail {
-				tc.Failure = &Result{
-					Message: "Failed",
-				}
-			} else if bm.Result == gtr.Skip {
-				tc.Skipped = &Result{
-					Message: "Skipped",
-				}
-			} else if len(bm.Output) > 0 {
-				tc.SystemOut = &Output{Data: formatOutput(bm.Output, 0)}
-			}
-
-			suite.AddTestcase(tc)
+			suite.AddTestcase(createTestcaseForBenchmark(pkg.Name, bm))
 		}
 
 		// JUnit doesn't have a good way of dealing with build or runtime
@@ -245,6 +201,55 @@ func CreateFromReport(report gtr.Report, hostname string) Testsuites {
 		suites.AddSuite(suite)
 	}
 	return suites
+}
+
+func createTestcaseForTest(pkgName string, test gtr.Test) Testcase {
+	tc := Testcase{
+		Classname: pkgName,
+		Name:      test.Name,
+		Time:      formatDuration(test.Duration),
+	}
+
+	if test.Result == gtr.Fail {
+		tc.Failure = &Result{
+			Message: "Failed",
+			Data:    formatOutput(test.Output, test.Level),
+		}
+	} else if test.Result == gtr.Skip {
+		tc.Skipped = &Result{
+			Message: "Skipped",
+			Data:    formatOutput(test.Output, test.Level),
+		}
+	} else if test.Result == gtr.Unknown {
+		tc.Error = &Result{
+			Message: "No test result found",
+			Data:    formatOutput(test.Output, test.Level),
+		}
+	} else if len(test.Output) > 0 {
+		tc.SystemOut = &Output{Data: formatOutput(test.Output, test.Level)}
+	}
+	return tc
+}
+
+func createTestcaseForBenchmark(pkgName string, bm gtr.Benchmark) Testcase {
+	tc := Testcase{
+		Classname: pkgName,
+		Name:      bm.Name,
+		Time:      formatBenchmarkTime(time.Duration(bm.NsPerOp) * time.Duration(bm.Iterations)),
+	}
+
+	if bm.Result == gtr.Fail {
+		tc.Failure = &Result{
+			Message: "Failed",
+		}
+	} else if bm.Result == gtr.Skip {
+		tc.Skipped = &Result{
+			Message: "Skipped",
+		}
+	} else if len(bm.Output) > 0 {
+		tc.SystemOut = &Output{Data: formatOutput(bm.Output, 0)}
+	}
+	return tc
 }
 
 // formatDuration returns the JUnit string representation of the given
