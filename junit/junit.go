@@ -43,11 +43,11 @@ type Testsuite struct {
 	Tests    int    `xml:"tests,attr"`
 	Failures int    `xml:"failures,attr"`
 	Errors   int    `xml:"errors,attr"`
+	ID       int    `xml:"id,attr"`
 
 	// optional attributes
 	Disabled  int    `xml:"disabled,attr,omitempty"`
 	Hostname  string `xml:"hostname,attr,omitempty"`
-	ID        int    `xml:"id,attr,omitempty"`
 	Package   string `xml:"package,attr,omitempty"`
 	Skipped   int    `xml:"skipped,attr,omitempty"`
 	Time      string `xml:"time,attr"`                // duration in seconds
@@ -136,6 +136,7 @@ func CreateFromReport(report gtr.Report, hostname string) Testsuites {
 		suite := Testsuite{
 			Name:     pkg.Name,
 			Hostname: hostname,
+			ID:       len(suites.Suites),
 		}
 
 		if !pkg.Timestamp.IsZero() {

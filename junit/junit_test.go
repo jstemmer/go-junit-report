@@ -32,6 +32,7 @@ func TestCreateFromReport(t *testing.T) {
 				Tests:    1,
 				Failures: 1,
 				Time:     "0.000",
+				ID:       0,
 				Testcases: []Testcase{
 					{
 						Name:    "BenchmarkFail",
@@ -64,7 +65,7 @@ func TestMarshalUnmarshal(t *testing.T) {
 				Errors:     1,
 				Failures:   1,
 				Hostname:   "localhost",
-				ID:         1,
+				ID:         0,
 				Package:    "package",
 				Skipped:    1,
 				Time:       "12.345",
