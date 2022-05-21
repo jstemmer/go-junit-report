@@ -249,8 +249,7 @@ func (b *reportBuilder) CreatePackage(name, result string, duration time.Duratio
 	pkg.Benchmarks = benchmarks
 	b.packages = append(b.packages, pkg)
 
-	// reset state
-	b.nextID = 1
+	// reset state, except for nextID to ensure all id's are unique.
 	b.lastID = 0
 	b.output = nil
 	b.coverage = 0
