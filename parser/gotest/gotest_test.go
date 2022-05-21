@@ -12,7 +12,8 @@ import (
 )
 
 var (
-	testTimestamp = time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
+	testTimestamp     = time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
+	testTimestampFunc = func() time.Time { return testTimestamp }
 )
 
 type parseLineTest struct {
@@ -308,9 +309,101 @@ func TestReport(t *testing.T) {
 		},
 	}
 
-	parser := NewParser(TimestampFunc(func() time.Time { return testTimestamp }))
+	parser := NewParser(TimestampFunc(testTimestampFunc))
 	got := parser.report(events)
 	if diff := cmp.Diff(want, got); diff != "" {
 		t.Errorf("FromEvents report incorrect, diff (-want, +got):\n%v", diff)
+	}
+}
+
+func TestSubtestModes(t *testing.T) {
+	events := []Event{
+		{Type: "run_test", Name: "TestParent"},
+		{Type: "output", Data: "TestParent output"},
+		{Type: "run_test", Name: "TestParent/Subtest#1"},
+		{Type: "output", Data: "Subtest#1 output"},
+		{Type: "run_test", Name: "TestParent/Subtest#2"},
+		{Type: "output", Data: "Subtest#2 output"},
+		{Type: "end_test", Name: "TestParent", Result: "PASS", Duration: 1 * time.Millisecond},
+		{Type: "end_test", Name: "TestParent/Subtest#1", Result: "FAIL", Duration: 2 * time.Millisecond},
+		{Type: "end_test", Name: "TestParent/Subtest#2", Result: "PASS", Duration: 3 * time.Millisecond},
+		{Type: "summary", Result: "FAIL", Name: "package/name", Duration: 1 * time.Millisecond},
+	}
+
+	tests := []struct {
+		name string
+		mode SubtestMode
+		want gtr.Report
+	}{
+		{
+			name: "ignore subtest parent results",
+			mode: IgnoreParentResults,
+			want: gtr.Report{
+				Packages: []gtr.Package{
+					{
+						Name:      "package/name",
+						Duration:  1 * time.Millisecond,
+						Timestamp: testTimestamp,
+						Tests: []gtr.Test{
+							{
+								Name:     "TestParent",
+								Duration: 1 * time.Millisecond,
+								Result:   gtr.Pass,
+								Output:   []string{"TestParent output"},
+							},
+							{
+								Name:     "TestParent/Subtest#1",
+								Duration: 2 * time.Millisecond,
+								Result:   gtr.Fail,
+								Output:   []string{"Subtest#1 output"},
+							},
+							{
+								Name:     "TestParent/Subtest#2",
+								Duration: 3 * time.Millisecond,
+								Result:   gtr.Pass,
+								Output:   []string{"Subtest#2 output"},
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "exclude subtest parents",
+			mode: ExcludeParents,
+			want: gtr.Report{
+				Packages: []gtr.Package{
+					{
+						Name:      "package/name",
+						Duration:  1 * time.Millisecond,
+						Timestamp: testTimestamp,
+						Tests: []gtr.Test{
+							{
+								Name:     "TestParent/Subtest#1",
+								Duration: 2 * time.Millisecond,
+								Result:   gtr.Fail,
+								Output:   []string{"Subtest#1 output"},
+							},
+							{
+								Name:     "TestParent/Subtest#2",
+								Duration: 3 * time.Millisecond,
+								Result:   gtr.Pass,
+								Output:   []string{"Subtest#2 output"},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			parser := NewParser(TimestampFunc(testTimestampFunc), SetSubtestMode(test.mode))
+			got := parser.report(events)
+			if diff := cmp.Diff(test.want, got); diff != "" {
+				t.Errorf("Invalid report created from events, diff (-want, +got):\n%v", diff)
+			}
+		})
 	}
 }

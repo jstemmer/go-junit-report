@@ -1,6 +1,8 @@
 package gotest
 
 import (
+	"fmt"
+	"strings"
 	"time"
 
 	"github.com/jstemmer/go-junit-report/v2/gtr"
@@ -22,13 +24,15 @@ type reportBuilder struct {
 	runErrors   map[int]gtr.Error
 
 	// state
-	nextID   int      // next free unused id
-	lastID   int      // most recently created id
-	output   []string // output that does not belong to any test
-	coverage float64  // coverage percentage
+	nextID    int              // next free unused id
+	lastID    int              // most recently created id
+	output    []string         // output that does not belong to any test
+	coverage  float64          // coverage percentage
+	parentIDs map[int]struct{} // set of test id's that contain subtests
 
 	// options
 	packageName   string
+	subtestMode   SubtestMode
 	timestampFunc func() time.Time
 }
 
@@ -40,6 +44,7 @@ func newReportBuilder() *reportBuilder {
 		buildErrors:   make(map[int]gtr.Error),
 		runErrors:     make(map[int]gtr.Error),
 		nextID:        1,
+		parentIDs:     make(map[int]struct{}),
 		timestampFunc: time.Now,
 	}
 }
@@ -71,6 +76,9 @@ func (b *reportBuilder) Build() gtr.Report {
 // CreateTest adds a test with the given name to the report, and marks it as
 // active.
 func (b *reportBuilder) CreateTest(name string) {
+	if parentID, ok := b.findTestParentID(name); ok {
+		b.parentIDs[parentID] = struct{}{}
+	}
 	b.tests[b.newID()] = gtr.Test{Name: name}
 }
 
@@ -233,6 +241,14 @@ func (b *reportBuilder) CreatePackage(name, result string, duration time.Duratio
 	var benchmarks []gtr.Benchmark
 	for id := 1; id < b.nextID; id++ {
 		if t, ok := b.tests[id]; ok {
+			if b.isParent(id) {
+				if b.subtestMode == IgnoreParentResults {
+					t.Result = gtr.Pass
+				} else if b.subtestMode == ExcludeParents {
+					fmt.Printf("excluding test %v\n", t.Name)
+					continue
+				}
+			}
 			tests = append(tests, t)
 			continue
 		}
@@ -255,6 +271,7 @@ func (b *reportBuilder) CreatePackage(name, result string, duration time.Duratio
 	b.coverage = 0
 	b.tests = make(map[int]gtr.Test)
 	b.benchmarks = make(map[int]gtr.Benchmark)
+	b.parentIDs = make(map[int]struct{})
 }
 
 // Coverage sets the code coverage percentage.
@@ -291,12 +308,35 @@ func (b *reportBuilder) findTest(name string) (int, bool) {
 	if t, ok := b.tests[b.lastID]; ok && t.Name == name {
 		return b.lastID, true
 	}
-	for id := len(b.tests); id >= 0; id-- {
-		if b.tests[id].Name == name {
-			return id, true
+	for i := b.nextID; i >= 0; i-- {
+		if test, ok := b.tests[i]; ok && test.Name == name {
+			return i, true
 		}
 	}
 	return 0, false
+}
+
+func (b *reportBuilder) findTestParentID(name string) (int, bool) {
+	parent := dropLastSegment(name)
+	for parent != "" {
+		if id, ok := b.findTest(parent); ok {
+			return id, true
+		}
+		parent = dropLastSegment(parent)
+	}
+	return 0, false
+}
+
+func (b *reportBuilder) isParent(id int) bool {
+	_, ok := b.parentIDs[id]
+	return ok
+}
+
+func dropLastSegment(name string) string {
+	if idx := strings.LastIndexByte(name, '/'); idx >= 0 {
+		return name[:idx]
+	}
+	return ""
 }
 
 // findBenchmark returns the id of the most recently created benchmark with the

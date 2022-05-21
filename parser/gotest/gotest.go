@@ -57,6 +57,50 @@ func TimestampFunc(f func() time.Time) Option {
 	}
 }
 
+// SubtestMode configures how Go subtests should be handled by the parser.
+type SubtestMode string
+
+const (
+	// SubtestModeDefault is the default subtest mode. It treats tests with
+	// subtests as any other tests.
+	SubtestModeDefault SubtestMode = ""
+
+	// IgnoreParentResults ignores test results for tests with subtests. Use
+	// this mode if you use subtest parents for common setup/teardown, but are
+	// not interested in counting them as failed tests. Ignoring their results
+	// still preserves these tests and their captured output in the report.
+	IgnoreParentResults SubtestMode = "ignore-parent-results"
+
+	// ExcludeParents excludes tests that contain subtests from the report.
+	// Note that the subtests themselves are not removed. Use this mode if you
+	// use subtest parents for common setup/teardown, but are not actually
+	// interested in their presence in the created report. If output was
+	// captured for tests that are removed, the output is preserved in the
+	// global report output.
+	ExcludeParents SubtestMode = "exclude-parents"
+)
+
+// ParseSubtestMode returns a SubtestMode for the given string.
+func ParseSubtestMode(in string) (SubtestMode, error) {
+	switch in {
+	case string(IgnoreParentResults):
+		return IgnoreParentResults, nil
+	case string(ExcludeParents):
+		return ExcludeParents, nil
+	default:
+		return SubtestModeDefault, fmt.Errorf("unknown subtest mode: %v", in)
+	}
+}
+
+// SetSubtestMode is an Option to change how the parser handles tests with
+// subtests. See the documentation for the individual SubtestModes for more
+// information.
+func SetSubtestMode(mode SubtestMode) Option {
+	return func(p *Parser) {
+		p.subtestMode = mode
+	}
+}
+
 // NewParser returns a new Go test output parser.
 func NewParser(options ...Option) *Parser {
 	p := &Parser{}
@@ -68,7 +112,9 @@ func NewParser(options ...Option) *Parser {
 
 // Parser is a Go test output Parser.
 type Parser struct {
-	packageName   string
+	packageName string
+	subtestMode SubtestMode
+
 	timestampFunc func() time.Time
 
 	events []Event
@@ -89,6 +135,7 @@ func (p *Parser) Parse(r io.Reader) (gtr.Report, error) {
 func (p *Parser) report(events []Event) gtr.Report {
 	rb := newReportBuilder()
 	rb.packageName = p.packageName
+	rb.subtestMode = p.subtestMode
 	if p.timestampFunc != nil {
 		rb.timestampFunc = p.timestampFunc
 	}
