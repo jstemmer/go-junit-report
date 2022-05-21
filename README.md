@@ -82,6 +82,7 @@ Run `go-junit-report -help` for a list of all supported flags.
 | `-parser parser`      | specify the parser to use, available parsers are: `gotest` (default), `gojson`  |
 | `-p key=value`        | add property to generated report; properties should be specified as `key=value` |
 | `-set-exit-code`      | set exit code to 1 if tests failed                                              |
+| `-subtest-mode`       | set subtest `mode`, modes are: `ignore-parent-results`, `exclude-parents`       |
 | `-version`            | print version and exit                                                          |
 
 ## Contributing

@@ -24,6 +24,7 @@ type Config struct {
 	Hostname      string
 	PackageName   string
 	SkipXMLHeader bool
+	SubtestMode   gotest.SubtestMode
 	Properties    map[string]string
 
 	// For debugging
@@ -96,6 +97,7 @@ func (c Config) writeXML(w io.Writer, report gtr.Report) error {
 func (c Config) gotestOptions() []gotest.Option {
 	return []gotest.Option{
 		gotest.PackageName(c.PackageName),
+		gotest.SetSubtestMode(c.SubtestMode),
 		gotest.TimestampFunc(c.timestampFunc),
 	}
 }
