@@ -26,12 +26,10 @@ type Config struct {
 	SkipXMLHeader bool
 	SubtestMode   gotest.SubtestMode
 	Properties    map[string]string
+	TimestampFunc func() time.Time
 
 	// For debugging
 	PrintEvents bool
-
-	// For testing
-	timestampFunc func() time.Time
 }
 
 // Run runs the go-junit-report command and returns the generated report.
@@ -98,6 +96,6 @@ func (c Config) gotestOptions() []gotest.Option {
 	return []gotest.Option{
 		gotest.PackageName(c.PackageName),
 		gotest.SetSubtestMode(c.SubtestMode),
-		gotest.TimestampFunc(c.timestampFunc),
+		gotest.TimestampFunc(c.TimestampFunc),
 	}
 }
