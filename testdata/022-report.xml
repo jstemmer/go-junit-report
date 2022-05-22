@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites tests="2">
-	<testsuite name="package/basic" tests="2" failures="0" errors="0" id="0" hostname="hostname" time="3.212" timestamp="2022-01-01T00:00:00Z">
+<testsuites tests="3">
+	<testsuite name="package/bench" tests="3" failures="0" errors="0" id="0" hostname="hostname" time="1.640" timestamp="2022-01-01T00:00:00Z">
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
-		<testcase name="BenchmarkParse" classname="package/basic" time="1.208000000"></testcase>
-		<testcase name="BenchmarkReadingList" classname="package/basic" time="1.425000000"></testcase>
-		<system-out><![CDATA[goos: darwin
+		<testcase name="TestOne" classname="package/bench" time="0.000">
+			<system-out><![CDATA[    bench_test.go:9: test log]]></system-out>
+		</testcase>
+		<testcase name="BenchmarkOne" classname="package/bench" time="0.000000000"></testcase>
+		<testcase name="BenchmarkTwo" classname="package/bench" time="1.305496599"></testcase>
+		<system-out><![CDATA[goos: linux
 goarch: amd64
-pkg: code.internal/state]]></system-out>
+pkg: package/bench]]></system-out>
 	</testsuite>
 </testsuites>

@@ -1,7 +1,18 @@
-goos: darwin
+=== RUN   TestOne
+    bench_test.go:9: test log
+--- PASS: TestOne (0.00s)
+goos: linux
 goarch: amd64
-pkg: code.internal/state
-BenchmarkParse-8                     2000000	       604 ns/op
-BenchmarkReadingList-8               1000000	      1425 ns/op
+pkg: package/bench
+BenchmarkOne
+    bench_test.go:13: benchmark log (1)
+    bench_test.go:13: benchmark log (100)
+    bench_test.go:13: benchmark log (10000)
+    bench_test.go:13: benchmark log (1000000)
+    bench_test.go:13: benchmark log (100000000)
+    bench_test.go:13: benchmark log (1000000000)
+BenchmarkOne-8   	1000000000	         0.2642 ns/op
+BenchmarkTwo
+BenchmarkTwo-8   	39560503	        33.21 ns/op
 PASS
-ok package/basic	3.212s
+ok  	package/bench	1.640s
