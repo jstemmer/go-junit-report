@@ -160,7 +160,7 @@ func CreateFromReport(report gtr.Report, hostname string) Testsuites {
 			suite.AddTestcase(createTestcaseForTest(pkg.Name, test))
 		}
 
-		for _, bm := range groupBenchmarksByName(pkg.Benchmarks) {
+		for _, bm := range pkg.Benchmarks {
 			suite.AddTestcase(createTestcaseForBenchmark(pkg.Name, bm))
 		}
 
@@ -267,57 +267,4 @@ func formatBenchmarkTime(d time.Duration) string {
 // formatOutput combines the lines from the given output into a single string.
 func formatOutput(output []string, indent int) string {
 	return strings.Join(output, "\n")
-}
-
-func groupBenchmarksByName(benchmarks []gtr.Benchmark) []gtr.Benchmark {
-	if len(benchmarks) == 0 {
-		return nil
-	}
-
-	var grouped []gtr.Benchmark
-	benchmap := make(map[string][]gtr.Benchmark)
-	for _, bm := range benchmarks {
-		if _, ok := benchmap[bm.Name]; !ok {
-			grouped = append(grouped, gtr.Benchmark{Name: bm.Name})
-		}
-		benchmap[bm.Name] = append(benchmap[bm.Name], bm)
-	}
-
-	for i, bm := range grouped {
-		n := 0
-		for _, b := range benchmap[bm.Name] {
-			if b.Result != gtr.Pass {
-				continue
-			}
-			bm.Iterations += b.Iterations
-			bm.NsPerOp += b.NsPerOp
-			bm.MBPerSec += b.MBPerSec
-			bm.BytesPerOp += b.BytesPerOp
-			bm.AllocsPerOp += b.AllocsPerOp
-			n++
-		}
-
-		bm.Result = groupResults(benchmap[bm.Name])
-		if n > 0 {
-			bm.NsPerOp = bm.NsPerOp / float64(n)
-			bm.MBPerSec = bm.MBPerSec / float64(n)
-			bm.BytesPerOp = bm.BytesPerOp / int64(n)
-			bm.AllocsPerOp = bm.AllocsPerOp / int64(n)
-		}
-		grouped[i] = bm
-	}
-	return grouped
-}
-
-func groupResults(benchmarks []gtr.Benchmark) gtr.Result {
-	var result gtr.Result
-	for _, bm := range benchmarks {
-		if bm.Result == gtr.Fail {
-			return gtr.Fail
-		}
-		if result != gtr.Pass {
-			result = bm.Result
-		}
-	}
-	return result
 }

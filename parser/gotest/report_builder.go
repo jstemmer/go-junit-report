@@ -260,7 +260,7 @@ func (b *reportBuilder) CreatePackage(name, result string, duration time.Duratio
 	pkg.Coverage = b.coverage
 	pkg.Output = b.output
 	pkg.Tests = tests
-	pkg.Benchmarks = benchmarks
+	pkg.Benchmarks = groupBenchmarksByName(benchmarks)
 	b.packages = append(b.packages, pkg)
 
 	// reset state, except for nextID to ensure all id's are unique.
@@ -377,4 +377,57 @@ func parseResult(r string) gtr.Result {
 	default:
 		return gtr.Unknown
 	}
+}
+
+func groupBenchmarksByName(benchmarks []gtr.Benchmark) []gtr.Benchmark {
+	if len(benchmarks) == 0 {
+		return nil
+	}
+
+	var grouped []gtr.Benchmark
+	byName := make(map[string][]gtr.Benchmark)
+	for _, bm := range benchmarks {
+		if _, ok := byName[bm.Name]; !ok {
+			grouped = append(grouped, gtr.Benchmark{Name: bm.Name})
+		}
+		byName[bm.Name] = append(byName[bm.Name], bm)
+	}
+
+	for i, group := range grouped {
+		count := 0
+		for _, bm := range byName[group.Name] {
+			if bm.Result != gtr.Pass {
+				continue
+			}
+			group.Iterations += bm.Iterations
+			group.NsPerOp += bm.NsPerOp
+			group.MBPerSec += bm.MBPerSec
+			group.BytesPerOp += bm.BytesPerOp
+			group.AllocsPerOp += bm.AllocsPerOp
+			count++
+		}
+
+		group.Result = groupResults(byName[group.Name])
+		if count > 0 {
+			group.NsPerOp /= float64(count)
+			group.MBPerSec /= float64(count)
+			group.BytesPerOp /= int64(count)
+			group.AllocsPerOp /= int64(count)
+		}
+		grouped[i] = group
+	}
+	return grouped
+}
+
+func groupResults(benchmarks []gtr.Benchmark) gtr.Result {
+	var result gtr.Result
+	for _, bm := range benchmarks {
+		if bm.Result == gtr.Fail {
+			return gtr.Fail
+		}
+		if result != gtr.Pass {
+			result = bm.Result
+		}
+	}
+	return result
 }
