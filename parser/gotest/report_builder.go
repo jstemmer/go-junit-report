@@ -309,7 +309,7 @@ func (b *reportBuilder) findTest(name string) (int, bool) {
 	if t, ok := b.tests[b.lastID]; ok && t.Name == name {
 		return b.lastID, true
 	}
-	for i := b.nextID; i >= 0; i-- {
+	for i := b.nextID; i > 0; i-- {
 		if test, ok := b.tests[i]; ok && test.Name == name {
 			return i, true
 		}
@@ -347,7 +347,7 @@ func (b *reportBuilder) findBenchmark(name string) (int, bool) {
 	if bm, ok := b.benchmarks[b.lastID]; ok && bm.Name == name {
 		return b.lastID, true
 	}
-	for id := len(b.benchmarks); id >= 0; id-- {
+	for id := len(b.benchmarks); id > 0; id-- {
 		if b.benchmarks[id].Name == name {
 			return id, true
 		}
