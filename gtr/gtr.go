@@ -82,6 +82,7 @@ func (p *Package) SetProperty(key, value string) {
 
 // Test contains the results of a single test.
 type Test struct {
+	ID       int
 	Name     string
 	Duration time.Duration
 	Result   Result
@@ -91,6 +92,7 @@ type Test struct {
 
 // Benchmark contains the results of a single benchmark.
 type Benchmark struct {
+	ID          int
 	Name        string
 	Result      Result
 	Output      []string
@@ -103,6 +105,7 @@ type Benchmark struct {
 
 // Error contains details of a build or runtime error.
 type Error struct {
+	ID       int
 	Name     string
 	Duration time.Duration
 	Cause    string
