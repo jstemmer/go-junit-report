@@ -78,7 +78,8 @@ func (b *reportBuilder) CreateTest(name string) {
 	if parentID, ok := b.findTestParentID(name); ok {
 		b.parentIDs[parentID] = struct{}{}
 	}
-	b.tests[b.newID()] = gtr.Test{Name: name}
+	id := b.newID()
+	b.tests[id] = gtr.Test{ID: id, Name: name}
 }
 
 // PauseTest marks the active context as no longer active. Any results or
@@ -127,9 +128,8 @@ func (b *reportBuilder) End() {
 // most recently created benchmark will be updated. If no benchmark exists with
 // this name, a new benchmark is created.
 func (b *reportBuilder) CreateBenchmark(name string) {
-	b.benchmarks[b.newID()] = gtr.Benchmark{
-		Name: name,
-	}
+	id := b.newID()
+	b.benchmarks[id] = gtr.Benchmark{ID: id, Name: name}
 }
 
 // BenchmarkResult updates an existing or adds a new benchmark with the given
@@ -144,6 +144,7 @@ func (b *reportBuilder) BenchmarkResult(name string, iterations int64, nsPerOp, 
 	}
 
 	b.benchmarks[id] = gtr.Benchmark{
+		ID:          id,
 		Name:        name,
 		Result:      gtr.Pass,
 		Iterations:  iterations,
@@ -173,7 +174,8 @@ func (b *reportBuilder) EndBenchmark(name, result string) {
 
 // CreateBuildError creates a new build error and marks it as active.
 func (b *reportBuilder) CreateBuildError(packageName string) {
-	b.buildErrors[b.newID()] = gtr.Error{Name: packageName}
+	id := b.newID()
+	b.buildErrors[id] = gtr.Error{ID: id, Name: packageName}
 }
 
 // CreatePackage adds a new package with the given name to the Report. This
@@ -197,6 +199,7 @@ func (b *reportBuilder) CreatePackage(name, result string, duration time.Duratio
 			if len(b.tests) > 0 || len(b.benchmarks) > 0 {
 				panic("unexpected tests and/or benchmarks found in build error package")
 			}
+			buildErr.ID = id
 			buildErr.Duration = duration
 			buildErr.Cause = data
 			pkg.BuildError = buildErr
@@ -388,7 +391,7 @@ func groupBenchmarksByName(benchmarks []gtr.Benchmark) []gtr.Benchmark {
 	byName := make(map[string][]gtr.Benchmark)
 	for _, bm := range benchmarks {
 		if _, ok := byName[bm.Name]; !ok {
-			grouped = append(grouped, gtr.Benchmark{Name: bm.Name})
+			grouped = append(grouped, gtr.Benchmark{ID: bm.ID, Name: bm.Name})
 		}
 		byName[bm.Name] = append(byName[bm.Name], bm)
 	}

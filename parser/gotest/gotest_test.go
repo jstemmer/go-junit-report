@@ -251,6 +251,7 @@ func TestReport(t *testing.T) {
 				Timestamp: testTimestamp,
 				Tests: []gtr.Test{
 					{
+						ID:       1,
 						Name:     "TestOne",
 						Duration: 1 * time.Millisecond,
 						Result:   gtr.Pass,
@@ -259,6 +260,7 @@ func TestReport(t *testing.T) {
 						},
 					},
 					{
+						ID:       2,
 						Name:     "TestSkip",
 						Duration: 1 * time.Millisecond,
 						Result:   gtr.Skip,
@@ -271,6 +273,7 @@ func TestReport(t *testing.T) {
 				Timestamp: testTimestamp,
 				Tests: []gtr.Test{
 					{
+						ID:       3,
 						Name:     "TestOne",
 						Duration: 1 * time.Millisecond,
 						Result:   gtr.Fail,
@@ -286,11 +289,13 @@ func TestReport(t *testing.T) {
 				Timestamp: testTimestamp,
 				Benchmarks: []gtr.Benchmark{
 					{
+						ID:      4,
 						Name:    "BenchmarkOne",
 						Result:  gtr.Pass,
 						NsPerOp: 100,
 					},
 					{
+						ID:     5,
 						Name:   "BenchmarkTwo",
 						Result: gtr.Fail,
 					},
@@ -301,6 +306,7 @@ func TestReport(t *testing.T) {
 				Name:      "package/failing1",
 				Timestamp: testTimestamp,
 				BuildError: gtr.Error{
+					ID:     6,
 					Name:   "package/failing1",
 					Cause:  "[build failed]",
 					Output: []string{"error message"},
@@ -346,18 +352,21 @@ func TestSubtestModes(t *testing.T) {
 						Timestamp: testTimestamp,
 						Tests: []gtr.Test{
 							{
+								ID:       1,
 								Name:     "TestParent",
 								Duration: 1 * time.Millisecond,
 								Result:   gtr.Pass,
 								Output:   []string{"TestParent output"},
 							},
 							{
+								ID:       2,
 								Name:     "TestParent/Subtest#1",
 								Duration: 2 * time.Millisecond,
 								Result:   gtr.Fail,
 								Output:   []string{"Subtest#1 output"},
 							},
 							{
+								ID:       3,
 								Name:     "TestParent/Subtest#2",
 								Duration: 3 * time.Millisecond,
 								Result:   gtr.Pass,
@@ -379,12 +388,14 @@ func TestSubtestModes(t *testing.T) {
 						Timestamp: testTimestamp,
 						Tests: []gtr.Test{
 							{
+								ID:       2,
 								Name:     "TestParent/Subtest#1",
 								Duration: 2 * time.Millisecond,
 								Result:   gtr.Fail,
 								Output:   []string{"Subtest#1 output"},
 							},
 							{
+								ID:       3,
 								Name:     "TestParent/Subtest#2",
 								Duration: 3 * time.Millisecond,
 								Result:   gtr.Pass,
