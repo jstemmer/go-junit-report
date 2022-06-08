@@ -264,14 +264,9 @@ func formatBenchmarkTime(d time.Duration) string {
 	return fmt.Sprintf("%.9f", d.Seconds())
 }
 
-// formatOutput trims the test whitespace prefix from each line and joins all
-// the lines.
+// formatOutput combines the lines from the given output into a single string.
 func formatOutput(output []string, indent int) string {
-	var lines []string
-	for _, line := range output {
-		lines = append(lines, line)
-	}
-	return strings.Join(lines, "\n")
+	return strings.Join(output, "\n")
 }
 
 func groupBenchmarksByName(benchmarks []gtr.Benchmark) []gtr.Benchmark {
