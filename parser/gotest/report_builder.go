@@ -5,6 +5,11 @@ import (
 	"time"
 
 	"github.com/jstemmer/go-junit-report/v2/gtr"
+	"github.com/jstemmer/go-junit-report/v2/parser/gotest/internal/collector"
+)
+
+const (
+	globalID = 0
 )
 
 // reportBuilder helps build a test Report from a collection of events.
@@ -23,11 +28,11 @@ type reportBuilder struct {
 	runErrors   map[int]gtr.Error
 
 	// state
-	nextID    int              // next free unused id
-	lastID    int              // most recently created id
-	output    []string         // output that does not belong to any test
-	coverage  float64          // coverage percentage
-	parentIDs map[int]struct{} // set of test id's that contain subtests
+	nextID    int               // next free unused id
+	lastID    int               // most recently created id
+	output    *collector.Output // output collected for each id
+	coverage  float64           // coverage percentage
+	parentIDs map[int]struct{}  // set of test id's that contain subtests
 
 	// options
 	packageName   string
@@ -43,6 +48,7 @@ func newReportBuilder() *reportBuilder {
 		buildErrors:   make(map[int]gtr.Error),
 		runErrors:     make(map[int]gtr.Error),
 		nextID:        1,
+		output:        collector.New(),
 		parentIDs:     make(map[int]struct{}),
 		timestampFunc: time.Now,
 	}
@@ -202,6 +208,8 @@ func (b *reportBuilder) CreatePackage(name, result string, duration time.Duratio
 			buildErr.ID = id
 			buildErr.Duration = duration
 			buildErr.Cause = data
+			buildErr.Output = b.output.Get(id)
+
 			pkg.BuildError = buildErr
 			b.packages = append(b.packages, pkg)
 
@@ -214,17 +222,15 @@ func (b *reportBuilder) CreatePackage(name, result string, duration time.Duratio
 
 	// If we've collected output, but there were no tests or benchmarks then
 	// either there were no tests, or there was some other non-build error.
-	if len(b.output) > 0 && len(b.tests) == 0 && len(b.benchmarks) == 0 {
+	if b.output.Contains(globalID) && len(b.tests) == 0 && len(b.benchmarks) == 0 {
 		if parseResult(result) == gtr.Fail {
 			pkg.RunError = gtr.Error{
 				Name:   name,
-				Output: b.output,
+				Output: b.output.Get(globalID),
 			}
 		}
 		b.packages = append(b.packages, pkg)
-
-		// TODO: reset state
-		b.output = nil
+		b.output.Clear(globalID)
 		return
 	}
 
@@ -233,9 +239,9 @@ func (b *reportBuilder) CreatePackage(name, result string, duration time.Duratio
 	if parseResult(result) == gtr.Fail && (len(b.tests) > 0 || len(b.benchmarks) > 0) && !b.containsFailingTest() {
 		pkg.RunError = gtr.Error{
 			Name:   name,
-			Output: b.output,
+			Output: b.output.Get(globalID),
 		}
-		b.output = nil
+		b.output.Clear(globalID)
 	}
 
 	// Collect tests and benchmarks for this package, maintaining insertion order.
@@ -247,28 +253,31 @@ func (b *reportBuilder) CreatePackage(name, result string, duration time.Duratio
 				if b.subtestMode == IgnoreParentResults {
 					t.Result = gtr.Pass
 				} else if b.subtestMode == ExcludeParents {
+					b.output.Merge(id, globalID)
 					continue
 				}
 			}
+			t.Output = b.output.Get(id)
 			tests = append(tests, t)
 			continue
 		}
 
 		if bm, ok := b.benchmarks[id]; ok {
+			bm.Output = b.output.Get(id)
 			benchmarks = append(benchmarks, bm)
 			continue
 		}
 	}
 
 	pkg.Coverage = b.coverage
-	pkg.Output = b.output
+	pkg.Output = b.output.Get(globalID)
 	pkg.Tests = tests
-	pkg.Benchmarks = groupBenchmarksByName(benchmarks)
+	pkg.Benchmarks = b.groupBenchmarksByName(benchmarks)
 	b.packages = append(b.packages, pkg)
 
 	// reset state, except for nextID to ensure all id's are unique.
 	b.lastID = 0
-	b.output = nil
+	b.output.Clear(globalID)
 	b.coverage = 0
 	b.tests = make(map[int]gtr.Test)
 	b.benchmarks = make(map[int]gtr.Benchmark)
@@ -280,26 +289,10 @@ func (b *reportBuilder) Coverage(pct float64, packages []string) {
 	b.coverage = pct
 }
 
-// AppendOutput appends the given line to the currently active context. If no
+// AppendOutput appends the given text to the currently active context. If no
 // active context exists, the output is assumed to belong to the package.
-func (b *reportBuilder) AppendOutput(line string) {
-	if b.lastID <= 0 {
-		b.output = append(b.output, line)
-		return
-	}
-
-	if t, ok := b.tests[b.lastID]; ok {
-		t.Output = append(t.Output, line)
-		b.tests[b.lastID] = t
-	} else if bm, ok := b.benchmarks[b.lastID]; ok {
-		bm.Output = append(bm.Output, line)
-		b.benchmarks[b.lastID] = bm
-	} else if be, ok := b.buildErrors[b.lastID]; ok {
-		be.Output = append(be.Output, line)
-		b.buildErrors[b.lastID] = be
-	} else {
-		b.output = append(b.output, line)
-	}
+func (b *reportBuilder) AppendOutput(text string) {
+	b.output.Append(b.lastID, text)
 }
 
 // findTest returns the id of the most recently created test with the given
@@ -382,7 +375,7 @@ func parseResult(r string) gtr.Result {
 	}
 }
 
-func groupBenchmarksByName(benchmarks []gtr.Benchmark) []gtr.Benchmark {
+func (b *reportBuilder) groupBenchmarksByName(benchmarks []gtr.Benchmark) []gtr.Benchmark {
 	if len(benchmarks) == 0 {
 		return nil
 	}
@@ -397,8 +390,10 @@ func groupBenchmarksByName(benchmarks []gtr.Benchmark) []gtr.Benchmark {
 	}
 
 	for i, group := range grouped {
+		var ids []int
 		count := 0
 		for _, bm := range byName[group.Name] {
+			ids = append(ids, bm.ID)
 			if bm.Result != gtr.Pass {
 				continue
 			}
@@ -411,6 +406,7 @@ func groupBenchmarksByName(benchmarks []gtr.Benchmark) []gtr.Benchmark {
 		}
 
 		group.Result = groupResults(byName[group.Name])
+		group.Output = b.output.GetAll(ids...)
 		if count > 0 {
 			group.NsPerOp /= float64(count)
 			group.MBPerSec /= float64(count)

@@ -325,14 +325,17 @@ func TestReport(t *testing.T) {
 func TestSubtestModes(t *testing.T) {
 	events := []Event{
 		{Type: "run_test", Name: "TestParent"},
-		{Type: "output", Data: "TestParent output"},
+		{Type: "output", Data: "TestParent before"},
 		{Type: "run_test", Name: "TestParent/Subtest#1"},
 		{Type: "output", Data: "Subtest#1 output"},
 		{Type: "run_test", Name: "TestParent/Subtest#2"},
 		{Type: "output", Data: "Subtest#2 output"},
+		{Type: "cont_test", Name: "TestParent"},
+		{Type: "output", Data: "TestParent after"},
 		{Type: "end_test", Name: "TestParent", Result: "PASS", Duration: 1 * time.Millisecond},
 		{Type: "end_test", Name: "TestParent/Subtest#1", Result: "FAIL", Duration: 2 * time.Millisecond},
 		{Type: "end_test", Name: "TestParent/Subtest#2", Result: "PASS", Duration: 3 * time.Millisecond},
+		{Type: "output", Data: "output"},
 		{Type: "summary", Result: "FAIL", Name: "package/name", Duration: 1 * time.Millisecond},
 	}
 
@@ -356,7 +359,7 @@ func TestSubtestModes(t *testing.T) {
 								Name:     "TestParent",
 								Duration: 1 * time.Millisecond,
 								Result:   gtr.Pass,
-								Output:   []string{"TestParent output"},
+								Output:   []string{"TestParent before", "TestParent after"},
 							},
 							{
 								ID:       2,
@@ -373,6 +376,7 @@ func TestSubtestModes(t *testing.T) {
 								Output:   []string{"Subtest#2 output"},
 							},
 						},
+						Output: []string{"output"},
 					},
 				},
 			},
@@ -402,6 +406,7 @@ func TestSubtestModes(t *testing.T) {
 								Output:   []string{"Subtest#2 output"},
 							},
 						},
+						Output: []string{"TestParent before", "TestParent after", "output"},
 					},
 				},
 			},

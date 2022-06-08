@@ -43,7 +43,8 @@ func TestGroupBenchmarksByName(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		got := groupBenchmarksByName(test.in)
+		b := newReportBuilder()
+		got := b.groupBenchmarksByName(test.in)
 		if diff := cmp.Diff(test.want, got); diff != "" {
 			t.Errorf("groupBenchmarksByName result incorrect, diff (-want, +got):\n%s\n", diff)
 		}

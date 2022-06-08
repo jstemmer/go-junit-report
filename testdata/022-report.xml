@@ -7,7 +7,14 @@
 		<testcase name="TestOne" classname="package/bench" time="0.000">
 			<system-out><![CDATA[    bench_test.go:9: test log]]></system-out>
 		</testcase>
-		<testcase name="BenchmarkOne" classname="package/bench" time="0.000000000"></testcase>
+		<testcase name="BenchmarkOne" classname="package/bench" time="0.000000000">
+			<system-out><![CDATA[    bench_test.go:13: benchmark log (1)
+    bench_test.go:13: benchmark log (100)
+    bench_test.go:13: benchmark log (10000)
+    bench_test.go:13: benchmark log (1000000)
+    bench_test.go:13: benchmark log (100000000)
+    bench_test.go:13: benchmark log (1000000000)]]></system-out>
+		</testcase>
 		<testcase name="BenchmarkTwo" classname="package/bench" time="1.305496599"></testcase>
 		<system-out><![CDATA[goos: linux
 goarch: amd64
