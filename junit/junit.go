@@ -241,10 +241,12 @@ func createTestcaseForBenchmark(pkgName string, bm gtr.Benchmark) Testcase {
 	if bm.Result == gtr.Fail {
 		tc.Failure = &Result{
 			Message: "Failed",
+			Data:    formatOutput(bm.Output, 0),
 		}
 	} else if bm.Result == gtr.Skip {
 		tc.Skipped = &Result{
 			Message: "Skipped",
+			Data:    formatOutput(bm.Output, 0),
 		}
 	} else if len(bm.Output) > 0 {
 		tc.SystemOut = &Output{Data: formatOutput(bm.Output, 0)}
