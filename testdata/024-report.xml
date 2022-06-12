@@ -4,8 +4,8 @@
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
-		<testcase name="BenchmarkOne" classname="package/bench" time="0.264000000"></testcase>
-		<testcase name="BenchmarkTwo" classname="package/bench" time="1.316969295"></testcase>
+		<testcase name="BenchmarkOne" classname="package/bench" time="0.264"></testcase>
+		<testcase name="BenchmarkTwo" classname="package/bench" time="1.317"></testcase>
 		<system-out><![CDATA[goos: linux
 goarch: amd64
 pkg: package/bench

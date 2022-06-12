@@ -36,7 +36,7 @@ func TestCreateFromReport(t *testing.T) {
 				Testcases: []Testcase{
 					{
 						Name:    "BenchmarkFail",
-						Time:    "0.000000000",
+						Time:    "0.000",
 						Failure: &Result{Message: "Failed"},
 					},
 				},

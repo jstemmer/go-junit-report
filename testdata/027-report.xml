@@ -4,9 +4,9 @@
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
-		<testcase name="BenchmarkItsy" classname="really/small" time="1.371000000"></testcase>
-		<testcase name="BenchmarkTeeny" classname="really/small" time="2.120000000"></testcase>
-		<testcase name="BenchmarkWeeny" classname="really/small" time="0.520000000"></testcase>
+		<testcase name="BenchmarkItsy" classname="really/small" time="1.371"></testcase>
+		<testcase name="BenchmarkTeeny" classname="really/small" time="2.120"></testcase>
+		<testcase name="BenchmarkWeeny" classname="really/small" time="0.520"></testcase>
 		<system-out><![CDATA[goos: darwin
 goarch: amd64
 pkg: really/small]]></system-out>

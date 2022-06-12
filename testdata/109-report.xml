@@ -10,7 +10,7 @@
 		<testcase name="TestZ" classname="package/name/bench" time="0.000">
 			<system-out><![CDATA[    z_test.go:6: ok]]></system-out>
 		</testcase>
-		<testcase name="BenchmarkTest" classname="package/name/bench" time="0.440700000">
+		<testcase name="BenchmarkTest" classname="package/name/bench" time="0.441">
 			<system-out><![CDATA[    bench_test.go:12: 1
     bench_test.go:12: 100
     bench_test.go:12: 10000
@@ -18,7 +18,7 @@
     bench_test.go:12: 100000000
     bench_test.go:12: 1000000000]]></system-out>
 		</testcase>
-		<testcase name="BenchmarkOtherTest" classname="package/name/bench" time="0.263900000"></testcase>
+		<testcase name="BenchmarkOtherTest" classname="package/name/bench" time="0.264"></testcase>
 		<system-out><![CDATA[goos: linux
 goarch: amd64
 pkg: package/name/bench]]></system-out>

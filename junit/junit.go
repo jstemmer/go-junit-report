@@ -235,7 +235,7 @@ func createTestcaseForBenchmark(pkgName string, bm gtr.Benchmark) Testcase {
 	tc := Testcase{
 		Classname: pkgName,
 		Name:      bm.Name,
-		Time:      formatBenchmarkTime(bm.ApproximateDuration()),
+		Time:      formatDuration(bm.ApproximateDuration()),
 	}
 
 	if bm.Result == gtr.Fail {
@@ -256,12 +256,6 @@ func createTestcaseForBenchmark(pkgName string, bm gtr.Benchmark) Testcase {
 // duration.
 func formatDuration(d time.Duration) string {
 	return fmt.Sprintf("%.3f", d.Seconds())
-}
-
-// formatBenchmarkTime returns the JUnit string representation of the given
-// benchmark time.
-func formatBenchmarkTime(d time.Duration) string {
-	return fmt.Sprintf("%.9f", d.Seconds())
 }
 
 // formatOutput combines the lines from the given output into a single string.
