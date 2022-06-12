@@ -103,6 +103,12 @@ type Benchmark struct {
 	AllocsPerOp int64
 }
 
+// ApproximateDuration returns the duration calculated by multiplying the
+// iterations and average time per iteration (NsPerOp).
+func (b Benchmark) ApproximateDuration() time.Duration {
+	return time.Duration(b.NsPerOp) * time.Duration(b.Iterations)
+}
+
 // Error contains details of a build or runtime error.
 type Error struct {
 	ID       int

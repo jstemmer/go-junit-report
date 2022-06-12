@@ -235,7 +235,7 @@ func createTestcaseForBenchmark(pkgName string, bm gtr.Benchmark) Testcase {
 	tc := Testcase{
 		Classname: pkgName,
 		Name:      bm.Name,
-		Time:      formatBenchmarkTime(time.Duration(bm.NsPerOp) * time.Duration(bm.Iterations)),
+		Time:      formatBenchmarkTime(bm.ApproximateDuration()),
 	}
 
 	if bm.Result == gtr.Fail {
