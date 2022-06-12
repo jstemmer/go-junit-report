@@ -106,7 +106,7 @@ type Benchmark struct {
 // ApproximateDuration returns the duration calculated by multiplying the
 // iterations and average time per iteration (NsPerOp).
 func (b Benchmark) ApproximateDuration() time.Duration {
-	return time.Duration(b.NsPerOp) * time.Duration(b.Iterations)
+	return time.Duration(float64(b.Iterations)*b.NsPerOp) * time.Nanosecond
 }
 
 // Error contains details of a build or runtime error.
