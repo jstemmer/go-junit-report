@@ -236,7 +236,7 @@ func (b *reportBuilder) CreatePackage(name, result string, duration time.Duratio
 
 	// If the summary result says we failed, but there were no failing tests
 	// then something else must have failed.
-	if parseResult(result) == gtr.Fail && (len(b.tests) > 0 || len(b.benchmarks) > 0) && !b.containsFailingTest() {
+	if parseResult(result) == gtr.Fail && (len(b.tests) > 0 || len(b.benchmarks) > 0) && !b.containsFailures() {
 		pkg.RunError = gtr.Error{
 			Name:   name,
 			Output: b.output.Get(globalID),
@@ -348,11 +348,16 @@ func (b *reportBuilder) findBenchmark(name string) (int, bool) {
 	return 0, false
 }
 
-// containsFailingTest return true if the current list of tests contains at
-// least one failing test or an unknown result.
-func (b *reportBuilder) containsFailingTest() bool {
+// containsFailures return true if the current list of tests or benchmarks
+// contains at least one failing test or an unknown result.
+func (b *reportBuilder) containsFailures() bool {
 	for _, test := range b.tests {
 		if test.Result == gtr.Fail || test.Result == gtr.Unknown {
+			return true
+		}
+	}
+	for _, bm := range b.benchmarks {
+		if bm.Result == gtr.Fail || bm.Result == gtr.Unknown {
 			return true
 		}
 	}
