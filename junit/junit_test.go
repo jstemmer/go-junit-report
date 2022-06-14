@@ -14,9 +14,9 @@ func TestCreateFromReport(t *testing.T) {
 	report := gtr.Report{
 		Packages: []gtr.Package{
 			{
-				Benchmarks: []gtr.Benchmark{
+				Tests: []gtr.Test{
 					{
-						Name:   "BenchmarkFail",
+						Name:   "TestFail",
 						Result: gtr.Fail,
 					},
 				},
@@ -35,7 +35,7 @@ func TestCreateFromReport(t *testing.T) {
 				ID:       0,
 				Testcases: []Testcase{
 					{
-						Name:    "BenchmarkFail",
+						Name:    "TestFail",
 						Time:    "0.000",
 						Failure: &Result{Message: "Failed"},
 					},

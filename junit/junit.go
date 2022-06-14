@@ -160,10 +160,6 @@ func CreateFromReport(report gtr.Report, hostname string) Testsuites {
 			suite.AddTestcase(createTestcaseForTest(pkg.Name, test))
 		}
 
-		for _, bm := range pkg.Benchmarks {
-			suite.AddTestcase(createTestcaseForBenchmark(pkg.Name, bm))
-		}
-
 		// JUnit doesn't have a good way of dealing with build or runtime
 		// errors that happen before a test has started, so we create a single
 		// failing test that contains the build error details.
@@ -227,29 +223,6 @@ func createTestcaseForTest(pkgName string, test gtr.Test) Testcase {
 		}
 	} else if len(test.Output) > 0 {
 		tc.SystemOut = &Output{Data: formatOutput(test.Output, test.Level)}
-	}
-	return tc
-}
-
-func createTestcaseForBenchmark(pkgName string, bm gtr.Benchmark) Testcase {
-	tc := Testcase{
-		Classname: pkgName,
-		Name:      bm.Name,
-		Time:      formatDuration(bm.ApproximateDuration()),
-	}
-
-	if bm.Result == gtr.Fail {
-		tc.Failure = &Result{
-			Message: "Failed",
-			Data:    formatOutput(bm.Output, 0),
-		}
-	} else if bm.Result == gtr.Skip {
-		tc.Skipped = &Result{
-			Message: "Skipped",
-			Data:    formatOutput(bm.Output, 0),
-		}
-	} else if len(bm.Output) > 0 {
-		tc.SystemOut = &Output{Data: formatOutput(bm.Output, 0)}
 	}
 	return tc
 }
