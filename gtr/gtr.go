@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-// Result is the result of a test or benchmark.
+// Result is the result of a test.
 type Result int
 
 const (
@@ -32,8 +32,7 @@ func (r Result) String() string {
 	}
 }
 
-// Report contains the build, test and/or benchmark results of a collection of
-// packages.
+// Report contains the build and test results of a collection of packages.
 type Report struct {
 	Packages []Package
 }
@@ -54,7 +53,7 @@ func (r *Report) IsSuccessful() bool {
 	return true
 }
 
-// Package contains build, test and/or benchmark results for a single package.
+// Package contains build and test results for a single package.
 type Package struct {
 	Name       string
 	Timestamp  time.Time
@@ -63,8 +62,7 @@ type Package struct {
 	Output     []string
 	Properties map[string]string
 
-	Tests      []Test
-	Benchmarks []Benchmark
+	Tests []Test
 
 	BuildError Error
 	RunError   Error
@@ -88,25 +86,12 @@ type Test struct {
 	Result   Result
 	Level    int
 	Output   []string
+	Data     map[string]interface{}
 }
 
-// Benchmark contains the results of a single benchmark.
-type Benchmark struct {
-	ID          int
-	Name        string
-	Result      Result
-	Output      []string
-	Iterations  int64
-	NsPerOp     float64
-	MBPerSec    float64
-	BytesPerOp  int64
-	AllocsPerOp int64
-}
-
-// ApproximateDuration returns the duration calculated by multiplying the
-// iterations and average time per iteration (NsPerOp).
-func (b Benchmark) ApproximateDuration() time.Duration {
-	return time.Duration(float64(b.Iterations)*b.NsPerOp) * time.Nanosecond
+// NewTest creates a new Test with the given id and name.
+func NewTest(id int, name string) Test {
+	return Test{ID: id, Name: name, Data: make(map[string]interface{})}
 }
 
 // Error contains details of a build or runtime error.

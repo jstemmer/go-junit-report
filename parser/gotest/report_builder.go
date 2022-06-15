@@ -14,16 +14,14 @@ const (
 
 // reportBuilder helps build a test Report from a collection of events.
 //
-// The reportBuilder keeps track of the active context whenever a test,
-// benchmark or build error is created. This is necessary because the test
-// parser do not contain any state themselves and simply just emit an event for
-// every line that is read. By tracking the active context, any output that is
-// appended to the reportBuilder gets attributed to the correct test, benchmark
-// or build error.
+// The reportBuilder keeps track of the active context whenever a test or build
+// error is created. This is necessary because the test parser do not contain
+// any state themselves and simply just emit an event for every line that is
+// read. By tracking the active context, any output that is appended to the
+// reportBuilder gets attributed to the correct test or build error.
 type reportBuilder struct {
 	packages    []gtr.Package
 	tests       map[int]gtr.Test
-	benchmarks  map[int]gtr.Benchmark
 	buildErrors map[int]gtr.Error
 	runErrors   map[int]gtr.Error
 
@@ -44,7 +42,6 @@ type reportBuilder struct {
 func newReportBuilder() *reportBuilder {
 	return &reportBuilder{
 		tests:         make(map[int]gtr.Test),
-		benchmarks:    make(map[int]gtr.Benchmark),
 		buildErrors:   make(map[int]gtr.Error),
 		runErrors:     make(map[int]gtr.Error),
 		nextID:        1,
@@ -62,17 +59,16 @@ func (b *reportBuilder) newID() int {
 	return id
 }
 
-// flush creates a new package in this report containing any tests or
-// benchmarks we've collected so far. This is necessary when a test or
-// benchmark did not end with a summary.
+// flush creates a new package in this report containing any tests we've
+// collected so far. This is necessary when a test did not end with a summary.
 func (b *reportBuilder) flush() {
-	if len(b.tests) > 0 || len(b.benchmarks) > 0 {
+	if len(b.tests) > 0 {
 		b.CreatePackage(b.packageName, "", 0, "")
 	}
 }
 
-// Build returns the new Report containing all the tests, benchmarks and output
-// created so far.
+// Build returns the new Report containing all the tests and output created so
+// far.
 func (b *reportBuilder) Build() gtr.Report {
 	b.flush()
 	return gtr.Report{Packages: b.packages}
@@ -85,7 +81,7 @@ func (b *reportBuilder) CreateTest(name string) {
 		b.parentIDs[parentID] = struct{}{}
 	}
 	id := b.newID()
-	b.tests[id] = gtr.Test{ID: id, Name: name}
+	b.tests[id] = gtr.NewTest(id, name)
 }
 
 // PauseTest marks the active context as no longer active. Any results or
@@ -134,31 +130,26 @@ func (b *reportBuilder) End() {
 // most recently created benchmark will be updated. If no benchmark exists with
 // this name, a new benchmark is created.
 func (b *reportBuilder) CreateBenchmark(name string) {
-	id := b.newID()
-	b.benchmarks[id] = gtr.Benchmark{ID: id, Name: name}
+	b.CreateTest(name)
 }
 
-// BenchmarkResult updates an existing or adds a new benchmark with the given
-// results and marks it as active. If an existing benchmark with this name
-// exists but without result, then that one is updated. Otherwise a new one is
-// added to the report.
+// BenchmarkResult updates an existing or adds a new test with the given
+// results and marks it as active. If an existing test with this name exists
+// but without result, then that one is updated. Otherwise a new one is added
+// to the report.
 func (b *reportBuilder) BenchmarkResult(name string, iterations int64, nsPerOp, mbPerSec float64, bytesPerOp, allocsPerOp int64) {
-	id, ok := b.findBenchmark(name)
-	if !ok || b.benchmarks[id].Result != gtr.Unknown {
-		b.CreateBenchmark(name)
+	id, ok := b.findTest(name)
+	if !ok || b.tests[id].Result != gtr.Unknown {
+		b.CreateTest(name)
 		id = b.lastID
 	}
 
-	b.benchmarks[id] = gtr.Benchmark{
-		ID:          id,
-		Name:        name,
-		Result:      gtr.Pass,
-		Iterations:  iterations,
-		NsPerOp:     nsPerOp,
-		MBPerSec:    mbPerSec,
-		BytesPerOp:  bytesPerOp,
-		AllocsPerOp: allocsPerOp,
-	}
+	benchmark := Benchmark{iterations, nsPerOp, mbPerSec, bytesPerOp, allocsPerOp}
+	test := gtr.NewTest(id, name)
+	test.Result = gtr.Pass
+	test.Duration = benchmark.ApproximateDuration()
+	SetBenchmarkData(&test, benchmark)
+	b.tests[id] = test
 }
 
 // EndBenchmark finds the benchmark with the given name and sets the result. If
@@ -166,16 +157,7 @@ func (b *reportBuilder) BenchmarkResult(name string, iterations int64, nsPerOp, 
 // benchmark will be used. If no benchmark exists with this name, a new
 // benchmark is created.
 func (b *reportBuilder) EndBenchmark(name, result string) {
-	id, ok := b.findBenchmark(name)
-	if !ok {
-		b.CreateBenchmark(name)
-		id = b.lastID
-	}
-
-	bm := b.benchmarks[id]
-	bm.Result = parseResult(result)
-	b.benchmarks[id] = bm
-	b.lastID = 0
+	b.EndTest(name, result, 0, 0)
 }
 
 // CreateBuildError creates a new build error and marks it as active.
@@ -202,8 +184,8 @@ func (b *reportBuilder) CreatePackage(name, result string, duration time.Duratio
 	// about the build errors for this particular package.
 	for id, buildErr := range b.buildErrors {
 		if buildErr.Name == name {
-			if len(b.tests) > 0 || len(b.benchmarks) > 0 {
-				panic("unexpected tests and/or benchmarks found in build error package")
+			if len(b.tests) > 0 {
+				panic("unexpected tests found in build error package")
 			}
 			buildErr.ID = id
 			buildErr.Duration = duration
@@ -220,9 +202,9 @@ func (b *reportBuilder) CreatePackage(name, result string, duration time.Duratio
 		}
 	}
 
-	// If we've collected output, but there were no tests or benchmarks then
-	// either there were no tests, or there was some other non-build error.
-	if b.output.Contains(globalID) && len(b.tests) == 0 && len(b.benchmarks) == 0 {
+	// If we've collected output, but there were no tests then either there
+	// actually were no tests, or there was some other non-build error.
+	if b.output.Contains(globalID) && len(b.tests) == 0 {
 		if parseResult(result) == gtr.Fail {
 			pkg.RunError = gtr.Error{
 				Name:   name,
@@ -236,7 +218,7 @@ func (b *reportBuilder) CreatePackage(name, result string, duration time.Duratio
 
 	// If the summary result says we failed, but there were no failing tests
 	// then something else must have failed.
-	if parseResult(result) == gtr.Fail && (len(b.tests) > 0 || len(b.benchmarks) > 0) && !b.containsFailures() {
+	if parseResult(result) == gtr.Fail && len(b.tests) > 0 && !b.containsFailures() {
 		pkg.RunError = gtr.Error{
 			Name:   name,
 			Output: b.output.Get(globalID),
@@ -244,9 +226,8 @@ func (b *reportBuilder) CreatePackage(name, result string, duration time.Duratio
 		b.output.Clear(globalID)
 	}
 
-	// Collect tests and benchmarks for this package, maintaining insertion order.
+	// Collect tests for this package, maintaining insertion order.
 	var tests []gtr.Test
-	var benchmarks []gtr.Benchmark
 	for id := 1; id < b.nextID; id++ {
 		if t, ok := b.tests[id]; ok {
 			if b.isParent(id) {
@@ -261,18 +242,12 @@ func (b *reportBuilder) CreatePackage(name, result string, duration time.Duratio
 			tests = append(tests, t)
 			continue
 		}
-
-		if bm, ok := b.benchmarks[id]; ok {
-			bm.Output = b.output.Get(id)
-			benchmarks = append(benchmarks, bm)
-			continue
-		}
 	}
+	tests = b.groupBenchmarksByName(tests)
 
 	pkg.Coverage = b.coverage
 	pkg.Output = b.output.Get(globalID)
 	pkg.Tests = tests
-	pkg.Benchmarks = b.groupBenchmarksByName(benchmarks)
 	b.packages = append(b.packages, pkg)
 
 	// reset state, except for nextID to ensure all id's are unique.
@@ -280,7 +255,6 @@ func (b *reportBuilder) CreatePackage(name, result string, duration time.Duratio
 	b.output.Clear(globalID)
 	b.coverage = 0
 	b.tests = make(map[int]gtr.Test)
-	b.benchmarks = make(map[int]gtr.Benchmark)
 	b.parentIDs = make(map[int]struct{})
 }
 
@@ -333,31 +307,11 @@ func dropLastSegment(name string) string {
 	return ""
 }
 
-// findBenchmark returns the id of the most recently created benchmark with the
-// given name if it exists.
-func (b *reportBuilder) findBenchmark(name string) (int, bool) {
-	// check if this benchmark was lastID
-	if bm, ok := b.benchmarks[b.lastID]; ok && bm.Name == name {
-		return b.lastID, true
-	}
-	for id := len(b.benchmarks); id > 0; id-- {
-		if b.benchmarks[id].Name == name {
-			return id, true
-		}
-	}
-	return 0, false
-}
-
-// containsFailures return true if the current list of tests or benchmarks
-// contains at least one failing test or an unknown result.
+// containsFailures return true if the current list of tests contains at least
+// one failing test or an unknown result.
 func (b *reportBuilder) containsFailures() bool {
 	for _, test := range b.tests {
 		if test.Result == gtr.Fail || test.Result == gtr.Unknown {
-			return true
-		}
-	}
-	for _, bm := range b.benchmarks {
-		if bm.Result == gtr.Fail || bm.Result == gtr.Unknown {
 			return true
 		}
 	}
@@ -380,57 +334,83 @@ func parseResult(r string) gtr.Result {
 	}
 }
 
-func (b *reportBuilder) groupBenchmarksByName(benchmarks []gtr.Benchmark) []gtr.Benchmark {
-	if len(benchmarks) == 0 {
+func (b *reportBuilder) groupBenchmarksByName(tests []gtr.Test) []gtr.Test {
+	if len(tests) == 0 {
 		return nil
 	}
 
-	var grouped []gtr.Benchmark
-	byName := make(map[string][]gtr.Benchmark)
-	for _, bm := range benchmarks {
-		if _, ok := byName[bm.Name]; !ok {
-			grouped = append(grouped, gtr.Benchmark{ID: bm.ID, Name: bm.Name})
+	var grouped []gtr.Test
+	byName := make(map[string][]gtr.Test)
+	for _, test := range tests {
+		if !strings.HasPrefix(test.Name, "Benchmark") {
+			// If this test is not a benchmark, we won't group it by name but
+			// just add it to the final result.
+			grouped = append(grouped, test)
+			continue
 		}
-		byName[bm.Name] = append(byName[bm.Name], bm)
+		if _, ok := byName[test.Name]; !ok {
+			grouped = append(grouped, gtr.NewTest(test.ID, test.Name))
+		}
+		byName[test.Name] = append(byName[test.Name], test)
 	}
 
 	for i, group := range grouped {
-		var ids []int
-		count := 0
-		for _, bm := range byName[group.Name] {
-			ids = append(ids, bm.ID)
-			if bm.Result != gtr.Pass {
+		if !strings.HasPrefix(group.Name, "Benchmark") {
+			continue
+		}
+		var (
+			ids   []int
+			total Benchmark
+			count int
+		)
+		for _, test := range byName[group.Name] {
+			ids = append(ids, test.ID)
+			if test.Result != gtr.Pass {
 				continue
 			}
-			group.Iterations += bm.Iterations
-			group.NsPerOp += bm.NsPerOp
-			group.MBPerSec += bm.MBPerSec
-			group.BytesPerOp += bm.BytesPerOp
-			group.AllocsPerOp += bm.AllocsPerOp
-			count++
+
+			if bench, ok := GetBenchmarkData(test); ok {
+				total.Iterations += bench.Iterations
+				total.NsPerOp += bench.NsPerOp
+				total.MBPerSec += bench.MBPerSec
+				total.BytesPerOp += bench.BytesPerOp
+				total.AllocsPerOp += bench.AllocsPerOp
+				count++
+			}
 		}
 
+		group.Duration = combinedDuration(byName[group.Name])
 		group.Result = groupResults(byName[group.Name])
 		group.Output = b.output.GetAll(ids...)
 		if count > 0 {
-			group.NsPerOp /= float64(count)
-			group.MBPerSec /= float64(count)
-			group.BytesPerOp /= int64(count)
-			group.AllocsPerOp /= int64(count)
+			total.Iterations /= int64(count)
+			total.NsPerOp /= float64(count)
+			total.MBPerSec /= float64(count)
+			total.BytesPerOp /= int64(count)
+			total.AllocsPerOp /= int64(count)
+			SetBenchmarkData(&group, total)
 		}
 		grouped[i] = group
 	}
 	return grouped
 }
 
-func groupResults(benchmarks []gtr.Benchmark) gtr.Result {
+func combinedDuration(tests []gtr.Test) time.Duration {
+	var total time.Duration
+	for _, test := range tests {
+		total += test.Duration
+	}
+	return total
+}
+
+func groupResults(tests []gtr.Test) gtr.Result {
 	var result gtr.Result
-	for _, bm := range benchmarks {
-		if bm.Result == gtr.Fail {
+	for _, test := range tests {
+		if test.Result == gtr.Fail {
 			return gtr.Fail
 		}
 		if result != gtr.Pass {
-			result = bm.Result
+			result = test.Result
 		}
 	}
 	return result

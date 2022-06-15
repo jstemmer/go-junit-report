@@ -258,12 +258,14 @@ func TestReport(t *testing.T) {
 						Output: []string{
 							"\tHello", // TODO: strip tabs?
 						},
+						Data: map[string]interface{}{},
 					},
 					{
 						ID:       2,
 						Name:     "TestSkip",
 						Duration: 1 * time.Millisecond,
 						Result:   gtr.Skip,
+						Data:     map[string]interface{}{},
 					},
 				},
 			},
@@ -280,6 +282,7 @@ func TestReport(t *testing.T) {
 						Output: []string{
 							"\tfile_test.go:10: error",
 						},
+						Data: map[string]interface{}{},
 					},
 				},
 			},
@@ -287,17 +290,18 @@ func TestReport(t *testing.T) {
 				Name:      "package/name3",
 				Duration:  1234 * time.Millisecond,
 				Timestamp: testTimestamp,
-				Benchmarks: []gtr.Benchmark{
+				Tests: []gtr.Test{
 					{
-						ID:      4,
-						Name:    "BenchmarkOne",
-						Result:  gtr.Pass,
-						NsPerOp: 100,
+						ID:     4,
+						Name:   "BenchmarkOne",
+						Result: gtr.Pass,
+						Data:   map[string]interface{}{key: Benchmark{NsPerOp: 100}},
 					},
 					{
 						ID:     5,
 						Name:   "BenchmarkTwo",
 						Result: gtr.Fail,
+						Data:   map[string]interface{}{},
 					},
 				},
 				Output: []string{"goarch: amd64"},
@@ -360,6 +364,7 @@ func TestSubtestModes(t *testing.T) {
 								Duration: 1 * time.Millisecond,
 								Result:   gtr.Pass,
 								Output:   []string{"TestParent before", "TestParent after"},
+								Data:     map[string]interface{}{},
 							},
 							{
 								ID:       2,
@@ -367,6 +372,7 @@ func TestSubtestModes(t *testing.T) {
 								Duration: 2 * time.Millisecond,
 								Result:   gtr.Fail,
 								Output:   []string{"Subtest#1 output"},
+								Data:     map[string]interface{}{},
 							},
 							{
 								ID:       3,
@@ -374,6 +380,7 @@ func TestSubtestModes(t *testing.T) {
 								Duration: 3 * time.Millisecond,
 								Result:   gtr.Pass,
 								Output:   []string{"Subtest#2 output"},
+								Data:     map[string]interface{}{},
 							},
 						},
 						Output: []string{"output"},
@@ -397,6 +404,7 @@ func TestSubtestModes(t *testing.T) {
 								Duration: 2 * time.Millisecond,
 								Result:   gtr.Fail,
 								Output:   []string{"Subtest#1 output"},
+								Data:     map[string]interface{}{},
 							},
 							{
 								ID:       3,
@@ -404,6 +412,7 @@ func TestSubtestModes(t *testing.T) {
 								Duration: 3 * time.Millisecond,
 								Result:   gtr.Pass,
 								Output:   []string{"Subtest#2 output"},
+								Data:     map[string]interface{}{},
 							},
 						},
 						Output: []string{"TestParent before", "TestParent after", "output"},

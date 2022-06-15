@@ -10,43 +10,49 @@ import (
 
 func TestGroupBenchmarksByName(t *testing.T) {
 	tests := []struct {
-		in   []gtr.Benchmark
-		want []gtr.Benchmark
+		name string
+		in   []gtr.Test
+		want []gtr.Test
 	}{
-		{nil, nil},
+		{"nil", nil, nil},
 		{
-			[]gtr.Benchmark{{ID: 1, Name: "BenchmarkFailed", Result: gtr.Fail}},
-			[]gtr.Benchmark{{ID: 1, Name: "BenchmarkFailed", Result: gtr.Fail}},
+			"one failing benchmark",
+			[]gtr.Test{{ID: 1, Name: "BenchmarkFailed", Result: gtr.Fail, Data: map[string]interface{}{}}},
+			[]gtr.Test{{ID: 1, Name: "BenchmarkFailed", Result: gtr.Fail, Data: map[string]interface{}{}}},
 		},
 		{
-			[]gtr.Benchmark{
-				{ID: 1, Name: "BenchmarkOne", Result: gtr.Pass, NsPerOp: 10, MBPerSec: 400, BytesPerOp: 1, AllocsPerOp: 2},
-				{ID: 2, Name: "BenchmarkOne", Result: gtr.Pass, NsPerOp: 20, MBPerSec: 300, BytesPerOp: 1, AllocsPerOp: 4},
-				{ID: 3, Name: "BenchmarkOne", Result: gtr.Pass, NsPerOp: 30, MBPerSec: 200, BytesPerOp: 1, AllocsPerOp: 8},
-				{ID: 4, Name: "BenchmarkOne", Result: gtr.Pass, NsPerOp: 40, MBPerSec: 100, BytesPerOp: 5, AllocsPerOp: 2},
+			"four passing benchmarks",
+			[]gtr.Test{
+				{ID: 1, Name: "BenchmarkOne", Result: gtr.Pass, Data: map[string]interface{}{key: Benchmark{NsPerOp: 10, MBPerSec: 400, BytesPerOp: 1, AllocsPerOp: 2}}},
+				{ID: 2, Name: "BenchmarkOne", Result: gtr.Pass, Data: map[string]interface{}{key: Benchmark{NsPerOp: 20, MBPerSec: 300, BytesPerOp: 1, AllocsPerOp: 4}}},
+				{ID: 3, Name: "BenchmarkOne", Result: gtr.Pass, Data: map[string]interface{}{key: Benchmark{NsPerOp: 30, MBPerSec: 200, BytesPerOp: 1, AllocsPerOp: 8}}},
+				{ID: 4, Name: "BenchmarkOne", Result: gtr.Pass, Data: map[string]interface{}{key: Benchmark{NsPerOp: 40, MBPerSec: 100, BytesPerOp: 5, AllocsPerOp: 2}}},
 			},
-			[]gtr.Benchmark{
-				{ID: 1, Name: "BenchmarkOne", Result: gtr.Pass, NsPerOp: 25, MBPerSec: 250, BytesPerOp: 2, AllocsPerOp: 4},
+			[]gtr.Test{
+				{ID: 1, Name: "BenchmarkOne", Result: gtr.Pass, Data: map[string]interface{}{key: Benchmark{NsPerOp: 25, MBPerSec: 250, BytesPerOp: 2, AllocsPerOp: 4}}},
 			},
 		},
 		{
-			[]gtr.Benchmark{
+			"four mixed result benchmarks",
+			[]gtr.Test{
 				{ID: 1, Name: "BenchmarkMixed", Result: gtr.Unknown},
-				{ID: 2, Name: "BenchmarkMixed", Result: gtr.Pass, NsPerOp: 10, MBPerSec: 400, BytesPerOp: 1, AllocsPerOp: 2},
-				{ID: 3, Name: "BenchmarkMixed", Result: gtr.Pass, NsPerOp: 40, MBPerSec: 100, BytesPerOp: 3, AllocsPerOp: 4},
+				{ID: 2, Name: "BenchmarkMixed", Result: gtr.Pass, Data: map[string]interface{}{key: Benchmark{NsPerOp: 10, MBPerSec: 400, BytesPerOp: 1, AllocsPerOp: 2}}},
+				{ID: 3, Name: "BenchmarkMixed", Result: gtr.Pass, Data: map[string]interface{}{key: Benchmark{NsPerOp: 40, MBPerSec: 100, BytesPerOp: 3, AllocsPerOp: 4}}},
 				{ID: 4, Name: "BenchmarkMixed", Result: gtr.Fail},
 			},
-			[]gtr.Benchmark{
-				{ID: 1, Name: "BenchmarkMixed", Result: gtr.Fail, NsPerOp: 25, MBPerSec: 250, BytesPerOp: 2, AllocsPerOp: 3},
+			[]gtr.Test{
+				{ID: 1, Name: "BenchmarkMixed", Result: gtr.Fail, Data: map[string]interface{}{key: Benchmark{NsPerOp: 25, MBPerSec: 250, BytesPerOp: 2, AllocsPerOp: 3}}},
 			},
 		},
 	}
 
 	for _, test := range tests {
-		b := newReportBuilder()
-		got := b.groupBenchmarksByName(test.in)
-		if diff := cmp.Diff(test.want, got); diff != "" {
-			t.Errorf("groupBenchmarksByName result incorrect, diff (-want, +got):\n%s\n", diff)
-		}
+		t.Run(test.name, func(t *testing.T) {
+			b := newReportBuilder()
+			got := b.groupBenchmarksByName(test.in)
+			if diff := cmp.Diff(test.want, got); diff != "" {
+				t.Errorf("groupBenchmarksByName result incorrect, diff (-want, +got):\n%s\n", diff)
+			}
+		})
 	}
 }
