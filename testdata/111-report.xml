@@ -4,5 +4,6 @@
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
+		<system-out><![CDATA[testing: warning: no tests to run]]></system-out>
 	</testsuite>
 </testsuites>
