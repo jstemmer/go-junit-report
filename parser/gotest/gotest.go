@@ -101,15 +101,6 @@ func SetSubtestMode(mode SubtestMode) Option {
 	}
 }
 
-// NewParser returns a new Go test output parser.
-func NewParser(options ...Option) *Parser {
-	p := &Parser{}
-	for _, option := range options {
-		option(p)
-	}
-	return p
-}
-
 // Parser is a Go test output Parser.
 type Parser struct {
 	packageName string
@@ -118,6 +109,15 @@ type Parser struct {
 	timestampFunc func() time.Time
 
 	events []Event
+}
+
+// NewParser returns a new Go test output parser.
+func NewParser(options ...Option) *Parser {
+	p := &Parser{}
+	for _, option := range options {
+		option(p)
+	}
+	return p
 }
 
 // Parse parses Go test output from the given io.Reader r and returns
