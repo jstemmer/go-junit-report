@@ -3,6 +3,7 @@ package gotest
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 	"io"
 	"regexp"
@@ -101,6 +102,12 @@ func SetSubtestMode(mode SubtestMode) Option {
 	}
 }
 
+const (
+	// maxLineSize is the maximum amount of bytes we'll read for a single line.
+	// Lines longer than maxLineSize will be truncated.
+	maxLineSize = 4 * 1024 * 1024
+)
+
 // Parser is a Go test output Parser.
 type Parser struct {
 	packageName string
@@ -124,11 +131,59 @@ func NewParser(options ...Option) *Parser {
 // gtr.Report.
 func (p *Parser) Parse(r io.Reader) (gtr.Report, error) {
 	p.events = nil
-	s := bufio.NewScanner(r)
-	for s.Scan() {
-		p.parseLine(s.Text())
+	s := bufio.NewReader(r)
+	for {
+		line, isPrefix, err := s.ReadLine()
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			return gtr.Report{}, err
+		}
+
+		if !isPrefix {
+			p.parseLine(string(line))
+			continue
+		}
+
+		// Line is incomplete, keep reading until we reach the end of the line.
+		var buf bytes.Buffer
+		buf.Write(line) // ignore err, always nil
+		for isPrefix {
+			line, isPrefix, err = s.ReadLine()
+			if err == io.EOF {
+				break
+			} else if err != nil {
+				return gtr.Report{}, err
+			}
+
+			if buf.Len() >= maxLineSize {
+				// Stop writing to buf if we exceed maxLineSize. We continue
+				// reading however to make sure we consume the entire line.
+				continue
+			}
+
+			buf.Write(line) // ignore err, always nil
+		}
+
+		if buf.Len() > maxLineSize {
+			buf.Truncate(maxLineSize)
+		}
+
+		// Lines that exceed bufio.MaxScanTokenSize are not expected to contain
+		// any relevant test infrastructure output, so instead of parsing them
+		// we treat them as regular output to increase performance.
+		//
+		// Parser used a bufio.Scanner in the past, which only supported
+		// reading lines up to bufio.MaxScanTokenSize in length. Since this
+		// turned out to be fine in almost all cases, it seemed an appropriate
+		// value to use to decide whether or not to attempt parsing this line.
+		if buf.Len() > bufio.MaxScanTokenSize {
+			p.output(buf.String())
+		} else {
+			p.parseLine(buf.String())
+		}
 	}
-	return p.report(p.events), s.Err()
+	return p.report(p.events), nil
 }
 
 // report generates a gtr.Report from the given list of events.
