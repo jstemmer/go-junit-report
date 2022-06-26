@@ -3,6 +3,7 @@ package junit
 import (
 	"encoding/xml"
 	"testing"
+	"time"
 
 	"github.com/jstemmer/go-junit-report/v2/gtr"
 
@@ -10,36 +11,98 @@ import (
 )
 
 func TestCreateFromReport(t *testing.T) {
-	// TODO: complete this report
 	report := gtr.Report{
 		Packages: []gtr.Package{
 			{
+				Name:       "package/name",
+				Timestamp:  time.Date(2022, 6, 26, 0, 0, 0, 0, time.UTC),
+				Duration:   1 * time.Second,
+				Coverage:   0.9,
+				Output:     []string{"output"},
+				Properties: map[string]string{"go.version": "go1.18"},
 				Tests: []gtr.Test{
+					{
+						Name:   "TestPass",
+						Result: gtr.Pass,
+						Output: []string{"ok"},
+					},
 					{
 						Name:   "TestFail",
 						Result: gtr.Fail,
+						Output: []string{"fail"},
+					},
+					{
+						Name:   "TestSkip",
+						Result: gtr.Skip,
+					},
+					{
+						Name:   "TestIncomplete",
+						Result: gtr.Unknown,
 					},
 				},
+				BuildError: gtr.Error{Name: "Build error"},
+				RunError:   gtr.Error{Name: "Run error"},
 			},
 		},
 	}
 
 	want := Testsuites{
-		Tests:    1,
+		Tests:    6,
+		Errors:   3,
 		Failures: 1,
+		Skipped:  1,
 		Suites: []Testsuite{
 			{
-				Tests:    1,
-				Failures: 1,
-				Time:     "0.000",
-				ID:       0,
+				Name:      "package/name",
+				Tests:     6,
+				Errors:    3,
+				ID:        0,
+				Failures:  1,
+				Skipped:   1,
+				Time:      "1.000",
+				Timestamp: "2022-06-26T00:00:00Z",
+				Properties: &[]Property{
+					{Name: "go.version", Value: "go1.18"},
+					{Name: "coverage.statements.pct", Value: "0.90"},
+				},
 				Testcases: []Testcase{
 					{
-						Name:    "TestFail",
-						Time:    "0.000",
-						Failure: &Result{Message: "Failed"},
+						Name:      "TestPass",
+						Classname: "package/name",
+						Time:      "0.000",
+						SystemOut: &Output{Data: "ok"},
+					},
+					{
+						Name:      "TestFail",
+						Classname: "package/name",
+						Time:      "0.000",
+						Failure:   &Result{Message: "Failed", Data: "fail"},
+					},
+					{
+						Name:      "TestSkip",
+						Classname: "package/name",
+						Time:      "0.000",
+						Skipped:   &Result{Message: "Skipped"},
+					},
+					{
+						Name:      "TestIncomplete",
+						Classname: "package/name",
+						Time:      "0.000",
+						Error:     &Result{Message: "No test result found"},
+					},
+					{
+						Classname: "Build error",
+						Time:      "0.000",
+						Error:     &Result{Message: "Build error"},
+					},
+					{
+						Name:      "Failure",
+						Classname: "Run error",
+						Time:      "0.000",
+						Error:     &Result{Message: "Runtime error"},
 					},
 				},
+				SystemOut: &Output{Data: "output"},
 			},
 		},
 	}
