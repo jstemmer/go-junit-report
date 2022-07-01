@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -57,7 +58,7 @@ func testRun(inputFile, reportFile string, config Config, t *testing.T) {
 	}
 	defer input.Close()
 
-	wantReport, err := os.ReadFile(reportFile)
+	wantReport, err := ioutil.ReadFile(reportFile)
 	if os.IsNotExist(err) {
 		t.Skipf("Skipping test with missing report file: %s", reportFile)
 	} else if err != nil {

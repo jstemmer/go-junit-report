@@ -2,6 +2,7 @@ package gotest
 
 import (
 	"io"
+	"io/ioutil"
 	"strings"
 	"testing"
 
@@ -15,7 +16,7 @@ var input = `some other output
 
 func TestJSONReaderReadAll(t *testing.T) {
 	r := newJSONReader(strings.NewReader(input))
-	got, err := io.ReadAll(r)
+	got, err := ioutil.ReadAll(r)
 	if err != nil {
 		t.Fatal(err)
 	}
