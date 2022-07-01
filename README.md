@@ -23,7 +23,7 @@ page.
 Download and install the latest stable version from source by running:
 
 ```bash
-go install github.com/jstemmer/go-junit-report@latest
+go install github.com/jstemmer/go-junit-report/v2@latest
 ```
 
 ## Usage
