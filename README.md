@@ -85,6 +85,30 @@ Run `go-junit-report -help` for a list of all supported flags.
 | `-subtest-mode`       | set subtest `mode`, modes are: `ignore-parent-results`, `exclude-parents`       |
 | `-version`            | print version and exit                                                          |
 
+## Changelog
+
+### v2.0.0
+
+- Support for parsing `go test -json` output.
+- Distinguish between build/runtime errors and test failures.
+- JUnit report now includes output for all tests and benchmarks, and global output that doesn't belong to any test.
+- Use full Go package name in generated report instead of only last path segment.
+- Add support for reading skipped/failed benchmarks.
+- Add `-subtest-mode` flag to exclude or ignore results of subtest parent tests.
+- Add `-in` and `-out` flags for specifying input and output files respectively.
+- Add `-iocopy` flag to copy stdin directly to stdout.
+- Add `-prop` flags to set key/value properties in generated report.
+- Add `-parser` flag to switch between regular `go test` (default) and `go test -json` parsing.
+- Output in JUnit XML is written in `<![CDATA[]]>` tags for improved readability.
+- Add `hostname`, `timestamp` and `id` attributes to JUnit XML.
+- Improve accuracy of benchmark time calculation and update formatting in report.
+- No longer strip leading whitespace from test output.
+- The `formatter` and `parser` packages have been replaced with `junit` and `parser/gotest` packages respectively.
+- Add support for parsing lines longer than 64KiB.
+- The JUnit errors/failures attributes are now required fields.
+- Drop support for parsing pre-Go1.13 test output.
+- Deprecate `-go-version` flag.
+
 ## Contributing
 
 See [CONTRIBUTING.md].
