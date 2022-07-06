@@ -52,7 +52,7 @@ type Testsuite struct {
 	Skipped   int    `xml:"skipped,attr,omitempty"`
 	Time      string `xml:"time,attr"`                // duration in seconds
 	Timestamp string `xml:"timestamp,attr,omitempty"` // date and time in ISO8601
-	File      string `xml:"file,attr"`
+	File      string `xml:"file,attr,omitempty"`
 
 	Properties *[]Property `xml:"properties>property,omitempty"`
 	Testcases  []Testcase  `xml:"testcase,omitempty"`
