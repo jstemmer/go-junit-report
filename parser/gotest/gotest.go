@@ -14,6 +14,12 @@ import (
 	"github.com/jstemmer/go-junit-report/v2/gtr"
 )
 
+const (
+	// maxLineSize is the maximum amount of bytes we'll read for a single line.
+	// Lines longer than maxLineSize will be truncated.
+	maxLineSize = 4 * 1024 * 1024
+)
+
 var (
 	// regexBenchInfo captures 3-5 groups: benchmark name, number of times ran, ns/op (with or without decimal), MB/sec (optional), B/op (optional), and allocs/op (optional).
 	regexBenchmark    = regexp.MustCompile(`^(Benchmark[^ -]+)$`)
@@ -101,12 +107,6 @@ func SetSubtestMode(mode SubtestMode) Option {
 		p.subtestMode = mode
 	}
 }
-
-const (
-	// maxLineSize is the maximum amount of bytes we'll read for a single line.
-	// Lines longer than maxLineSize will be truncated.
-	maxLineSize = 4 * 1024 * 1024
-)
 
 // Parser is a Go test output Parser.
 type Parser struct {
