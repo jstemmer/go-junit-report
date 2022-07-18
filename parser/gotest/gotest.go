@@ -3,7 +3,6 @@ package gotest
 
 import (
 	"bufio"
-	"bytes"
 	"fmt"
 	"io"
 	"regexp"
@@ -12,6 +11,7 @@ import (
 	"time"
 
 	"github.com/jstemmer/go-junit-report/v2/gtr"
+	"github.com/jstemmer/go-junit-report/v2/parser/gotest/internal/reader"
 )
 
 const (
@@ -130,43 +130,17 @@ func NewParser(options ...Option) *Parser {
 // Parse parses Go test output from the given io.Reader r and returns
 // gtr.Report.
 func (p *Parser) Parse(r io.Reader) (gtr.Report, error) {
+	return p.parse(reader.NewLimitedLineReader(r, maxLineSize))
+}
+
+func (p *Parser) parse(r *reader.LimitedLineReader) (gtr.Report, error) {
 	p.events = nil
-	s := bufio.NewReader(r)
 	for {
-		line, isPrefix, err := s.ReadLine()
+		line, err := r.ReadLine()
 		if err == io.EOF {
 			break
 		} else if err != nil {
 			return gtr.Report{}, err
-		}
-
-		if !isPrefix {
-			p.parseLine(string(line))
-			continue
-		}
-
-		// Line is incomplete, keep reading until we reach the end of the line.
-		var buf bytes.Buffer
-		buf.Write(line) // ignore err, always nil
-		for isPrefix {
-			line, isPrefix, err = s.ReadLine()
-			if err == io.EOF {
-				break
-			} else if err != nil {
-				return gtr.Report{}, err
-			}
-
-			if buf.Len() >= maxLineSize {
-				// Stop writing to buf if we exceed maxLineSize. We continue
-				// reading however to make sure we consume the entire line.
-				continue
-			}
-
-			buf.Write(line) // ignore err, always nil
-		}
-
-		if buf.Len() > maxLineSize {
-			buf.Truncate(maxLineSize)
 		}
 
 		// Lines that exceed bufio.MaxScanTokenSize are not expected to contain
@@ -177,10 +151,10 @@ func (p *Parser) Parse(r io.Reader) (gtr.Report, error) {
 		// reading lines up to bufio.MaxScanTokenSize in length. Since this
 		// turned out to be fine in almost all cases, it seemed an appropriate
 		// value to use to decide whether or not to attempt parsing this line.
-		if buf.Len() > bufio.MaxScanTokenSize {
-			p.output(buf.String())
+		if len(line) > bufio.MaxScanTokenSize {
+			p.output(line)
 		} else {
-			p.parseLine(buf.String())
+			p.parseLine(line)
 		}
 	}
 	return p.report(p.events), nil

@@ -1,8 +1,6 @@
 package gotest
 
 import (
-	"bufio"
-	"bytes"
 	"fmt"
 	"strings"
 	"testing"
@@ -213,58 +211,6 @@ func TestParseLine(t *testing.T) {
 			got := parser.events
 			if diff := cmp.Diff(want, got); diff != "" {
 				t.Errorf("parseLine(%q) returned unexpected events, diff (-want, +got):\n%v", test.input, diff)
-			}
-		})
-	}
-}
-
-func TestParseLargeLine(t *testing.T) {
-	tests := []struct {
-		desc      string
-		inputSize int
-	}{
-		{"small size", 128},
-		{"under buf size", 4095},
-		{"buf size", 4096},
-		{"multiple of buf size ", 4096 * 2},
-		{"not multiple of buf size", 10 * 1024},
-		{"bufio.MaxScanTokenSize", bufio.MaxScanTokenSize},
-		{"over bufio.MaxScanTokenSize", bufio.MaxScanTokenSize + 1},
-		{"under limit", maxLineSize - 1},
-		{"at limit", maxLineSize},
-		{"just over limit", maxLineSize + 1},
-		{"over limit", maxLineSize + 128},
-	}
-
-	createInput := func(lines ...string) *bytes.Buffer {
-		buf := &bytes.Buffer{}
-		buf.WriteString("=== RUN TestOne\n--- PASS: TestOne (0.00s)\n")
-		buf.WriteString(strings.Join(lines, "\n"))
-		return buf
-	}
-
-	for _, test := range tests {
-		t.Run(test.desc, func(t *testing.T) {
-			line1 := string(make([]byte, test.inputSize))
-			line2 := "other line"
-			report, err := NewParser().Parse(createInput(line1, line2))
-			if err != nil {
-				t.Fatalf("Parse() returned error %v", err)
-			} else if len(report.Packages) != 1 {
-				t.Fatalf("Parse() returned unexpected number of packages, got %d want 1.", len(report.Packages))
-			} else if len(report.Packages[0].Output) != 2 {
-				t.Fatalf("Parse() returned unexpected number of output lines, got %d want 1.", len(report.Packages[0].Output))
-			}
-
-			want := line1
-			if len(want) > maxLineSize {
-				want = want[:maxLineSize]
-			}
-			if got := report.Packages[0].Output[0]; got != want {
-				t.Fatalf("Parse() output line1 mismatch, got len %d want len %d", len(got), len(want))
-			}
-			if report.Packages[0].Output[1] != line2 {
-				t.Fatalf("Parse() output line2 mismatch, got %v want %v", report.Packages[0].Output[1], line2)
 			}
 		})
 	}
