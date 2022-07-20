@@ -23,7 +23,6 @@ type reportBuilder struct {
 	packages    []gtr.Package
 	tests       map[int]gtr.Test
 	buildErrors map[int]gtr.Error
-	runErrors   map[int]gtr.Error
 
 	// state
 	nextID    int               // next free unused id
@@ -43,7 +42,6 @@ func newReportBuilder() *reportBuilder {
 	return &reportBuilder{
 		tests:         make(map[int]gtr.Test),
 		buildErrors:   make(map[int]gtr.Error),
-		runErrors:     make(map[int]gtr.Error),
 		nextID:        1,
 		output:        collector.New(),
 		parentIDs:     make(map[int]struct{}),
