@@ -115,3 +115,12 @@ func TestActiveID(t *testing.T) {
 	}
 
 }
+
+func TestSafeText(t *testing.T) {
+	l := line{text: "\tx\x00y\x1bz\n"}
+	got := l.SafeText()
+	want := "\txyz\n"
+	if diff := cmp.Diff(want, got); diff != "" {
+		t.Errorf("SafeText() for %q incorrect (-want +got):\n%s", l.text, diff)
+	}
+}

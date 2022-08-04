@@ -45,9 +45,15 @@ func TestWithNewlinesFlat(t *testing.T) {
 	fmt.Println("two-newlines\ntwo-newlines\ntwo-newlines")
 }
 
+func TestControl(t *testing.T) {
+	t.Logf("log\x00 control")
+	fmt.Printf("printf\x00 control\n")
+}
+
 func TestSubTests(t *testing.T) {
 	t.Run("TestFlat", TestFlat)
 	t.Run("TestWithSpace", TestWithSpace)
 	t.Run("TestWithTab", TestWithTab)
 	t.Run("TestWithNewlinesFlat", TestWithNewlinesFlat)
+	t.Run("TestControl", TestControl)
 }
