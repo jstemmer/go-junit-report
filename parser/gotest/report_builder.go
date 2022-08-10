@@ -53,7 +53,7 @@ func newReportBuilder() *reportBuilder {
 func (b *reportBuilder) newID() int {
 	id := b.nextID
 	b.lastID = id
-	b.nextID += 1
+	b.nextID++
 	return id
 }
 

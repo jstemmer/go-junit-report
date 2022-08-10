@@ -74,18 +74,18 @@ func (t *Testsuite) AddProperty(name, value string) {
 // AddTestcase adds Testcase tc to this Testsuite.
 func (t *Testsuite) AddTestcase(tc Testcase) {
 	t.Testcases = append(t.Testcases, tc)
-	t.Tests += 1
+	t.Tests++
 
 	if tc.Error != nil {
-		t.Errors += 1
+		t.Errors++
 	}
 
 	if tc.Failure != nil {
-		t.Failures += 1
+		t.Failures++
 	}
 
 	if tc.Skipped != nil {
-		t.Skipped += 1
+		t.Skipped++
 	}
 }
 
