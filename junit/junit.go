@@ -90,8 +90,8 @@ func (t *Testsuite) AddTestcase(tc Testcase) {
 }
 
 // SetTimestamp sets the timestamp in this Testsuite.
-func (ts *Testsuite) SetTimestamp(t time.Time) {
-	ts.Timestamp = t.Format(time.RFC3339)
+func (t *Testsuite) SetTimestamp(timestamp time.Time) {
+	t.Timestamp = timestamp.Format(time.RFC3339)
 }
 
 // Testcase represents a single test with its results.
