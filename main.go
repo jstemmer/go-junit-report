@@ -1,3 +1,6 @@
+// go-junit-report converts `go test` output to a JUnit compatible XML report.
+//
+// See README.md for more information and usage examples.
 package main
 
 import (
@@ -11,6 +14,7 @@ import (
 	"github.com/jstemmer/go-junit-report/v2/parser/gotest"
 )
 
+// Current release information printed by the -version flag.
 var (
 	Version   = "v2.0.0-dev"
 	Revision  = "HEAD"

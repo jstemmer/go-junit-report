@@ -14,7 +14,7 @@ func NewJSONParser(options ...Option) *JSONParser {
 	return &JSONParser{gp: NewParser(options...)}
 }
 
-// Parser is a Go test json output Parser.
+// JSONParser is a `go test -json` output Parser.
 type JSONParser struct {
 	gp *Parser
 }

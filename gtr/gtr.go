@@ -10,6 +10,7 @@ import (
 // Result is the result of a test.
 type Result int
 
+// Test results.
 const (
 	Unknown Result = iota
 	Pass
