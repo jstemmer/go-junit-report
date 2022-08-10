@@ -86,12 +86,12 @@ func testRun(inputFile, reportFile string, config Config, t *testing.T) {
 }
 
 func testFileConfig(filename string) (config Config, reportFile string, err error) {
-	var prefix string
-	if idx := strings.IndexByte(filename, '-'); idx < 0 {
+	idx := strings.IndexByte(filename, '-')
+	if idx < 0 {
 		return config, "", fmt.Errorf("testdata file does not contain a dash (-); expected name `{id}-{name}.txt` got `%s`", filename)
-	} else {
-		prefix = filename[:idx]
 	}
+
+	prefix := filename[:idx]
 	id, err := strconv.Atoi(prefix)
 	if err != nil {
 		return config, "", fmt.Errorf("testdata file did not start with a valid number: %w", err)
