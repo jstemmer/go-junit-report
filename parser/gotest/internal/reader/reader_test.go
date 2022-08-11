@@ -5,6 +5,8 @@ import (
 	"io"
 	"strings"
 	"testing"
+
+	"github.com/google/go-cmp/cmp"
 )
 
 const testingLimit = 4 * 1024 * 1024
@@ -64,5 +66,36 @@ func TestLimitedLineReader(t *testing.T) {
 				t.Fatalf("ReadLine() returned unexpected line, got %v want nothing\n", got)
 			}
 		})
+	}
+}
+
+func TestJSONEventReader(t *testing.T) {
+	input := `some other output
+{"Time":"2019-10-09T00:00:00.708139047+00:00","Action":"output","Package":"package/name/ok","Test":"TestOK"}
+{"Time":"2019-10-09T00:00:00.708139047+00:00","Action":"output","Package":"package/name/ok","Test":"TestOK","Output":"=== RUN   TestOK\n"}
+`
+	want := []struct {
+		line     string
+		metadata *Metadata
+	}{
+		{"some other output", nil},
+		{"=== RUN   TestOK", &Metadata{Package: "package/name/ok"}},
+	}
+
+	r := NewJSONEventReader(strings.NewReader(input))
+	for i := 0; i < len(want); i++ {
+		line, metadata, err := r.ReadLine()
+		if err == io.EOF {
+			return
+		} else if err != nil {
+			t.Fatalf("ReadLine() returned error %v", err)
+		}
+
+		if diff := cmp.Diff(want[i].line, line); diff != "" {
+			t.Errorf("ReadLine() returned incorrect line, diff (-want, +got):\n%s\n", diff)
+		}
+		if diff := cmp.Diff(want[i].metadata, metadata); diff != "" {
+			t.Errorf("ReadLine() Returned incorrect metadata, diff (-want, +got):\n%s\n", diff)
+		}
 	}
 }
