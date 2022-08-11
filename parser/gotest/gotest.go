@@ -136,7 +136,7 @@ func (p *Parser) Parse(r io.Reader) (gtr.Report, error) {
 func (p *Parser) parse(r reader.LineReader) (gtr.Report, error) {
 	p.events = nil
 	for {
-		line, _, err := r.ReadLine()
+		line, metadata, err := r.ReadLine()
 		if err == io.EOF {
 			break
 		} else if err != nil {
@@ -160,6 +160,7 @@ func (p *Parser) parse(r reader.LineReader) (gtr.Report, error) {
 		}
 
 		for _, ev := range evs {
+			ev.applyMetadata(metadata)
 			p.events = append(p.events, ev)
 		}
 	}
