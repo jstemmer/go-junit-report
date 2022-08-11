@@ -34,7 +34,7 @@ func TestLimitedLineReader(t *testing.T) {
 			input := strings.NewReader(strings.Join([]string{line1, line2}, "\n"))
 			r := NewLimitedLineReader(input, testingLimit)
 
-			got, err := r.ReadLine()
+			got, _, err := r.ReadLine()
 			if err != nil {
 				t.Fatalf("ReadLine() returned error %v", err)
 			}
@@ -47,7 +47,7 @@ func TestLimitedLineReader(t *testing.T) {
 				t.Fatalf("ReadLine() returned incorrect line, got len %d want len %d", len(got), len(want))
 			}
 
-			got, err = r.ReadLine()
+			got, _, err = r.ReadLine()
 			if err != nil {
 				t.Fatalf("ReadLine() returned error %v", err)
 			}
@@ -56,7 +56,7 @@ func TestLimitedLineReader(t *testing.T) {
 				t.Fatalf("ReadLine() returned incorrect line, got len %d want len %d", len(got), len(want))
 			}
 
-			got, err = r.ReadLine()
+			got, _, err = r.ReadLine()
 			if err != io.EOF {
 				t.Fatalf("ReadLine() returned unexpected error, got %v want %v\n", err, io.EOF)
 			}

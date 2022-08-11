@@ -133,10 +133,10 @@ func (p *Parser) Parse(r io.Reader) (gtr.Report, error) {
 	return p.parse(reader.NewLimitedLineReader(r, maxLineSize))
 }
 
-func (p *Parser) parse(r *reader.LimitedLineReader) (gtr.Report, error) {
+func (p *Parser) parse(r reader.LineReader) (gtr.Report, error) {
 	p.events = nil
 	for {
-		line, err := r.ReadLine()
+		line, _, err := r.ReadLine()
 		if err == io.EOF {
 			break
 		} else if err != nil {
