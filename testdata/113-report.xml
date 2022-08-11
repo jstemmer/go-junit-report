@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2">
+	<testsuite name="package/race-json/pkg2" tests="1" failures="0" errors="0" id="0" hostname="hostname" time="0.000" timestamp="2022-01-01T00:00:00Z">
+		<properties>
+			<property name="go.version" value="1.0"></property>
+		</properties>
+		<testcase name="TestPkg2" classname="package/race-json/pkg2" time="0.000"></testcase>
+	</testsuite>
+	<testsuite name="package/race-json/pkg1" tests="1" failures="0" errors="0" id="1" hostname="hostname" time="0.000" timestamp="2022-01-01T00:00:00Z">
+		<properties>
+			<property name="go.version" value="1.0"></property>
+		</properties>
+		<testcase name="TestPkg1" classname="package/race-json/pkg1" time="0.000"></testcase>
+	</testsuite>
+</testsuites>
