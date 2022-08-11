@@ -1,6 +1,7 @@
 package gotest
 
 import (
+	"fmt"
 	"strings"
 	"time"
 
@@ -46,6 +47,39 @@ func newReportBuilder() *reportBuilder {
 		output:        collector.New(),
 		parentIDs:     make(map[int]struct{}),
 		timestampFunc: time.Now,
+	}
+}
+
+// ProcessEvent gives an event to this reportBuilder to be processed for this
+// report.
+func (b *reportBuilder) ProcessEvent(ev Event) {
+	switch ev.Type {
+	case "run_test":
+		b.CreateTest(ev.Name)
+	case "pause_test":
+		b.PauseTest(ev.Name)
+	case "cont_test":
+		b.ContinueTest(ev.Name)
+	case "end_test":
+		b.EndTest(ev.Name, ev.Result, ev.Duration, ev.Indent)
+	case "run_benchmark":
+		b.CreateBenchmark(ev.Name)
+	case "benchmark":
+		b.BenchmarkResult(ev.Name, ev.Iterations, ev.NsPerOp, ev.MBPerSec, ev.BytesPerOp, ev.AllocsPerOp)
+	case "end_benchmark":
+		b.EndBenchmark(ev.Name, ev.Result)
+	case "status":
+		b.End()
+	case "summary":
+		b.CreatePackage(ev.Name, ev.Result, ev.Duration, ev.Data)
+	case "coverage":
+		b.Coverage(ev.CovPct, ev.CovPackages)
+	case "build_output":
+		b.CreateBuildError(ev.Name)
+	case "output":
+		b.AppendOutput(ev.Data)
+	default:
+		fmt.Printf("reportBuilder: unhandled event type: %v\n", ev.Type)
 	}
 }
 

@@ -169,34 +169,7 @@ func (p *Parser) report(events []Event) gtr.Report {
 		rb.timestampFunc = p.timestampFunc
 	}
 	for _, ev := range events {
-		switch ev.Type {
-		case "run_test":
-			rb.CreateTest(ev.Name)
-		case "pause_test":
-			rb.PauseTest(ev.Name)
-		case "cont_test":
-			rb.ContinueTest(ev.Name)
-		case "end_test":
-			rb.EndTest(ev.Name, ev.Result, ev.Duration, ev.Indent)
-		case "run_benchmark":
-			rb.CreateBenchmark(ev.Name)
-		case "benchmark":
-			rb.BenchmarkResult(ev.Name, ev.Iterations, ev.NsPerOp, ev.MBPerSec, ev.BytesPerOp, ev.AllocsPerOp)
-		case "end_benchmark":
-			rb.EndBenchmark(ev.Name, ev.Result)
-		case "status":
-			rb.End()
-		case "summary":
-			rb.CreatePackage(ev.Name, ev.Result, ev.Duration, ev.Data)
-		case "coverage":
-			rb.Coverage(ev.CovPct, ev.CovPackages)
-		case "build_output":
-			rb.CreateBuildError(ev.Name)
-		case "output":
-			rb.AppendOutput(ev.Data)
-		default:
-			fmt.Printf("unhandled event type: %v\n", ev.Type)
-		}
+		rb.ProcessEvent(ev)
 	}
 	return rb.Build()
 }
