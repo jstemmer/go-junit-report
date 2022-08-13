@@ -108,12 +108,13 @@ func (b *reportBuilder) Build() gtr.Report {
 
 // CreateTest adds a test with the given name to the report, and marks it as
 // active.
-func (b *reportBuilder) CreateTest(name string) {
+func (b *reportBuilder) CreateTest(name string) int {
 	if parentID, ok := b.findTestParentID(name); ok {
 		b.parentIDs[parentID] = struct{}{}
 	}
 	id := b.newID()
 	b.tests[id] = gtr.NewTest(id, name)
+	return id
 }
 
 // PauseTest marks the active context as no longer active. Any results or
@@ -140,8 +141,7 @@ func (b *reportBuilder) EndTest(name, result string, duration time.Duration, lev
 		// test did not exist, create one
 		// TODO: Likely reason is that the user ran go test without the -v
 		// flag, should we report this somewhere?
-		b.CreateTest(name)
-		id = b.lastID
+		id = b.CreateTest(name)
 	}
 
 	t := b.tests[id]
@@ -164,8 +164,7 @@ func (b *reportBuilder) End() {
 func (b *reportBuilder) BenchmarkResult(name string, iterations int64, nsPerOp, mbPerSec float64, bytesPerOp, allocsPerOp int64) {
 	id, ok := b.findTest(name)
 	if !ok || b.tests[id].Result != gtr.Unknown {
-		b.CreateTest(name)
-		id = b.lastID
+		id = b.CreateTest(name)
 	}
 
 	benchmark := Benchmark{iterations, nsPerOp, mbPerSec, bytesPerOp, allocsPerOp}
