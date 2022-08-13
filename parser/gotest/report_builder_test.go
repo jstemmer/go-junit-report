@@ -125,6 +125,66 @@ func TestReport(t *testing.T) {
 	}
 }
 
+func TestBuildReportMultiplePackages(t *testing.T) {
+	events := []Event{
+		{Package: "package/name1", Type: "run_test", Name: "TestOne"},
+		{Package: "package/name2", Type: "run_test", Name: "TestOne"},
+		{Package: "package/name1", Type: "output", Data: "\tHello"},
+		{Package: "package/name1", Type: "end_test", Name: "TestOne", Result: "PASS", Duration: 1 * time.Millisecond},
+		{Package: "package/name2", Type: "output", Data: "\tfile_test.go:10: error"},
+		{Package: "package/name2", Type: "end_test", Name: "TestOne", Result: "FAIL", Duration: 1 * time.Millisecond},
+		{Package: "package/name2", Type: "status", Result: "FAIL"},
+		{Package: "package/name2", Type: "summary", Result: "FAIL", Name: "package/name2", Duration: 1 * time.Millisecond},
+		{Package: "package/name1", Type: "status", Result: "PASS"},
+		{Package: "package/name1", Type: "summary", Result: "ok", Name: "package/name1", Duration: 1 * time.Millisecond},
+	}
+
+	want := gtr.Report{
+		Packages: []gtr.Package{
+			{
+				Name:      "package/name2",
+				Duration:  1 * time.Millisecond,
+				Timestamp: testTimestamp,
+				Tests: []gtr.Test{
+					{
+						ID:       2,
+						Name:     "TestOne",
+						Duration: 1 * time.Millisecond,
+						Result:   gtr.Fail,
+						Output:   []string{"\tfile_test.go:10: error"},
+						Data:     make(map[string]interface{}),
+					},
+				},
+			},
+			{
+				Name:      "package/name1",
+				Duration:  1 * time.Millisecond,
+				Timestamp: testTimestamp,
+				Tests: []gtr.Test{
+					{
+						ID:       1,
+						Name:     "TestOne",
+						Duration: 1 * time.Millisecond,
+						Result:   gtr.Pass,
+						Output:   []string{"\tHello"},
+						Data:     make(map[string]interface{}),
+					},
+				},
+			},
+		},
+	}
+
+	rb := newReportBuilder()
+	rb.timestampFunc = testTimestampFunc
+	for _, ev := range events {
+		rb.ProcessEvent(ev)
+	}
+	got := rb.Build()
+	if diff := cmp.Diff(want, got); diff != "" {
+		t.Errorf("FromEvents report incorrect, diff (-want, +got):\n%v", diff)
+	}
+}
+
 func TestSubtestModes(t *testing.T) {
 	events := []Event{
 		{Type: "run_test", Name: "TestParent"},
