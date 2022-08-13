@@ -63,11 +63,11 @@ func (b *reportBuilder) ProcessEvent(ev Event) {
 	case "end_test":
 		b.EndTest(ev.Name, ev.Result, ev.Duration, ev.Indent)
 	case "run_benchmark":
-		b.CreateBenchmark(ev.Name)
+		b.CreateTest(ev.Name)
 	case "benchmark":
 		b.BenchmarkResult(ev.Name, ev.Iterations, ev.NsPerOp, ev.MBPerSec, ev.BytesPerOp, ev.AllocsPerOp)
 	case "end_benchmark":
-		b.EndBenchmark(ev.Name, ev.Result)
+		b.EndTest(ev.Name, ev.Result, 0, 0)
 	case "status":
 		b.End()
 	case "summary":
@@ -157,14 +157,6 @@ func (b *reportBuilder) End() {
 	b.lastID = 0
 }
 
-// CreateBenchmark adds a benchmark with the given name to the report, and
-// marks it as active. If more than one benchmark exists with this name, the
-// most recently created benchmark will be updated. If no benchmark exists with
-// this name, a new benchmark is created.
-func (b *reportBuilder) CreateBenchmark(name string) {
-	b.CreateTest(name)
-}
-
 // BenchmarkResult updates an existing or adds a new test with the given
 // results and marks it as active. If an existing test with this name exists
 // but without result, then that one is updated. Otherwise a new one is added
@@ -182,14 +174,6 @@ func (b *reportBuilder) BenchmarkResult(name string, iterations int64, nsPerOp, 
 	test.Duration = benchmark.ApproximateDuration()
 	SetBenchmarkData(&test, benchmark)
 	b.tests[id] = test
-}
-
-// EndBenchmark finds the benchmark with the given name and sets the result. If
-// more than one benchmark exists with this name, the most recently created
-// benchmark will be used. If no benchmark exists with this name, a new
-// benchmark is created.
-func (b *reportBuilder) EndBenchmark(name, result string) {
-	b.EndTest(name, result, 0, 0)
 }
 
 // CreateBuildError creates a new build error and marks it as active.
