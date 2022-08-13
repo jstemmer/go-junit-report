@@ -223,7 +223,7 @@ func (b *reportBuilder) CreatePackage(name, result string, duration time.Duratio
 				Name:   name,
 				Output: b.output.Get(globalID),
 			}
-		} else if b.output.Contains(globalID) {
+		} else {
 			pkg.Output = b.output.Get(globalID)
 		}
 		b.packages = append(b.packages, pkg)
