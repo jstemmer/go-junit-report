@@ -27,7 +27,6 @@ type reportBuilder struct {
 
 	// state
 	nextID    int               // next free unused id
-	lastID    int               // most recently created id
 	output    *collector.Output // output collected for each id
 	coverage  float64           // coverage percentage
 	parentIDs map[int]struct{}  // set of test id's that contain subtests
@@ -86,7 +85,6 @@ func (b *reportBuilder) ProcessEvent(ev Event) {
 // newID returns a new unique id and sets the active context this id.
 func (b *reportBuilder) newID() int {
 	id := b.nextID
-	b.lastID = id
 	b.nextID++
 	return id
 }
@@ -113,6 +111,7 @@ func (b *reportBuilder) CreateTest(name string) int {
 		b.parentIDs[parentID] = struct{}{}
 	}
 	id := b.newID()
+	b.output.SetActiveID(id)
 	b.tests[id] = gtr.NewTest(id, name)
 	return id
 }
@@ -121,14 +120,15 @@ func (b *reportBuilder) CreateTest(name string) int {
 // output added to the report after calling PauseTest will no longer be assumed
 // to belong to this test.
 func (b *reportBuilder) PauseTest(name string) {
-	b.lastID = 0
+	b.output.SetActiveID(0)
 }
 
 // ContinueTest finds the test with the given name and marks it as active. If
 // more than one test exist with this name, the most recently created test will
 // be used.
 func (b *reportBuilder) ContinueTest(name string) {
-	b.lastID, _ = b.findTest(name)
+	id, _ := b.findTest(name)
+	b.output.SetActiveID(id)
 }
 
 // EndTest finds the test with the given name, sets the result, duration and
@@ -149,12 +149,12 @@ func (b *reportBuilder) EndTest(name, result string, duration time.Duration, lev
 	t.Duration = duration
 	t.Level = level
 	b.tests[id] = t
-	b.lastID = 0
+	b.output.SetActiveID(0)
 }
 
 // End marks the active context as no longer active.
 func (b *reportBuilder) End() {
-	b.lastID = 0
+	b.output.SetActiveID(0)
 }
 
 // BenchmarkResult updates an existing or adds a new test with the given
@@ -178,6 +178,7 @@ func (b *reportBuilder) BenchmarkResult(name string, iterations int64, nsPerOp, 
 // CreateBuildError creates a new build error and marks it as active.
 func (b *reportBuilder) CreateBuildError(packageName string) {
 	id := b.newID()
+	b.output.SetActiveID(id)
 	b.buildErrors[id] = gtr.Error{ID: id, Name: packageName}
 }
 
@@ -268,7 +269,7 @@ func (b *reportBuilder) CreatePackage(name, result string, duration time.Duratio
 	b.packages = append(b.packages, pkg)
 
 	// reset state, except for nextID to ensure all id's are unique.
-	b.lastID = 0
+	b.output.SetActiveID(0)
 	b.output.Clear(globalID)
 	b.coverage = 0
 	b.tests = make(map[int]gtr.Test)
@@ -283,16 +284,12 @@ func (b *reportBuilder) Coverage(pct float64, packages []string) {
 // AppendOutput appends the given text to the currently active context. If no
 // active context exists, the output is assumed to belong to the package.
 func (b *reportBuilder) AppendOutput(text string) {
-	b.output.Append(b.lastID, text)
+	b.output.Append(text)
 }
 
 // findTest returns the id of the most recently created test with the given
 // name if it exists.
 func (b *reportBuilder) findTest(name string) (int, bool) {
-	// check if this test was lastID
-	if t, ok := b.tests[b.lastID]; ok && t.Name == name {
-		return b.lastID, true
-	}
 	for i := b.nextID; i > 0; i-- {
 		if test, ok := b.tests[i]; ok && test.Name == name {
 			return i, true
