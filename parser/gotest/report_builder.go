@@ -187,12 +187,9 @@ func (b *reportBuilder) CreateBuildError(packageName string) {
 // so far. Afterwards all state is reset.
 func (b *reportBuilder) CreatePackage(name, result string, duration time.Duration, data string) {
 	pkg := gtr.Package{
-		Name:     name,
-		Duration: duration,
-	}
-
-	if b.timestampFunc != nil {
-		pkg.Timestamp = b.timestampFunc()
+		Name:      name,
+		Duration:  duration,
+		Timestamp: b.timestampFunc(),
 	}
 
 	// Build errors are treated somewhat differently. Rather than having a
