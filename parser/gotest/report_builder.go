@@ -258,7 +258,7 @@ func (b *reportBuilder) CreatePackage(name, result string, duration time.Duratio
 			continue
 		}
 	}
-	tests = b.groupBenchmarksByName(tests)
+	tests = groupBenchmarksByName(tests, b.output)
 
 	pkg.Coverage = b.coverage
 	pkg.Output = b.output.Get(globalID)
@@ -345,7 +345,7 @@ func parseResult(r string) gtr.Result {
 	}
 }
 
-func (b *reportBuilder) groupBenchmarksByName(tests []gtr.Test) []gtr.Test {
+func groupBenchmarksByName(tests []gtr.Test, output *collector.Output) []gtr.Test {
 	if len(tests) == 0 {
 		return nil
 	}
@@ -392,7 +392,7 @@ func (b *reportBuilder) groupBenchmarksByName(tests []gtr.Test) []gtr.Test {
 
 		group.Duration = combinedDuration(byName[group.Name])
 		group.Result = groupResults(byName[group.Name])
-		group.Output = b.output.GetAll(ids...)
+		group.Output = output.GetAll(ids...)
 		if count > 0 {
 			total.Iterations /= int64(count)
 			total.NsPerOp /= float64(count)

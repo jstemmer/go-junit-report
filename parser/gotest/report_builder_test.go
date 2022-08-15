@@ -1,10 +1,12 @@
 package gotest
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
 	"github.com/jstemmer/go-junit-report/v2/gtr"
+	"github.com/jstemmer/go-junit-report/v2/parser/gotest/internal/collector"
 
 	"github.com/google/go-cmp/cmp"
 )
@@ -236,6 +238,11 @@ func TestSubtestModes(t *testing.T) {
 }
 
 func TestGroupBenchmarksByName(t *testing.T) {
+	output := collector.New()
+	for i := 1; i <= 4; i++ {
+		output.AppendToID(i, fmt.Sprintf("output-%d", i))
+	}
+
 	tests := []struct {
 		name string
 		in   []gtr.Test
@@ -245,7 +252,7 @@ func TestGroupBenchmarksByName(t *testing.T) {
 		{
 			"one failing benchmark",
 			[]gtr.Test{{ID: 1, Name: "BenchmarkFailed", Result: gtr.Fail, Data: map[string]interface{}{}}},
-			[]gtr.Test{{ID: 1, Name: "BenchmarkFailed", Result: gtr.Fail, Data: map[string]interface{}{}}},
+			[]gtr.Test{{ID: 1, Name: "BenchmarkFailed", Result: gtr.Fail, Output: []string{"output-1"}, Data: map[string]interface{}{}}},
 		},
 		{
 			"four passing benchmarks",
@@ -256,7 +263,7 @@ func TestGroupBenchmarksByName(t *testing.T) {
 				{ID: 4, Name: "BenchmarkOne", Result: gtr.Pass, Data: map[string]interface{}{key: Benchmark{NsPerOp: 40, MBPerSec: 100, BytesPerOp: 5, AllocsPerOp: 2}}},
 			},
 			[]gtr.Test{
-				{ID: 1, Name: "BenchmarkOne", Result: gtr.Pass, Data: map[string]interface{}{key: Benchmark{NsPerOp: 25, MBPerSec: 250, BytesPerOp: 2, AllocsPerOp: 4}}},
+				{ID: 1, Name: "BenchmarkOne", Result: gtr.Pass, Output: []string{"output-1", "output-2", "output-3", "output-4"}, Data: map[string]interface{}{key: Benchmark{NsPerOp: 25, MBPerSec: 250, BytesPerOp: 2, AllocsPerOp: 4}}},
 			},
 		},
 		{
@@ -268,15 +275,14 @@ func TestGroupBenchmarksByName(t *testing.T) {
 				{ID: 4, Name: "BenchmarkMixed", Result: gtr.Fail},
 			},
 			[]gtr.Test{
-				{ID: 1, Name: "BenchmarkMixed", Result: gtr.Fail, Data: map[string]interface{}{key: Benchmark{NsPerOp: 25, MBPerSec: 250, BytesPerOp: 2, AllocsPerOp: 3}}},
+				{ID: 1, Name: "BenchmarkMixed", Result: gtr.Fail, Output: []string{"output-1", "output-2", "output-3", "output-4"}, Data: map[string]interface{}{key: Benchmark{NsPerOp: 25, MBPerSec: 250, BytesPerOp: 2, AllocsPerOp: 3}}},
 			},
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			b := newReportBuilder()
-			got := b.groupBenchmarksByName(test.in)
+			got := groupBenchmarksByName(test.in, output)
 			if diff := cmp.Diff(test.want, got); diff != "" {
 				t.Errorf("groupBenchmarksByName result incorrect, diff (-want, +got):\n%s\n", diff)
 			}
