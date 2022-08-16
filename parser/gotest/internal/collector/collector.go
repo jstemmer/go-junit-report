@@ -4,24 +4,13 @@ package collector
 
 import (
 	"sort"
-	"strings"
 	"time"
-	"unicode"
 )
 
 // line is a single line of output captured at some point in time.
 type line struct {
 	Timestamp time.Time
-	text      string
-}
-
-func (l line) SafeText() string {
-	return strings.Map(func(r rune) rune {
-		if unicode.IsControl(r) && !unicode.IsSpace(r) {
-			return -1
-		}
-		return r
-	}, l.text)
+	Text      string
 }
 
 // Output stores output lines grouped by id. Output can be retrieved for one or
@@ -65,7 +54,7 @@ func (o *Output) Contains(id int) bool {
 func (o *Output) Get(id int) []string {
 	var lines []string
 	for _, line := range o.m[id] {
-		lines = append(lines, line.SafeText())
+		lines = append(lines, line.Text)
 	}
 	return lines
 }
@@ -82,7 +71,7 @@ func (o *Output) GetAll(ids ...int) []string {
 	})
 	var lines []string
 	for _, line := range output {
-		lines = append(lines, line.SafeText())
+		lines = append(lines, line.Text)
 	}
 	return lines
 }

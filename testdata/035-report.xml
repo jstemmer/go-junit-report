@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites tests="11">
-	<testsuite name="package/whitespace" tests="11" failures="0" errors="0" id="0" hostname="hostname" time="0.001" timestamp="2022-01-01T00:00:00Z">
+<testsuites tests="9">
+	<testsuite name="package/whitespace" tests="9" failures="0" errors="0" id="0" hostname="hostname" time="0.001" timestamp="2022-01-01T00:00:00Z">
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
@@ -46,10 +46,6 @@ two-newlines
 two-newlines
 two-newlines]]></system-out>
 		</testcase>
-		<testcase name="TestControl" classname="package/whitespace" time="0.000">
-			<system-out><![CDATA[    whitespace_test.go:49: log control
-printf control]]></system-out>
-		</testcase>
 		<testcase name="TestSubTests" classname="package/whitespace" time="0.000"></testcase>
 		<testcase name="TestSubTests/TestFlat" classname="package/whitespace" time="0.000">
 			<system-out><![CDATA[    whitespace_test.go:9: log 1
@@ -92,10 +88,6 @@ one-newline
 two-newlines
 two-newlines
 two-newlines]]></system-out>
-		</testcase>
-		<testcase name="TestSubTests/TestControl" classname="package/whitespace" time="0.000">
-			<system-out><![CDATA[    whitespace_test.go:49: log control
-printf control]]></system-out>
 		</testcase>
 	</testsuite>
 </testsuites>
