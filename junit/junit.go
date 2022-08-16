@@ -3,6 +3,7 @@
 package junit
 
 import (
+	"bytes"
 	"encoding/xml"
 	"fmt"
 	"strings"
@@ -235,6 +236,16 @@ func formatDuration(d time.Duration) string {
 }
 
 // formatOutput combines the lines from the given output into a single string.
-func formatOutput(output []string) string {
-	return strings.Join(output, "\n")
+func formatOutput(output []string, _ int) string {
+	buf := bytes.NewBufferString("")
+	for i, o := range output {
+		err := xml.EscapeText(buf, []byte(o))
+		if err != nil {
+			return "formatOutput: " + err.Error()
+		}
+		if i < len(output)-1 {
+			buf.WriteString("\n")
+		}
+	}
+	return buf.String()
 }
