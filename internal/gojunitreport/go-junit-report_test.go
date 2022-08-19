@@ -33,6 +33,9 @@ func TestRun(t *testing.T) {
 	if err != nil {
 		t.Fatalf("error finding files in testdata: %v", err)
 	}
+	if len(files) == 0 {
+		t.Fatalf("no files found in %s", testDataDir)
+	}
 
 	for _, file := range files {
 		if !matchRegex.MatchString(file) {
