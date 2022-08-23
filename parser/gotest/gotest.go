@@ -133,15 +133,17 @@ func (p *Parser) Parse(r io.Reader) (gtr.Report, error) {
 	return p.parse(reader.NewLimitedLineReader(r, maxLineSize))
 }
 
-func (p *Parser) parse(r *reader.LimitedLineReader) (gtr.Report, error) {
+func (p *Parser) parse(r reader.LineReader) (gtr.Report, error) {
 	p.events = nil
 	for {
-		line, err := r.ReadLine()
+		line, metadata, err := r.ReadLine()
 		if err == io.EOF {
 			break
 		} else if err != nil {
 			return gtr.Report{}, err
 		}
+
+		var evs []Event
 
 		// Lines that exceed bufio.MaxScanTokenSize are not expected to contain
 		// any relevant test infrastructure output, so instead of parsing them
@@ -152,9 +154,14 @@ func (p *Parser) parse(r *reader.LimitedLineReader) (gtr.Report, error) {
 		// turned out to be fine in almost all cases, it seemed an appropriate
 		// value to use to decide whether or not to attempt parsing this line.
 		if len(line) > bufio.MaxScanTokenSize {
-			p.output(line)
+			evs = p.output(line)
 		} else {
-			p.parseLine(line)
+			evs = p.parseLine(line)
+		}
+
+		for _, ev := range evs {
+			ev.applyMetadata(metadata)
+			p.events = append(p.events, ev)
 		}
 	}
 	return p.report(p.events), nil
@@ -181,76 +188,70 @@ func (p *Parser) Events() []Event {
 	return events
 }
 
-func (p *Parser) parseLine(line string) {
+func (p *Parser) parseLine(line string) (events []Event) {
 	if strings.HasPrefix(line, "=== RUN ") {
-		p.runTest(strings.TrimSpace(line[8:]))
+		return p.runTest(strings.TrimSpace(line[8:]))
 	} else if strings.HasPrefix(line, "=== PAUSE ") {
-		p.pauseTest(strings.TrimSpace(line[10:]))
+		return p.pauseTest(strings.TrimSpace(line[10:]))
 	} else if strings.HasPrefix(line, "=== CONT ") {
-		p.contTest(strings.TrimSpace(line[9:]))
+		return p.contTest(strings.TrimSpace(line[9:]))
 	} else if matches := regexEndTest.FindStringSubmatch(line); len(matches) == 5 {
-		p.endTest(line, matches[1], matches[2], matches[3], matches[4])
+		return p.endTest(line, matches[1], matches[2], matches[3], matches[4])
 	} else if matches := regexStatus.FindStringSubmatch(line); len(matches) == 2 {
-		p.status(matches[1])
+		return p.status(matches[1])
 	} else if matches := regexSummary.FindStringSubmatch(line); len(matches) == 8 {
-		p.summary(matches[1], matches[2], matches[3], matches[4], matches[5], matches[6], matches[7])
+		return p.summary(matches[1], matches[2], matches[3], matches[4], matches[5], matches[6], matches[7])
 	} else if matches := regexCoverage.FindStringSubmatch(line); len(matches) == 3 {
-		p.coverage(matches[1], matches[2])
+		return p.coverage(matches[1], matches[2])
 	} else if matches := regexBenchmark.FindStringSubmatch(line); len(matches) == 2 {
-		p.runBench(matches[1])
+		return p.runBench(matches[1])
 	} else if matches := regexBenchSummary.FindStringSubmatch(line); len(matches) == 7 {
-		p.benchSummary(matches[1], matches[2], matches[3], matches[4], matches[5], matches[6])
+		return p.benchSummary(matches[1], matches[2], matches[3], matches[4], matches[5], matches[6])
 	} else if matches := regexEndBenchmark.FindStringSubmatch(line); len(matches) == 3 {
-		p.endBench(matches[1], matches[2])
+		return p.endBench(matches[1], matches[2])
 	} else if strings.HasPrefix(line, "# ") {
-		// TODO(jstemmer): this should just be output; we should detect build output when building report
 		fields := strings.Fields(strings.TrimPrefix(line, "# "))
 		if len(fields) == 1 || len(fields) == 2 {
-			p.buildOutput(fields[0])
-		} else {
-			p.output(line)
+			return p.buildOutput(fields[0])
 		}
-	} else {
-		p.output(line)
 	}
+	return p.output(line)
 }
 
-func (p *Parser) add(event Event) {
-	p.events = append(p.events, event)
+func (p *Parser) runTest(name string) []Event {
+	return []Event{{Type: "run_test", Name: name}}
 }
 
-func (p *Parser) runTest(name string) {
-	p.add(Event{Type: "run_test", Name: name})
+func (p *Parser) pauseTest(name string) []Event {
+	return []Event{{Type: "pause_test", Name: name}}
 }
 
-func (p *Parser) pauseTest(name string) {
-	p.add(Event{Type: "pause_test", Name: name})
+func (p *Parser) contTest(name string) []Event {
+	return []Event{{Type: "cont_test", Name: name}}
 }
 
-func (p *Parser) contTest(name string) {
-	p.add(Event{Type: "cont_test", Name: name})
-}
-
-func (p *Parser) endTest(line, indent, result, name, duration string) {
+func (p *Parser) endTest(line, indent, result, name, duration string) []Event {
+	var events []Event
 	if idx := strings.Index(line, fmt.Sprintf("%s--- %s:", indent, result)); idx > 0 {
-		p.output(line[:idx])
+		events = append(events, p.output(line[:idx])...)
 	}
 	_, n := stripIndent(indent)
-	p.add(Event{
+	events = append(events, Event{
 		Type:     "end_test",
 		Name:     name,
 		Result:   result,
 		Indent:   n,
 		Duration: parseSeconds(duration),
 	})
+	return events
 }
 
-func (p *Parser) status(result string) {
-	p.add(Event{Type: "status", Result: result})
+func (p *Parser) status(result string) []Event {
+	return []Event{{Type: "status", Result: result}}
 }
 
-func (p *Parser) summary(result, name, duration, cached, status, covpct, packages string) {
-	p.add(Event{
+func (p *Parser) summary(result, name, duration, cached, status, covpct, packages string) []Event {
+	return []Event{{
 		Type:        "summary",
 		Result:      result,
 		Name:        name,
@@ -258,26 +259,26 @@ func (p *Parser) summary(result, name, duration, cached, status, covpct, package
 		Data:        strings.TrimSpace(cached + " " + status),
 		CovPct:      parseFloat(covpct),
 		CovPackages: parsePackages(packages),
-	})
+	}}
 }
 
-func (p *Parser) coverage(percent, packages string) {
-	p.add(Event{
+func (p *Parser) coverage(percent, packages string) []Event {
+	return []Event{{
 		Type:        "coverage",
 		CovPct:      parseFloat(percent),
 		CovPackages: parsePackages(packages),
-	})
+	}}
 }
 
-func (p *Parser) runBench(name string) {
-	p.add(Event{
+func (p *Parser) runBench(name string) []Event {
+	return []Event{{
 		Type: "run_benchmark",
 		Name: name,
-	})
+	}}
 }
 
-func (p *Parser) benchSummary(name, iterations, nsPerOp, mbPerSec, bytesPerOp, allocsPerOp string) {
-	p.add(Event{
+func (p *Parser) benchSummary(name, iterations, nsPerOp, mbPerSec, bytesPerOp, allocsPerOp string) []Event {
+	return []Event{{
 		Type:        "benchmark",
 		Name:        name,
 		Iterations:  parseInt(iterations),
@@ -285,26 +286,26 @@ func (p *Parser) benchSummary(name, iterations, nsPerOp, mbPerSec, bytesPerOp, a
 		MBPerSec:    parseFloat(mbPerSec),
 		BytesPerOp:  parseInt(bytesPerOp),
 		AllocsPerOp: parseInt(allocsPerOp),
-	})
+	}}
 }
 
-func (p *Parser) endBench(result, name string) {
-	p.add(Event{
+func (p *Parser) endBench(result, name string) []Event {
+	return []Event{{
 		Type:   "end_benchmark",
 		Name:   name,
 		Result: result,
-	})
+	}}
 }
 
-func (p *Parser) buildOutput(packageName string) {
-	p.add(Event{
+func (p *Parser) buildOutput(packageName string) []Event {
+	return []Event{{
 		Type: "build_output",
 		Name: packageName,
-	})
+	}}
 }
 
-func (p *Parser) output(line string) {
-	p.add(Event{Type: "output", Data: line})
+func (p *Parser) output(line string) []Event {
+	return []Event{{Type: "output", Data: line}}
 }
 
 func parseSeconds(s string) time.Duration {

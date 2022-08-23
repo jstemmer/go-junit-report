@@ -1,0 +1,14 @@
+{"Time":"2022-07-17T22:24:20.065393432+01:00","Action":"run","Package":"package/race-json/pkg1","Test":"TestPkg1"}
+{"Time":"2022-07-17T22:24:20.065595209+01:00","Action":"output","Package":"package/race-json/pkg1","Test":"TestPkg1","Output":"=== RUN   TestPkg1\n"}
+{"Time":"2022-07-17T22:24:20.065621488+01:00","Action":"output","Package":"package/race-json/pkg1","Test":"TestPkg1","Output":"--- PASS: TestPkg1 (0.00s)\n"}
+{"Time":"2022-07-17T22:24:20.065633674+01:00","Action":"pass","Package":"package/race-json/pkg1","Test":"TestPkg1","Elapsed":0}
+{"Time":"2022-07-17T22:24:20.065647242+01:00","Action":"output","Package":"package/race-json/pkg1","Output":"PASS\n"}
+{"Time":"2022-07-17T22:24:20.065407525+01:00","Action":"run","Package":"package/race-json/pkg2","Test":"TestPkg2"}
+{"Time":"2022-07-17T22:24:20.06568802+01:00","Action":"output","Package":"package/race-json/pkg2","Test":"TestPkg2","Output":"=== RUN   TestPkg2\n"}
+{"Time":"2022-07-17T22:24:20.065713342+01:00","Action":"output","Package":"package/race-json/pkg2","Test":"TestPkg2","Output":"--- PASS: TestPkg2 (0.00s)\n"}
+{"Time":"2022-07-17T22:24:20.065725102+01:00","Action":"pass","Package":"package/race-json/pkg2","Test":"TestPkg2","Elapsed":0}
+{"Time":"2022-07-17T22:24:20.065736721+01:00","Action":"output","Package":"package/race-json/pkg2","Output":"PASS\n"}
+{"Time":"2022-07-17T22:24:20.06574776+01:00","Action":"output","Package":"package/race-json/pkg2","Output":"ok  \tpackage/race-json/pkg2\t(cached)\n"}
+{"Time":"2022-07-17T22:24:20.065763529+01:00","Action":"pass","Package":"package/race-json/pkg2","Elapsed":0}
+{"Time":"2022-07-17T22:24:20.065657773+01:00","Action":"output","Package":"package/race-json/pkg1","Output":"ok  \tpackage/race-json/pkg1\t(cached)\n"}
+{"Time":"2022-07-17T22:24:20.065831715+01:00","Action":"pass","Package":"package/race-json/pkg1","Elapsed":0}

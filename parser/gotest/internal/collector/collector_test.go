@@ -9,8 +9,8 @@ import (
 
 func TestClear(t *testing.T) {
 	o := New()
-	o.Append(1, "1")
-	o.Append(2, "2")
+	o.AppendToID(1, "1")
+	o.AppendToID(2, "2")
 	o.Clear(1)
 
 	want := []string(nil)
@@ -28,22 +28,22 @@ func TestClear(t *testing.T) {
 
 func TestAppendAndGet(t *testing.T) {
 	o := New()
-	o.Append(1, "1.1")
-	o.Append(1, "1.2")
-	o.Append(2, "2")
-	o.Append(1, "1.3")
+	o.AppendToID(1, "1.1")
+	o.AppendToID(1, "1.2")
+	o.AppendToID(2, "2")
+	o.AppendToID(1, "1.3")
 
 	want := []string{"1.1", "1.2", "1.3"}
 	got := o.Get(1)
 	if diff := cmp.Diff(want, got); diff != "" {
-		t.Errorf("Append() incorrect (-want +got):\n%s", diff)
+		t.Errorf("AppendToID() incorrect (-want +got):\n%s", diff)
 	}
 }
 
 func TestContains(t *testing.T) {
 	o := New()
-	o.Append(1, "1")
-	o.Append(2, "2")
+	o.AppendToID(1, "1")
+	o.AppendToID(2, "2")
 	o.Clear(1)
 
 	if !o.Contains(2) {
@@ -59,7 +59,7 @@ func TestContains(t *testing.T) {
 func TestGetAll(t *testing.T) {
 	o := New()
 	for i := 1; i <= 10; i++ {
-		o.Append(i%3, strconv.Itoa(i))
+		o.AppendToID(i%3, strconv.Itoa(i))
 	}
 
 	want := []string{"1", "2", "4", "5", "7", "8", "10"}
@@ -72,7 +72,7 @@ func TestGetAll(t *testing.T) {
 func TestMerge(t *testing.T) {
 	o := New()
 	for i := 1; i <= 10; i++ {
-		o.Append(i%3, strconv.Itoa(i))
+		o.AppendToID(i%3, strconv.Itoa(i))
 	}
 
 	o.Merge(2, 1)
@@ -88,4 +88,30 @@ func TestMerge(t *testing.T) {
 	if diff := cmp.Diff(want, got); diff != "" {
 		t.Errorf("Get(2) after Merge(2, 1) incorrect (-want +got):\n%s", diff)
 	}
+}
+
+func TestActiveID(t *testing.T) {
+	o := New()
+
+	o.Append("0")
+	o.SetActiveID(2)
+	o.Append("2")
+	o.SetActiveID(1)
+	o.Append("1")
+	o.SetActiveID(0)
+	o.Append("0")
+
+	expected := [][]string{
+		{"0", "0"},
+		{"1"},
+		{"2"},
+	}
+	for i := 0; i < 2; i++ {
+		want := expected[i]
+		got := o.Get(i)
+		if diff := cmp.Diff(want, got); diff != "" {
+			t.Errorf("Get(0) after SetActiveID incorrect (-want +got):\n%s", diff)
+		}
+	}
+
 }
