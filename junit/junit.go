@@ -149,7 +149,7 @@ func CreateFromReport(report gtr.Report, hostname string) Testsuites {
 		}
 
 		if len(pkg.Output) > 0 {
-			suite.SystemOut = &Output{Data: formatOutput(pkg.Output, 0)}
+			suite.SystemOut = &Output{Data: formatOutput(pkg.Output)}
 		}
 
 		if pkg.Coverage > 0 {
@@ -210,20 +210,20 @@ func createTestcaseForTest(pkgName string, test gtr.Test) Testcase {
 	if test.Result == gtr.Fail {
 		tc.Failure = &Result{
 			Message: "Failed",
-			Data:    formatOutput(test.Output, test.Level),
+			Data:    formatOutput(test.Output),
 		}
 	} else if test.Result == gtr.Skip {
 		tc.Skipped = &Result{
 			Message: "Skipped",
-			Data:    formatOutput(test.Output, test.Level),
+			Data:    formatOutput(test.Output),
 		}
 	} else if test.Result == gtr.Unknown {
 		tc.Error = &Result{
 			Message: "No test result found",
-			Data:    formatOutput(test.Output, test.Level),
+			Data:    formatOutput(test.Output),
 		}
 	} else if len(test.Output) > 0 {
-		tc.SystemOut = &Output{Data: formatOutput(test.Output, test.Level)}
+		tc.SystemOut = &Output{Data: formatOutput(test.Output)}
 	}
 	return tc
 }
@@ -235,6 +235,6 @@ func formatDuration(d time.Duration) string {
 }
 
 // formatOutput combines the lines from the given output into a single string.
-func formatOutput(output []string, indent int) string {
+func formatOutput(output []string) string {
 	return strings.Join(output, "\n")
 }
