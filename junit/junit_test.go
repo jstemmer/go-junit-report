@@ -19,7 +19,7 @@ func TestCreateFromReport(t *testing.T) {
 				Duration:   1 * time.Second,
 				Coverage:   0.9,
 				Output:     []string{"output"},
-				Properties: map[string]string{"go.version": "go1.18"},
+				Properties: []gtr.Property{{Name: "go.version", Value: "go1.18"}},
 				Tests: []gtr.Test{
 					{
 						Name:   "TestPass",

@@ -144,8 +144,8 @@ func CreateFromReport(report gtr.Report, hostname string) Testsuites {
 			suite.SetTimestamp(pkg.Timestamp)
 		}
 
-		for k, v := range pkg.Properties {
-			suite.AddProperty(k, v)
+		for _, p := range pkg.Properties {
+			suite.AddProperty(p.Name, p.Value)
 		}
 
 		if len(pkg.Output) > 0 {
