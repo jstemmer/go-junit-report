@@ -78,7 +78,7 @@ func (p *Package) SetProperty(key, value string) {
 	// then add the specieid key-value property.
 	i := 0
 	for _, prop := range p.Properties {
-		if key == prop.Name {
+		if key != prop.Name {
 			p.Properties[i] = prop
 			i++
 		}
