@@ -3,11 +3,11 @@
 package junit
 
 import (
-	"bytes"
 	"encoding/xml"
 	"fmt"
 	"strings"
 	"time"
+	"unicode"
 
 	"github.com/jstemmer/go-junit-report/v2/gtr"
 )
@@ -236,16 +236,31 @@ func formatDuration(d time.Duration) string {
 }
 
 // formatOutput combines the lines from the given output into a single string.
-func formatOutput(output []string, _ int) string {
-	buf := bytes.NewBufferString("")
-	for i, o := range output {
-		err := xml.EscapeText(buf, []byte(o))
-		if err != nil {
-			return "formatOutput: " + err.Error()
+func formatOutput(output []string) string {
+	return escapeIllegalChars(strings.Join(output, "\n"))
+}
+
+func escapeIllegalChars(str string) string {
+	return strings.Map(func(r rune) rune {
+		if unicode.IsSpace(r) {
+			return r
 		}
-		if i < len(output)-1 {
-			buf.WriteString("\n")
+		if isInCharacterRange(r) {
+			return r
 		}
-	}
-	return buf.String()
+		return '�'
+	}, str)
+}
+
+// Decide whether the given rune is in the XML Character Range, per
+// the Char production of https://www.xml.com/axml/testaxml.htm,
+// Section 2.2 Characters.
+// Form: encoding/xml/xml.go
+func isInCharacterRange(r rune) (inrange bool) {
+	return r == 0x09 ||
+		r == 0x0A ||
+		r == 0x0D ||
+		r >= 0x20 && r <= 0xD7FF ||
+		r >= 0xE000 && r <= 0xFFFD ||
+		r >= 0x10000 && r <= 0x10FFFF
 }
