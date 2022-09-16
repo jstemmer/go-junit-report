@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"strings"
 	"time"
-	"unicode"
 
 	"github.com/jstemmer/go-junit-report/v2/gtr"
 )
@@ -242,9 +241,6 @@ func formatOutput(output []string) string {
 
 func escapeIllegalChars(str string) string {
 	return strings.Map(func(r rune) rune {
-		if unicode.IsSpace(r) {
-			return r
-		}
 		if isInCharacterRange(r) {
 			return r
 		}

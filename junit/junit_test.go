@@ -81,7 +81,7 @@ func TestCreateFromReport(t *testing.T) {
 						Name:      "TestEscapeOutput",
 						Classname: "package/name",
 						Time:      "0.000",
-						SystemOut: &Output{Data: "�\v\f \t\\"},
+						SystemOut: &Output{Data: `��� 	\`},
 					},
 					{
 						Name:      "TestFail",
