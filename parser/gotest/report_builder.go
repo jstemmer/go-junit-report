@@ -120,6 +120,11 @@ func (b *reportBuilder) Build() gtr.Report {
 		}
 		b.packages = append(b.packages, b.CreatePackage(name, b.packageName, "", 0, ""))
 	}
+
+	// Create packages for any leftover build errors.
+	for _, buildErr := range b.buildErrors {
+		b.packages = append(b.packages, b.CreatePackage("", buildErr.Name, "", 0, ""))
+	}
 	return gtr.Report{Packages: b.packages}
 }
 

@@ -350,30 +350,61 @@ func TestGroupBenchmarksByName(t *testing.T) {
 	}
 }
 
-func TestReportFailedSummary(t *testing.T) {
-	events := []Event{
-		{Type: "summary", Result: "FAIL", Name: "package/name", Duration: 1 * time.Millisecond},
-	}
-	want := gtr.Report{
-		Packages: []gtr.Package{
-			{
-				Name:      "package/name",
-				Duration:  1 * time.Millisecond,
-				Timestamp: testTimestamp,
-				RunError: gtr.Error{
-					Name: "package/name",
+func TestReportSpecialCases(t *testing.T) {
+	tests := []struct {
+		name   string
+		events []Event
+		want   gtr.Report
+	}{
+		{
+			"failed-summary-only",
+			[]Event{{Type: "summary", Result: "FAIL", Name: "package/name", Duration: 1 * time.Millisecond}},
+			gtr.Report{
+				Packages: []gtr.Package{
+					{
+						Name:      "package/name",
+						Duration:  1 * time.Millisecond,
+						Timestamp: testTimestamp,
+						RunError: gtr.Error{
+							Name: "package/name",
+						},
+					},
+				},
+			},
+		},
+		{
+			"leftover-builderror",
+			[]Event{
+				{Type: "build_output", Name: "package/name"},
+				{Type: "output", Data: "error message"},
+			},
+			gtr.Report{
+				Packages: []gtr.Package{
+					{
+						Name:      "package/name",
+						Timestamp: testTimestamp,
+						BuildError: gtr.Error{
+							ID:     1,
+							Name:   "package/name",
+							Output: []string{"error message"},
+						},
+					},
 				},
 			},
 		},
 	}
 
-	rb := newReportBuilder()
-	rb.timestampFunc = testTimestampFunc
-	for _, ev := range events {
-		rb.ProcessEvent(ev)
-	}
-	got := rb.Build()
-	if diff := cmp.Diff(want, got); diff != "" {
-		t.Errorf("Incorrect report created, diff (-want, +got):\n%v\n", diff)
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			rb := newReportBuilder()
+			rb.timestampFunc = testTimestampFunc
+			for _, ev := range test.events {
+				rb.ProcessEvent(ev)
+			}
+			got := rb.Build()
+			if diff := cmp.Diff(test.want, got); diff != "" {
+				t.Errorf("Incorrect report created, diff (-want, +got):\n%v\n", diff)
+			}
+		})
 	}
 }
