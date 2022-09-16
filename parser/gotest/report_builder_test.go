@@ -121,7 +121,7 @@ func TestReport(t *testing.T) {
 	}
 	got := rb.Build()
 	if diff := cmp.Diff(want, got); diff != "" {
-		t.Errorf("FromEvents report incorrect, diff (-want, +got):\n%v", diff)
+		t.Errorf("Incorrect report created, diff (-want, +got):\n%v", diff)
 	}
 }
 
@@ -181,7 +181,7 @@ func TestBuildReportMultiplePackages(t *testing.T) {
 	}
 	got := rb.Build()
 	if diff := cmp.Diff(want, got); diff != "" {
-		t.Errorf("FromEvents report incorrect, diff (-want, +got):\n%v", diff)
+		t.Errorf("Incorrect report created, diff (-want, +got):\n%v", diff)
 	}
 }
 
