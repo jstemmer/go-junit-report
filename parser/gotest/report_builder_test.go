@@ -349,3 +349,31 @@ func TestGroupBenchmarksByName(t *testing.T) {
 		})
 	}
 }
+
+func TestReportFailedSummary(t *testing.T) {
+	events := []Event{
+		{Type: "summary", Result: "FAIL", Name: "package/name", Duration: 1 * time.Millisecond},
+	}
+	want := gtr.Report{
+		Packages: []gtr.Package{
+			{
+				Name:      "package/name",
+				Duration:  1 * time.Millisecond,
+				Timestamp: testTimestamp,
+				RunError: gtr.Error{
+					Name: "package/name",
+				},
+			},
+		},
+	}
+
+	rb := newReportBuilder()
+	rb.timestampFunc = testTimestampFunc
+	for _, ev := range events {
+		rb.ProcessEvent(ev)
+	}
+	got := rb.Build()
+	if diff := cmp.Diff(want, got); diff != "" {
+		t.Errorf("Incorrect report created, diff (-want, +got):\n%v\n", diff)
+	}
+}

@@ -164,7 +164,16 @@ func (b *reportBuilder) CreatePackage(packageName, newPackageName, result string
 	delete(b.packageBuilders, packageName)
 	pb.output.SetActiveID(0)
 
+	// If the packageBuilder is empty, we never received any events for this
+	// package so there's no need to continue.
 	if pb.IsEmpty() {
+		// However, we should at least report an error if the result says we
+		// failed.
+		if parseResult(result) == gtr.Fail {
+			pkg.RunError = gtr.Error{
+				Name: newPackageName,
+			}
+		}
 		return pkg
 	}
 
