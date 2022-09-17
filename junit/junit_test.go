@@ -27,6 +27,11 @@ func TestCreateFromReport(t *testing.T) {
 						Output: []string{"ok"},
 					},
 					{
+						Name:   "TestEscapeOutput",
+						Result: gtr.Pass,
+						Output: []string{"\x00\v\f \t\\"},
+					},
+					{
 						Name:   "TestFail",
 						Result: gtr.Fail,
 						Output: []string{"fail"},
@@ -47,14 +52,14 @@ func TestCreateFromReport(t *testing.T) {
 	}
 
 	want := Testsuites{
-		Tests:    6,
+		Tests:    7,
 		Errors:   3,
 		Failures: 1,
 		Skipped:  1,
 		Suites: []Testsuite{
 			{
 				Name:      "package/name",
-				Tests:     6,
+				Tests:     7,
 				Errors:    3,
 				ID:        0,
 				Failures:  1,
@@ -71,6 +76,12 @@ func TestCreateFromReport(t *testing.T) {
 						Classname: "package/name",
 						Time:      "0.000",
 						SystemOut: &Output{Data: "ok"},
+					},
+					{
+						Name:      "TestEscapeOutput",
+						Classname: "package/name",
+						Time:      "0.000",
+						SystemOut: &Output{Data: `��� 	\`},
 					},
 					{
 						Name:      "TestFail",
