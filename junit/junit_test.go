@@ -134,17 +134,19 @@ func TestMarshalUnmarshal(t *testing.T) {
 		Disabled: 1,
 		Suites: []Testsuite{
 			{
-				Name:       "suite1",
-				Tests:      1,
-				Errors:     1,
-				Failures:   1,
-				Hostname:   "localhost",
-				ID:         0,
-				Package:    "package",
-				Skipped:    1,
-				Time:       "12.345",
-				Timestamp:  "2012-03-09T14:38:06+01:00",
-				Properties: properties("key", "value"),
+				Name:      "suite1",
+				Tests:     1,
+				Errors:    1,
+				Failures:  1,
+				Hostname:  "localhost",
+				ID:        0,
+				Package:   "package",
+				Skipped:   1,
+				Time:      "12.345",
+				Timestamp: "2012-03-09T14:38:06+01:00",
+				Properties: &[]Property{
+					{Name: "key", Value: "value"},
+				},
 				Testcases: []Testcase{
 					{
 						Name:      "test1",
@@ -178,15 +180,4 @@ func TestMarshalUnmarshal(t *testing.T) {
 	if diff := cmp.Diff(want, got); diff != "" {
 		t.Errorf("Unmarshal result incorrect, diff (-want +got):\n%s\n", diff)
 	}
-}
-
-func properties(keyvals ...string) *[]Property {
-	if len(keyvals)%2 != 0 {
-		panic("invalid keyvals specified")
-	}
-	var props []Property
-	for i := 0; i < len(keyvals); i += 2 {
-		props = append(props, Property{keyvals[i], keyvals[i+1]})
-	}
-	return &props
 }
