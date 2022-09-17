@@ -244,14 +244,14 @@ func escapeIllegalChars(str string) string {
 		if isInCharacterRange(r) {
 			return r
 		}
-		return '�'
+		return '\uFFFD'
 	}, str)
 }
 
 // Decide whether the given rune is in the XML Character Range, per
 // the Char production of https://www.xml.com/axml/testaxml.htm,
 // Section 2.2 Characters.
-// Form: encoding/xml/xml.go
+// From: encoding/xml/xml.go
 func isInCharacterRange(r rune) (inrange bool) {
 	return r == 0x09 ||
 		r == 0x0A ||
