@@ -150,7 +150,7 @@ func (b *reportBuilder) CreatePackage(packageName, newPackageName, result string
 	// First check if this package contained a build error. If that's the case,
 	// we won't find any tests in this package.
 	for id, buildErr := range b.buildErrors {
-		if buildErr.Name == newPackageName {
+		if buildErr.Name == newPackageName || strings.TrimSuffix(buildErr.Name, "_test") == newPackageName {
 			pkg.BuildError = buildErr
 			pkg.BuildError.ID = id
 			pkg.BuildError.Duration = duration

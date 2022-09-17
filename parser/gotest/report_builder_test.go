@@ -392,6 +392,26 @@ func TestReportSpecialCases(t *testing.T) {
 				},
 			},
 		},
+		{
+			"build error in package with _test suffix",
+			[]Event{
+				{Type: "build_output", Name: "package/name_test"},
+				{Type: "summary", Name: "package/name", Result: "FAIL", Data: "[build failed]"},
+			},
+			gtr.Report{
+				Packages: []gtr.Package{
+					{
+						Name:      "package/name",
+						Timestamp: testTimestamp,
+						BuildError: gtr.Error{
+							ID:    1,
+							Name:  "package/name_test",
+							Cause: "[build failed]",
+						},
+					},
+				},
+			},
+		},
 	}
 
 	for _, test := range tests {
