@@ -1,0 +1,4 @@
+# package/testpkg/pkg_test [package/testpkg/pkg.test]
+pkg/pkg_test.go:5:2: imported and not used: "fmt"
+FAIL	package/testpkg/pkg [build failed]
+FAIL

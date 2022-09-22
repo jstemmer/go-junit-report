@@ -120,6 +120,11 @@ func (b *reportBuilder) Build() gtr.Report {
 		}
 		b.packages = append(b.packages, b.CreatePackage(name, b.packageName, "", 0, ""))
 	}
+
+	// Create packages for any leftover build errors.
+	for _, buildErr := range b.buildErrors {
+		b.packages = append(b.packages, b.CreatePackage("", buildErr.Name, "", 0, ""))
+	}
 	return gtr.Report{Packages: b.packages}
 }
 
@@ -145,7 +150,7 @@ func (b *reportBuilder) CreatePackage(packageName, newPackageName, result string
 	// First check if this package contained a build error. If that's the case,
 	// we won't find any tests in this package.
 	for id, buildErr := range b.buildErrors {
-		if buildErr.Name == newPackageName {
+		if buildErr.Name == newPackageName || strings.TrimSuffix(buildErr.Name, "_test") == newPackageName {
 			pkg.BuildError = buildErr
 			pkg.BuildError.ID = id
 			pkg.BuildError.Duration = duration
@@ -164,7 +169,16 @@ func (b *reportBuilder) CreatePackage(packageName, newPackageName, result string
 	delete(b.packageBuilders, packageName)
 	pb.output.SetActiveID(0)
 
+	// If the packageBuilder is empty, we never received any events for this
+	// package so there's no need to continue.
 	if pb.IsEmpty() {
+		// However, we should at least report an error if the result says we
+		// failed.
+		if parseResult(result) == gtr.Fail {
+			pkg.RunError = gtr.Error{
+				Name: newPackageName,
+			}
+		}
 		return pkg
 	}
 

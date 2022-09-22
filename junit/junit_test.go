@@ -27,6 +27,11 @@ func TestCreateFromReport(t *testing.T) {
 						Output: []string{"ok"},
 					},
 					{
+						Name:   "TestEscapeOutput",
+						Result: gtr.Pass,
+						Output: []string{"\x00\v\f \t\\"},
+					},
+					{
 						Name:   "TestFail",
 						Result: gtr.Fail,
 						Output: []string{"fail"},
@@ -47,14 +52,14 @@ func TestCreateFromReport(t *testing.T) {
 	}
 
 	want := Testsuites{
-		Tests:    6,
+		Tests:    7,
 		Errors:   3,
 		Failures: 1,
 		Skipped:  1,
 		Suites: []Testsuite{
 			{
 				Name:      "package/name",
-				Tests:     6,
+				Tests:     7,
 				Errors:    3,
 				ID:        0,
 				Failures:  1,
@@ -71,6 +76,12 @@ func TestCreateFromReport(t *testing.T) {
 						Classname: "package/name",
 						Time:      "0.000",
 						SystemOut: &Output{Data: "ok"},
+					},
+					{
+						Name:      "TestEscapeOutput",
+						Classname: "package/name",
+						Time:      "0.000",
+						SystemOut: &Output{Data: `��� 	\`},
 					},
 					{
 						Name:      "TestFail",
@@ -123,17 +134,19 @@ func TestMarshalUnmarshal(t *testing.T) {
 		Disabled: 1,
 		Suites: []Testsuite{
 			{
-				Name:       "suite1",
-				Tests:      1,
-				Errors:     1,
-				Failures:   1,
-				Hostname:   "localhost",
-				ID:         0,
-				Package:    "package",
-				Skipped:    1,
-				Time:       "12.345",
-				Timestamp:  "2012-03-09T14:38:06+01:00",
-				Properties: properties("key", "value"),
+				Name:      "suite1",
+				Tests:     1,
+				Errors:    1,
+				Failures:  1,
+				Hostname:  "localhost",
+				ID:        0,
+				Package:   "package",
+				Skipped:   1,
+				Time:      "12.345",
+				Timestamp: "2012-03-09T14:38:06+01:00",
+				Properties: &[]Property{
+					{Name: "key", Value: "value"},
+				},
 				Testcases: []Testcase{
 					{
 						Name:      "test1",
@@ -167,15 +180,4 @@ func TestMarshalUnmarshal(t *testing.T) {
 	if diff := cmp.Diff(want, got); diff != "" {
 		t.Errorf("Unmarshal result incorrect, diff (-want +got):\n%s\n", diff)
 	}
-}
-
-func properties(keyvals ...string) *[]Property {
-	if len(keyvals)%2 != 0 {
-		panic("invalid keyvals specified")
-	}
-	var props []Property
-	for i := 0; i < len(keyvals); i += 2 {
-		props = append(props, Property{keyvals[i], keyvals[i+1]})
-	}
-	return &props
 }
