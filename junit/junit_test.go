@@ -66,7 +66,7 @@ func TestCreateFromReport(t *testing.T) {
 				Skipped:   1,
 				Time:      "1.000",
 				Timestamp: "2022-06-26T00:00:00Z",
-				Properties: &[]Property{
+				Properties: []Property{
 					{Name: "go.version", Value: "go1.18"},
 					{Name: "coverage.statements.pct", Value: "0.90"},
 				},
@@ -144,7 +144,7 @@ func TestMarshalUnmarshal(t *testing.T) {
 				Skipped:   1,
 				Time:      "12.345",
 				Timestamp: "2012-03-09T14:38:06+01:00",
-				Properties: &[]Property{
+				Properties: []Property{
 					{Name: "key", Value: "value"},
 				},
 				Testcases: []Testcase{
