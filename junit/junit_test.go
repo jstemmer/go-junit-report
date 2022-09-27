@@ -1,6 +1,7 @@
 package junit
 
 import (
+	"bytes"
 	"encoding/xml"
 	"testing"
 	"time"
@@ -179,5 +180,30 @@ func TestMarshalUnmarshal(t *testing.T) {
 	want.XMLName.Local = "testsuites"
 	if diff := cmp.Diff(want, got); diff != "" {
 		t.Errorf("Unmarshal result incorrect, diff (-want +got):\n%s\n", diff)
+	}
+}
+
+func TestWriteXML(t *testing.T) {
+	want := `<testsuites tests="1">
+	<testsuite name="Example" tests="1" failures="0" errors="0" id="0" time="">
+		<testcase name="Test" classname=""></testcase>
+	</testsuite>
+</testsuites>
+`
+
+	var suites Testsuites
+
+	ts := Testsuite{Name:"Example"}
+	ts.AddTestcase(Testcase{Name: "Test", })
+	suites.AddSuite(ts)
+
+	var buf bytes.Buffer
+	if err := suites.WriteXML(&buf); err != nil {
+		t.Fatalf("WriteXML failed: %v\n", err)
+	}
+
+	got := buf.String()
+	if diff := cmp.Diff(want, got); diff != "" {
+		t.Errorf("WriteXML mismatch, diff (-want +got):\n%s\n", diff)
 	}
 }

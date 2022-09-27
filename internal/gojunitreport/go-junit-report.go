@@ -64,32 +64,21 @@ func (c Config) Run(input io.Reader, output io.Writer) (*gtr.Report, error) {
 		}
 	}
 
-	if err = c.writeXML(output, report); err != nil {
+	if err = c.writeJunitXML(output, report); err != nil {
 		return nil, err
 	}
 	return &report, nil
 }
 
-func (c Config) writeXML(w io.Writer, report gtr.Report) error {
+func (c Config) writeJunitXML(w io.Writer, report gtr.Report) error {
 	testsuites := junit.CreateFromReport(report, c.Hostname)
-
 	if !c.SkipXMLHeader {
 		_, err := fmt.Fprintf(w, xml.Header)
 		if err != nil {
 			return err
 		}
 	}
-
-	enc := xml.NewEncoder(w)
-	enc.Indent("", "\t")
-	if err := enc.Encode(testsuites); err != nil {
-		return err
-	}
-	if err := enc.Flush(); err != nil {
-		return err
-	}
-	_, err := fmt.Fprintf(w, "\n")
-	return err
+	return testsuites.WriteXML(w)
 }
 
 func (c Config) gotestOptions() []gotest.Option {

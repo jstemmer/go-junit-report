@@ -5,6 +5,7 @@ package junit
 import (
 	"encoding/xml"
 	"fmt"
+	"io"
 	"strings"
 	"time"
 
@@ -34,6 +35,20 @@ func (t *Testsuites) AddSuite(ts Testsuite) {
 	t.Failures += ts.Failures
 	t.Skipped += ts.Skipped
 	t.Disabled += ts.Disabled
+}
+
+// WriteXML writes the XML representation of Testsuites t to writer w.
+func (t *Testsuites) WriteXML(w io.Writer) error {
+	enc := xml.NewEncoder(w)
+	enc.Indent("", "\t")
+	if err := enc.Encode(t); err != nil {
+		return err
+	}
+	if err := enc.Flush(); err != nil {
+		return err
+	}
+	_, err := fmt.Fprintf(w, "\n")
+	return err
 }
 
 // Testsuite is a single JUnit testsuite containing testcases.
