@@ -20,6 +20,7 @@ var configs = map[string]gojunitreport.Config{
 	"005-no-xml-header.txt": {SkipXMLHeader: true},
 	"006-mixed.txt":         {SkipXMLHeader: true},
 	"007-compiled_test.txt": {PackageName: "test/package"},
+	"039-no-properties.txt": {Properties: make(map[string]string)},
 }
 
 func main() {
@@ -104,7 +105,9 @@ func createReportFromInput(inputFile, outputFile string, write bool) error {
 	config.TimestampFunc = func() time.Time {
 		return time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
 	}
-	config.Properties = map[string]string{"go.version": "1.0"}
+	if config.Properties == nil {
+		config.Properties = map[string]string{"go.version": "1.0"}
+	}
 
 	_, err = config.Run(in, out)
 	return err

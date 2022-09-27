@@ -1,0 +1,4 @@
+=== RUN   TestPass
+--- PASS: TestPass (0.06s)
+PASS
+ok  	package/pass	0.160s

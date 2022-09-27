@@ -21,9 +21,10 @@ const testDataDir = "../../testdata/"
 var matchTest = flag.String("match", "", "only test testdata matching this pattern")
 
 var testConfigs = map[int]Config{
-	5: {SkipXMLHeader: true},
-	6: {SkipXMLHeader: true},
-	7: {PackageName: "test/package"},
+	5:  {SkipXMLHeader: true},
+	6:  {SkipXMLHeader: true},
+	7:  {PackageName: "test/package"},
+	39: {Properties: make(map[string]string)},
 }
 
 func TestRun(t *testing.T) {
@@ -73,7 +74,9 @@ func testRun(inputFile, reportFile string, config Config, t *testing.T) {
 		config.Parser = "gojson"
 	}
 	config.Hostname = "hostname"
-	config.Properties = map[string]string{"go.version": "1.0"}
+	if config.Properties == nil {
+		config.Properties = map[string]string{"go.version": "1.0"}
+	}
 	config.TimestampFunc = func() time.Time {
 		return time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
 	}
