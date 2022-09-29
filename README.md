@@ -4,14 +4,7 @@ go-junit-report is a tool that converts [`go test`] output to a JUnit compatible
 XML report, suitable for use with applications such as [Jenkins].
 
 [![Build status][github-actions-badge]][github-actions-link]
-
-The test output parser and JUnit XML report generator are also available as Go
-packages. This can be helpful if you want to create your own custom JUnit
-reports for example. See the package documentation on pkg.go.dev for more
-information:
-
-- [github.com/jstemmer/go-junit-report/v2/parser/gotest]
-- [github.com/jstemmer/go-junit-report/v2/junit]
+[![Go Reference](https://pkg.go.dev/badge/github.com/jstemmer/go-junit-report/v2.svg)](https://pkg.go.dev/github.com/jstemmer/go-junit-report/v2)
 
 ## Install from package (recommended)
 
@@ -84,6 +77,16 @@ Run `go-junit-report -help` for a list of all supported flags.
 | `-set-exit-code`      | set exit code to 1 if tests failed                                              |
 | `-subtest-mode`       | set subtest `mode`, modes are: `ignore-parent-results`, `exclude-parents`       |
 | `-version`            | print version and exit                                                          |
+
+## Go packages
+
+The test output parser and JUnit XML report generator are also available as Go
+packages. This can be helpful if you want to use the `go test` output parser or
+create your own custom JUnit reports for example. See the package documentation
+on pkg.go.dev for more information:
+
+- [github.com/jstemmer/go-junit-report/v2/parser/gotest]
+- [github.com/jstemmer/go-junit-report/v2/junit]
 
 ## Changelog
 
