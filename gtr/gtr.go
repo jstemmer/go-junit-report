@@ -135,7 +135,7 @@ func TrimPrefixSpaces(line string, indent int) string {
 	// from a test.
 	prefixLen := strings.IndexFunc(line, func(r rune) bool { return r != ' ' })
 	if prefixLen%4 == 0 {
-		// Use the subtest level to trim a consistenly sized prefix from the
+		// Use the subtest level to trim a consistently sized prefix from the
 		// output lines.
 		for i := 0; i <= indent; i++ {
 			line = strings.TrimPrefix(line, "    ")
