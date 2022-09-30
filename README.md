@@ -3,8 +3,9 @@
 go-junit-report is a tool that converts [`go test`] output to a JUnit compatible
 XML report, suitable for use with applications such as [Jenkins].
 
-[![Build status][github-actions-badge]][github-actions-link]
+[![Build status](https://github.com/jstemmer/go-junit-report/actions/workflows/main.yml/badge.svg)](https://github.com/jstemmer/go-junit-report/actions)
 [![Go Reference](https://pkg.go.dev/badge/github.com/jstemmer/go-junit-report/v2.svg)](https://pkg.go.dev/github.com/jstemmer/go-junit-report/v2)
+[![Go Report Card](https://goreportcard.com/badge/github.com/jstemmer/go-junit-report/v2)](https://goreportcard.com/report/github.com/jstemmer/go-junit-report/v2)
 
 ## Install from package (recommended)
 
@@ -118,8 +119,6 @@ See [CONTRIBUTING.md].
 
 [`go test`]: https://pkg.go.dev/cmd/go#hdr-Test_packages
 [Jenkins]: https://www.jenkins.io/
-[github-actions-badge]: https://github.com/jstemmer/go-junit-report/actions/workflows/main.yml/badge.svg
-[github-actions-link]: https://github.com/jstemmer/go-junit-report/actions
 [github.com/jstemmer/go-junit-report/v2/parser/gotest]: https://pkg.go.dev/github.com/jstemmer/go-junit-report/v2/parser/gotest
 [github.com/jstemmer/go-junit-report/v2/junit]: https://pkg.go.dev/github.com/jstemmer/go-junit-report/v2/junit
 [Releases]: https://github.com/jstemmer/go-junit-report/releases
