@@ -75,7 +75,7 @@ type Package struct {
 func (p *Package) SetProperty(key, value string) {
 	// TODO(jstemmer): Delete this method in the next major release.
 	// Delete all the properties whose name is the specified key,
-	// then add the specieid key-value property.
+	// then add the specified key-value property.
 	i := 0
 	for _, prop := range p.Properties {
 		if key != prop.Name {
