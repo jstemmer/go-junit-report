@@ -144,8 +144,31 @@ type Output struct {
 	Data string `xml:",cdata"`
 }
 
+// SkippedNodeTextLocation configures where the <skipped> node text is stored.
+type SkippedNodeTextLocation int
+
+const (
+	// TextNode stores the <skipped> node text as a child text node.
+	TextNode SkippedNodeTextLocation = iota
+
+	// MessageAttr stores the <skipped> node text in the message attribute of the <skipped> node.
+	MessageAttr SkippedNodeTextLocation = iota
+)
+
+// ParseSkippedNodeTextLocation returns a SkipOuputLocationData for the given string.
+func ParseSkippedNodeTextLocation(in string) (SkippedNodeTextLocation, error) {
+	switch in {
+	case "text-node":
+		return TextNode, nil
+	case "message-attr":
+		return MessageAttr, nil
+	default:
+		return 0, fmt.Errorf("parsing skipped node text location: unknown value %q", in)
+	}
+}
+
 // CreateFromReport creates a JUnit representation of the given gtr.Report.
-func CreateFromReport(report gtr.Report, hostname string) Testsuites {
+func CreateFromReport(report gtr.Report, hostname string, skippedNodeTextLocation SkippedNodeTextLocation) Testsuites {
 	var suites Testsuites
 	for _, pkg := range report.Packages {
 		var duration time.Duration
@@ -173,7 +196,7 @@ func CreateFromReport(report gtr.Report, hostname string) Testsuites {
 
 		for _, test := range pkg.Tests {
 			duration += test.Duration
-			suite.AddTestcase(createTestcaseForTest(pkg.Name, test))
+			suite.AddTestcase(createTestcaseForTest(pkg.Name, test, skippedNodeTextLocation))
 		}
 
 		// JUnit doesn't have a good way of dealing with build or runtime
@@ -215,7 +238,7 @@ func CreateFromReport(report gtr.Report, hostname string) Testsuites {
 	return suites
 }
 
-func createTestcaseForTest(pkgName string, test gtr.Test) Testcase {
+func createTestcaseForTest(pkgName string, test gtr.Test, skippedNodeTextLocation SkippedNodeTextLocation) Testcase {
 	tc := Testcase{
 		Classname: pkgName,
 		Name:      test.Name,
@@ -228,9 +251,16 @@ func createTestcaseForTest(pkgName string, test gtr.Test) Testcase {
 			Data:    formatOutput(test.Output),
 		}
 	} else if test.Result == gtr.Skip {
-		tc.Skipped = &Result{
-			Message: "Skipped",
-			Data:    formatOutput(test.Output),
+		switch skippedNodeTextLocation {
+		case TextNode:
+			tc.Skipped = &Result{
+				Message: "Skipped",
+				Data:    formatOutput(test.Output),
+			}
+		case MessageAttr:
+			tc.Skipped = &Result{
+				Message: strings.TrimSpace(formatOutput(test.Output)),
+			}
 		}
 	} else if test.Result == gtr.Unknown {
 		tc.Error = &Result{

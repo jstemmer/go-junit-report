@@ -119,7 +119,7 @@ func TestCreateFromReport(t *testing.T) {
 		},
 	}
 
-	got := CreateFromReport(report, "")
+	got := CreateFromReport(report, "", TextNode)
 	if diff := cmp.Diff(want, got); diff != "" {
 		t.Errorf("CreateFromReport incorrect, diff (-want, +got):\n%s\n", diff)
 	}

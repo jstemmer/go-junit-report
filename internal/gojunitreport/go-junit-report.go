@@ -20,13 +20,14 @@ type parser interface {
 
 // Config contains the go-junit-report command configuration.
 type Config struct {
-	Parser        string
-	Hostname      string
-	PackageName   string
-	SkipXMLHeader bool
-	SubtestMode   gotest.SubtestMode
-	Properties    map[string]string
-	TimestampFunc func() time.Time
+	Parser                  string
+	Hostname                string
+	PackageName             string
+	SkipXMLHeader           bool
+	SubtestMode             gotest.SubtestMode
+	SkippedNodeTextLocation junit.SkippedNodeTextLocation
+	Properties              map[string]string
+	TimestampFunc           func() time.Time
 
 	// For debugging
 	PrintEvents bool
@@ -71,7 +72,7 @@ func (c Config) Run(input io.Reader, output io.Writer) (*gtr.Report, error) {
 }
 
 func (c Config) writeJunitXML(w io.Writer, report gtr.Report) error {
-	testsuites := junit.CreateFromReport(report, c.Hostname)
+	testsuites := junit.CreateFromReport(report, c.Hostname, c.SkippedNodeTextLocation)
 	if !c.SkipXMLHeader {
 		_, err := fmt.Fprintf(w, xml.Header)
 		if err != nil {

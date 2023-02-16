@@ -66,18 +66,19 @@ go-junit-report -in tests.txt -iocopy -out report.xml
 
 Run `go-junit-report -help` for a list of all supported flags.
 
-| Flag                  | Description                                                                     |
-| --------------------  | -----------                                                                     |
-| `-in file`            | read go test log from `file`                                                    |
-| `-iocopy`             | copy input to stdout; can only be used in conjunction with -out                 |
-| `-no-xml-header`      | do not print xml header                                                         |
-| `-out file`           | write XML report to `file`                                                      |
-| `-package-name name`  | specify a default package name to use if output does not contain a package name |
-| `-parser parser`      | specify the parser to use, available parsers are: `gotest` (default), `gojson`  |
-| `-p key=value`        | add property to generated report; properties should be specified as `key=value` |
-| `-set-exit-code`      | set exit code to 1 if tests failed                                              |
-| `-subtest-mode`       | set subtest `mode`, modes are: `ignore-parent-results`, `exclude-parents`       |
-| `-version`            | print version and exit                                                          |
+| Flag                          | Description                                                                     |
+| ----------------------------- | ------------------------------------------------------------------------------- |
+| `-in file`                    | read go test log from `file`                                                    |
+| `-iocopy`                     | copy input to stdout; can only be used in conjunction with -out                 |
+| `-no-xml-header`              | do not print xml header                                                         |
+| `-out file`                   | write XML report to `file`                                                      |
+| `-package-name name`          | specify a default package name to use if output does not contain a package name |
+| `-parser parser`              | specify the parser to use, available parsers are: `gotest` (default), `gojson`  |
+| `-p key=value`                | add property to generated report; properties should be specified as `key=value` |
+| `-set-exit-code`              | set exit code to 1 if tests failed                                              |
+| `-subtest-mode`               | set subtest `mode`, modes are: `ignore-parent-results`, `exclude-parents`       |
+| `-skipped-node-text-location` | set location of <skipped> node text, options are: `text-node`, `message-attr`   |
+| `-version`                    | print version and exit                                                          |
 
 ## Go packages
 
@@ -90,6 +91,10 @@ on pkg.go.dev for more information:
 - [github.com/jstemmer/go-junit-report/v2/junit]
 
 ## Changelog
+
+### v2.1.0
+
+- Add `-skipped-node-text-location` flag to set where <skipped> node text is stored.
 
 ### v2.0.0
 
