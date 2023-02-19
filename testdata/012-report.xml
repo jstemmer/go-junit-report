@@ -14,7 +14,7 @@
 			<failure message="Failed"><![CDATA[    subtests_test.go:10: error message]]></failure>
 		</testcase>
 		<testcase name="TestSubtests/Subtest#02" classname="package/subtests" time="0.000">
-			<skipped message="Skipped"><![CDATA[    subtests_test.go:13: skip message]]></skipped>
+			<skipped message="subtests_test.go:13: skip message"></skipped>
 		</testcase>
 		<testcase name="TestNestedSubtests" classname="package/subtests" time="0.000"></testcase>
 		<testcase name="TestNestedSubtests/a#1" classname="package/subtests" time="0.000"></testcase>

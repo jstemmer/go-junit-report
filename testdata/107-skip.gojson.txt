@@ -1,13 +1,23 @@
-{"Time":"2019-10-09T00:00:00.329193863+00:00","Action":"run","Package":"package/name/skip","Test":"TestSkip"}
-{"Time":"2019-10-09T00:00:00.329288607+00:00","Action":"output","Package":"package/name/skip","Test":"TestSkip","Output":"=== RUN   TestSkip\n"}
-{"Time":"2019-10-09T00:00:00.32929713+00:00","Action":"output","Package":"package/name/skip","Test":"TestSkip","Output":"    skip_test.go:6: skip message\n"}
-{"Time":"2019-10-09T00:00:00.329302577+00:00","Action":"output","Package":"package/name/skip","Test":"TestSkip","Output":"--- SKIP: TestSkip (0.00s)\n"}
-{"Time":"2019-10-09T00:00:00.329305698+00:00","Action":"skip","Package":"package/name/skip","Test":"TestSkip","Elapsed":0}
-{"Time":"2019-10-09T00:00:00.329309504+00:00","Action":"run","Package":"package/name/skip","Test":"TestSkipNow"}
-{"Time":"2019-10-09T00:00:00.329312988+00:00","Action":"output","Package":"package/name/skip","Test":"TestSkipNow","Output":"=== RUN   TestSkipNow\n"}
-{"Time":"2019-10-09T00:00:00.329315853+00:00","Action":"output","Package":"package/name/skip","Test":"TestSkipNow","Output":"    skip_test.go:10: log message\n"}
-{"Time":"2019-10-09T00:00:00.329319388+00:00","Action":"output","Package":"package/name/skip","Test":"TestSkipNow","Output":"--- SKIP: TestSkipNow (0.00s)\n"}
-{"Time":"2019-10-09T00:00:00.329322008+00:00","Action":"skip","Package":"package/name/skip","Test":"TestSkipNow","Elapsed":0}
-{"Time":"2019-10-09T00:00:00.329324691+00:00","Action":"output","Package":"package/name/skip","Output":"PASS\n"}
-{"Time":"2019-10-09T00:00:00.329392899+00:00","Action":"output","Package":"package/name/skip","Output":"ok  \tpackage/name/skip\t0.001s\n"}
-{"Time":"2019-10-09T00:00:00.329615729+00:00","Action":"pass","Package":"package/name/skip","Elapsed":0.001}
+{"Time":"2023-02-19T23:15:21.674171Z","Action":"run","Package":"package/skip","Test":"TestSkip"}
+{"Time":"2023-02-19T23:15:21.674342Z","Action":"output","Package":"package/skip","Test":"TestSkip","Output":"=== RUN   TestSkip\n"}
+{"Time":"2023-02-19T23:15:21.674352Z","Action":"output","Package":"package/skip","Test":"TestSkip","Output":"    skip_test.go:6: skip message\n"}
+{"Time":"2023-02-19T23:15:21.674371Z","Action":"output","Package":"package/skip","Test":"TestSkip","Output":"--- SKIP: TestSkip (0.00s)\n"}
+{"Time":"2023-02-19T23:15:21.674374Z","Action":"skip","Package":"package/skip","Test":"TestSkip","Elapsed":0}
+{"Time":"2023-02-19T23:15:21.674382Z","Action":"run","Package":"package/skip","Test":"TestSkipNow"}
+{"Time":"2023-02-19T23:15:21.674386Z","Action":"output","Package":"package/skip","Test":"TestSkipNow","Output":"=== RUN   TestSkipNow\n"}
+{"Time":"2023-02-19T23:15:21.674388Z","Action":"output","Package":"package/skip","Test":"TestSkipNow","Output":"    skip_test.go:10: log message\n"}
+{"Time":"2023-02-19T23:15:21.674391Z","Action":"output","Package":"package/skip","Test":"TestSkipNow","Output":"--- SKIP: TestSkipNow (0.00s)\n"}
+{"Time":"2023-02-19T23:15:21.674394Z","Action":"skip","Package":"package/skip","Test":"TestSkipNow","Elapsed":0}
+{"Time":"2023-02-19T23:15:21.6744Z","Action":"run","Package":"package/skip","Test":"TestSkipNoMessage"}
+{"Time":"2023-02-19T23:15:21.674402Z","Action":"output","Package":"package/skip","Test":"TestSkipNoMessage","Output":"=== RUN   TestSkipNoMessage\n"}
+{"Time":"2023-02-19T23:15:21.674405Z","Action":"output","Package":"package/skip","Test":"TestSkipNoMessage","Output":"--- SKIP: TestSkipNoMessage (0.00s)\n"}
+{"Time":"2023-02-19T23:15:21.674407Z","Action":"skip","Package":"package/skip","Test":"TestSkipNoMessage","Elapsed":0}
+{"Time":"2023-02-19T23:15:21.674409Z","Action":"run","Package":"package/skip","Test":"TestSkipLogMessage"}
+{"Time":"2023-02-19T23:15:21.674411Z","Action":"output","Package":"package/skip","Test":"TestSkipLogMessage","Output":"=== RUN   TestSkipLogMessage\n"}
+{"Time":"2023-02-19T23:15:21.67442Z","Action":"output","Package":"package/skip","Test":"TestSkipLogMessage","Output":"    skip_test.go:19: log message\n"}
+{"Time":"2023-02-19T23:15:21.674426Z","Action":"output","Package":"package/skip","Test":"TestSkipLogMessage","Output":"    skip_test.go:20: skip message\n"}
+{"Time":"2023-02-19T23:15:21.674432Z","Action":"output","Package":"package/skip","Test":"TestSkipLogMessage","Output":"--- SKIP: TestSkipLogMessage (0.00s)\n"}
+{"Time":"2023-02-19T23:15:21.674434Z","Action":"skip","Package":"package/skip","Test":"TestSkipLogMessage","Elapsed":0}
+{"Time":"2023-02-19T23:15:21.674439Z","Action":"output","Package":"package/skip","Output":"PASS\n"}
+{"Time":"2023-02-19T23:15:21.674441Z","Action":"output","Package":"package/skip","Output":"ok  \tpackage/skip\n"}
+{"Time":"2023-02-19T23:15:21.674448Z","Action":"pass","Package":"package/skip","Elapsed":0}

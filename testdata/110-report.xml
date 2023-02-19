@@ -11,7 +11,7 @@
 			<failure message="Failed"><![CDATA[    bench_test.go:10: fatal message]]></failure>
 		</testcase>
 		<testcase name="BenchmarkSkip" classname="package/name/benchfail" time="0.000">
-			<skipped message="Skipped"><![CDATA[    bench_test.go:14: skip message]]></skipped>
+			<skipped message="bench_test.go:14: skip message"></skipped>
 		</testcase>
 		<system-out><![CDATA[goos: linux
 goarch: amd64

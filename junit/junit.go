@@ -228,9 +228,17 @@ func createTestcaseForTest(pkgName string, test gtr.Test) Testcase {
 			Data:    formatOutput(test.Output),
 		}
 	} else if test.Result == gtr.Skip {
+		message := ""
+		data := ""
+		if len(test.Output) > 0 {
+			message = strings.TrimSpace(test.Output[len(test.Output)-1])
+			if len(test.Output) > 1 {
+				data = formatOutput(test.Output[:len(test.Output)-1])
+			}
+		}
 		tc.Skipped = &Result{
-			Message: "Skipped",
-			Data:    formatOutput(test.Output),
+			Message: message,
+			Data:    data,
 		}
 	} else if test.Result == gtr.Unknown {
 		tc.Error = &Result{

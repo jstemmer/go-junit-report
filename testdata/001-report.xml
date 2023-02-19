@@ -28,10 +28,10 @@
 			<property name="go.version" value="1.0"></property>
 		</properties>
 		<testcase name="TestSkip" classname="package/skip" time="0.020">
-			<skipped message="Skipped"><![CDATA[    skip_test.go:6: skip message]]></skipped>
+			<skipped message="skip_test.go:6: skip message"></skipped>
 		</testcase>
 		<testcase name="TestSkipNow" classname="package/skip" time="0.130">
-			<skipped message="Skipped"><![CDATA[    skip_test.go:10: log message]]></skipped>
+			<skipped message="skip_test.go:10: log message"></skipped>
 		</testcase>
 	</testsuite>
 </testsuites>

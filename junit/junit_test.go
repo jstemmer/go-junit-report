@@ -94,7 +94,7 @@ func TestCreateFromReport(t *testing.T) {
 						Name:      "TestSkip",
 						Classname: "package/name",
 						Time:      "0.000",
-						Skipped:   &Result{Message: "Skipped"},
+						Skipped:   &Result{},
 					},
 					{
 						Name:      "TestIncomplete",
