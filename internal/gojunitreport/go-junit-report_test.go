@@ -14,7 +14,6 @@ import (
 	"time"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/jstemmer/go-junit-report/v2/junit"
 )
 
 const testDataDir = "../../testdata/"
@@ -22,11 +21,10 @@ const testDataDir = "../../testdata/"
 var matchTest = flag.String("match", "", "only test testdata matching this pattern")
 
 var testConfigs = map[int]Config{
-	5:   {SkipXMLHeader: true},
-	6:   {SkipXMLHeader: true},
-	7:   {PackageName: "test/package"},
-	39:  {Properties: make(map[string]string)},
-	114: {SkippedNodeTextLocation: junit.MessageAttr},
+	5:  {SkipXMLHeader: true},
+	6:  {SkipXMLHeader: true},
+	7:  {PackageName: "test/package"},
+	39: {Properties: make(map[string]string)},
 }
 
 func TestRun(t *testing.T) {

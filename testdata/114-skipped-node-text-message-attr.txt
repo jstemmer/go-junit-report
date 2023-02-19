@@ -1,8 +1,0 @@
-=== RUN   TestSkip
-    skip_test.go:6: skip message
---- SKIP: TestSkip (0.00s)
-=== RUN   TestSkipNow
-    skip_test.go:10: log message
---- SKIP: TestSkipNow (0.00s)
-PASS
-ok      package/skip    0.394s
