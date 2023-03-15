@@ -136,6 +136,14 @@ func (p *Parser) Parse(r io.Reader) (gtr.Report, error) {
 
 func (p *Parser) parse(r reader.LineReader) (gtr.Report, error) {
 	p.events = nil
+
+	rb := newReportBuilder()
+	rb.packageName = p.packageName
+	rb.subtestMode = p.subtestMode
+	if p.timestampFunc != nil {
+		rb.timestampFunc = p.timestampFunc
+	}
+
 	for {
 		line, metadata, err := r.ReadLine()
 		if err == io.EOF {
@@ -162,24 +170,11 @@ func (p *Parser) parse(r reader.LineReader) (gtr.Report, error) {
 
 		for _, ev := range evs {
 			ev.applyMetadata(metadata)
+			rb.ProcessEvent(ev)
 			p.events = append(p.events, ev)
 		}
 	}
-	return p.report(p.events), nil
-}
-
-// report generates a gtr.Report from the given list of events.
-func (p *Parser) report(events []Event) gtr.Report {
-	rb := newReportBuilder()
-	rb.packageName = p.packageName
-	rb.subtestMode = p.subtestMode
-	if p.timestampFunc != nil {
-		rb.timestampFunc = p.timestampFunc
-	}
-	for _, ev := range events {
-		rb.ProcessEvent(ev)
-	}
-	return rb.Build()
+	return rb.Build(), nil
 }
 
 // Events returns the events created by the parser.
