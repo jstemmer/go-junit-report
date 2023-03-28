@@ -91,6 +91,9 @@ on pkg.go.dev for more information:
 
 ## Changelog
 
+### v2.1.0
+- Populate <skipped> node message attribute with last line of output from test
+
 ### v2.0.0
 
 - Support for parsing `go test -json` output.

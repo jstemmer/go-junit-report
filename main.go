@@ -16,7 +16,7 @@ import (
 
 // Current release information printed by the -version flag.
 var (
-	Version   = "v2.0.0-dev"
+	Version   = "v2.1.0"
 	Revision  = "HEAD"
 	BuildTime string
 )

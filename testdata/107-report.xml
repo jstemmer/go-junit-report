@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites tests="2" skipped="2">
-	<testsuite name="package/name/skip" tests="2" failures="0" errors="0" id="0" hostname="hostname" skipped="2" time="0.001" timestamp="2022-01-01T00:00:00Z">
+<testsuites tests="4" skipped="4">
+	<testsuite name="package/skip" tests="4" failures="0" errors="0" id="0" hostname="hostname" skipped="4" time="0.000" timestamp="2022-01-01T00:00:00Z">
 		<properties>
 			<property name="go.version" value="1.0"></property>
 		</properties>
-		<testcase name="TestSkip" classname="package/name/skip" time="0.000">
-			<skipped message="Skipped"><![CDATA[    skip_test.go:6: skip message]]></skipped>
+		<testcase name="TestSkip" classname="package/skip" time="0.000">
+			<skipped message="skip_test.go:6: skip message"></skipped>
 		</testcase>
-		<testcase name="TestSkipNow" classname="package/name/skip" time="0.000">
-			<skipped message="Skipped"><![CDATA[    skip_test.go:10: log message]]></skipped>
+		<testcase name="TestSkipNow" classname="package/skip" time="0.000">
+			<skipped message="skip_test.go:10: log message"></skipped>
+		</testcase>
+		<testcase name="TestSkipNoMessage" classname="package/skip" time="0.000">
+			<skipped message=""></skipped>
+		</testcase>
+		<testcase name="TestSkipLogMessage" classname="package/skip" time="0.000">
+			<skipped message="skip_test.go:20: skip message"><![CDATA[    skip_test.go:19: log message]]></skipped>
 		</testcase>
 	</testsuite>
 </testsuites>
