@@ -6,9 +6,9 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
+	"regexp"
 	"strings"
 	"time"
-	"regexp"
 
 	"github.com/jstemmer/go-junit-report/v2/gtr"
 )
@@ -253,7 +253,7 @@ func formatDuration(d time.Duration) string {
 // formatOutput combines the lines from the given output into a single string.
 func formatOutput(output []string) string {
 	cleanString := removeEscapeSequences(strings.Join(output, "\n"))
-	return escapeIllegalChars(strings.Join(cleanString, "\n"))
+	return escapeIllegalChars(cleanString)
 }
 
 func escapeIllegalChars(str string) string {

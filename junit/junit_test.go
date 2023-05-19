@@ -33,6 +33,11 @@ func TestCreateFromReport(t *testing.T) {
 						Output: []string{"\x00\v\f \t\\"},
 					},
 					{
+						Name:   "TestRemoveOutputANSI",
+						Result: gtr.Pass,
+						Output: []string{"This contains some", "\x1b[1mANSI\x1b[0m", "sequence"},
+					},
+					{
 						Name:   "TestFail",
 						Result: gtr.Fail,
 						Output: []string{"fail"},
@@ -53,14 +58,14 @@ func TestCreateFromReport(t *testing.T) {
 	}
 
 	want := Testsuites{
-		Tests:    7,
+		Tests:    8,
 		Errors:   3,
 		Failures: 1,
 		Skipped:  1,
 		Suites: []Testsuite{
 			{
 				Name:      "package/name",
-				Tests:     7,
+				Tests:     8,
 				Errors:    3,
 				ID:        0,
 				Failures:  1,
@@ -83,6 +88,12 @@ func TestCreateFromReport(t *testing.T) {
 						Classname: "package/name",
 						Time:      "0.000",
 						SystemOut: &Output{Data: `��� 	\`},
+					},
+					{
+						Name:      "TestRemoveOutputANSI",
+						Classname: "package/name",
+						Time:      "0.000",
+						SystemOut: &Output{Data: "This contains some\nANSI\nsequence"},
 					},
 					{
 						Name:      "TestFail",
@@ -193,8 +204,8 @@ func TestWriteXML(t *testing.T) {
 
 	var suites Testsuites
 
-	ts := Testsuite{Name:"Example"}
-	ts.AddTestcase(Testcase{Name: "Test", })
+	ts := Testsuite{Name: "Example"}
+	ts.AddTestcase(Testcase{Name: "Test"})
 	suites.AddSuite(ts)
 
 	var buf bytes.Buffer
