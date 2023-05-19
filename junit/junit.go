@@ -8,6 +8,7 @@ import (
 	"io"
 	"strings"
 	"time"
+	"regexp"
 
 	"github.com/jstemmer/go-junit-report/v2/gtr"
 )
@@ -251,7 +252,8 @@ func formatDuration(d time.Duration) string {
 
 // formatOutput combines the lines from the given output into a single string.
 func formatOutput(output []string) string {
-	return escapeIllegalChars(strings.Join(output, "\n"))
+	cleanString := removeEscapeSequences(strings.Join(output, "\n"))
+	return escapeIllegalChars(strings.Join(cleanString, "\n"))
 }
 
 func escapeIllegalChars(str string) string {
@@ -261,6 +263,14 @@ func escapeIllegalChars(str string) string {
 		}
 		return '\uFFFD'
 	}, str)
+}
+
+func removeEscapeSequences(s string) string {
+	// Define a regular expression to match ANSI escape sequences
+	ansiEscapeRegex := regexp.MustCompile(`\x1b\[[0-9;]*[a-zA-Z]`)
+	// Remove ANSI escape sequences from the input string
+	cleanString := ansiEscapeRegex.ReplaceAllString(s, "")
+	return cleanString
 }
 
 // Decide whether the given rune is in the XML Character Range, per
