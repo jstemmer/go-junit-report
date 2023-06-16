@@ -6,9 +6,10 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
-	"regexp"
 	"strings"
 	"time"
+
+	"github.com/acarl005/stripansi"
 
 	"github.com/jstemmer/go-junit-report/v2/gtr"
 )
@@ -252,25 +253,17 @@ func formatDuration(d time.Duration) string {
 
 // formatOutput combines the lines from the given output into a single string.
 func formatOutput(output []string) string {
-	cleanString := removeEscapeSequences(strings.Join(output, "\n"))
-	return escapeIllegalChars(cleanString)
+	return escapeIllegalChars(strings.Join(output, "\n"))
 }
 
 func escapeIllegalChars(str string) string {
+	str = stripansi.Strip(str)
 	return strings.Map(func(r rune) rune {
 		if isInCharacterRange(r) {
 			return r
 		}
 		return '\uFFFD'
 	}, str)
-}
-
-func removeEscapeSequences(s string) string {
-	// Define a regular expression to match ANSI escape sequences
-	ansiEscapeRegex := regexp.MustCompile(`\x1b\[[0-9;]*[a-zA-Z]`)
-	// Remove ANSI escape sequences from the input string
-	cleanString := ansiEscapeRegex.ReplaceAllString(s, "")
-	return cleanString
 }
 
 // Decide whether the given rune is in the XML Character Range, per

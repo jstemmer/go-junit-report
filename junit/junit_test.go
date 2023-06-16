@@ -35,7 +35,7 @@ func TestCreateFromReport(t *testing.T) {
 					{
 						Name:   "TestRemoveOutputANSI",
 						Result: gtr.Pass,
-						Output: []string{"This contains some", "\x1b[1mANSI\x1b[0m", "sequence"},
+						Output: []string{"This contains some", "\x1b[38;5;140mANSI\x1b[0m", "sequence"},
 					},
 					{
 						Name:   "TestFail",
