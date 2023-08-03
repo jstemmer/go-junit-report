@@ -24,7 +24,7 @@ var (
 	// regexBenchInfo captures 3-5 groups: benchmark name, number of times ran, ns/op (with or without decimal), MB/sec (optional), B/op (optional), and allocs/op (optional).
 	regexBenchmark    = regexp.MustCompile(`^(Benchmark[^ -]+)$`)
 	regexBenchSummary = regexp.MustCompile(`^(Benchmark[^ -]+)(?:-\d+\s+|\s+)(\d+)\s+(\d+|\d+\.\d+)\sns\/op(?:\s+(\d+|\d+\.\d+)\sMB\/s)?(?:\s+(\d+)\sB\/op)?(?:\s+(\d+)\sallocs/op)?`)
-	regexCoverage     = regexp.MustCompile(`^coverage:\s+(\d+|\d+\.\d+)%\s+of\s+statements(?:\sin\s(.+))?$`)
+	regexCoverage     = regexp.MustCompile(`^(\s+[^ \t]+\s+)?coverage:\s+(\d+|\d+\.\d+)%\s+of\s+statements(?:\sin\s(.+))?$`)
 	regexEndBenchmark = regexp.MustCompile(`^--- (BENCH|FAIL|SKIP): (Benchmark[^ -]+)(?:-\d+)?$`)
 	regexEndTest      = regexp.MustCompile(`((?:    )*)--- (PASS|FAIL|SKIP): ([^ ]+) \((\d+\.\d+)(?: seconds|s)\)`)
 	regexStatus       = regexp.MustCompile(`^(PASS|FAIL|SKIP)$`)
@@ -197,8 +197,8 @@ func (p *Parser) parseLine(line string) (events []Event) {
 		return p.status(matches[1])
 	} else if matches := regexSummary.FindStringSubmatch(line); len(matches) == 8 {
 		return p.summary(matches[1], matches[2], matches[3], matches[4], matches[7], matches[5], matches[6])
-	} else if matches := regexCoverage.FindStringSubmatch(line); len(matches) == 3 {
-		return p.coverage(matches[1], matches[2])
+	} else if matches := regexCoverage.FindStringSubmatch(line); len(matches) == 4 {
+		return p.coverage(matches[2], matches[3])
 	} else if matches := regexBenchmark.FindStringSubmatch(line); len(matches) == 2 {
 		return p.runBench(matches[1])
 	} else if matches := regexBenchSummary.FindStringSubmatch(line); len(matches) == 7 {
