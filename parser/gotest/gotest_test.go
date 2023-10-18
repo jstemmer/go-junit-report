@@ -45,6 +45,10 @@ var parseLineTests = []parseLineTest{
 		[]Event{{Type: "cont_test", Name: "TestOne"}},
 	},
 	{
+		"=== NAME  TestOne",
+		[]Event{{Type: "cont_test", Name: "TestOne"}},
+	},
+	{
 		"--- PASS: TestOne (12.34 seconds)",
 		[]Event{{Type: "end_test", Name: "TestOne", Result: "PASS", Duration: 12_340 * time.Millisecond}},
 	},

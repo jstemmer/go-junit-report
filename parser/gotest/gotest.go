@@ -191,6 +191,9 @@ func (p *Parser) parseLine(line string) (events []Event) {
 		return p.pauseTest(strings.TrimSpace(line[10:]))
 	} else if strings.HasPrefix(line, "=== CONT ") {
 		return p.contTest(strings.TrimSpace(line[9:]))
+	} else if strings.HasPrefix(line, "=== NAME ") {
+		// for compatibility with gotest 1.20+ https://go-review.git.corp.google.com/c/go/+/443596
+		return p.contTest(strings.TrimSpace(line[9:]))
 	} else if matches := regexEndTest.FindStringSubmatch(line); len(matches) == 5 {
 		return p.endTest(line, matches[1], matches[2], matches[3], matches[4])
 	} else if matches := regexStatus.FindStringSubmatch(line); len(matches) == 2 {
