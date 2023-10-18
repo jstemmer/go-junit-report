@@ -91,6 +91,18 @@ on pkg.go.dev for more information:
 
 ## Changelog
 
+### v2.1.0
+
+- Fix #147: Make timestamps in generated report more accurate.
+- Fix #140: Escape illegal XML characters in junit output.
+- Fix #145: Handle build errors in test packages with the `_test` suffix.
+- Fix #145: Don't ignore build errors that did not belong to a package.
+- Fix #134: Json test output was not parsed correctly when using the `-race` flag in `go test`.
+- Add support for `=== NAME` lines introduced in Go1.20
+- junit: Add File attribute to `testsuite`.
+- junit: Allow multiple properties with the same name.
+- junit: Add the `Testsuites.WriteXML` convenience method.
+
 ### v2.0.0
 
 - Support for parsing `go test -json` output.
