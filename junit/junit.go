@@ -9,6 +9,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/acarl005/stripansi"
+
 	"github.com/jstemmer/go-junit-report/v2/gtr"
 )
 
@@ -255,6 +257,7 @@ func formatOutput(output []string) string {
 }
 
 func escapeIllegalChars(str string) string {
+	str = stripansi.Strip(str)
 	return strings.Map(func(r rune) rune {
 		if isInCharacterRange(r) {
 			return r
