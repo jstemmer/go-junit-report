@@ -145,7 +145,7 @@ type Output struct {
 }
 
 // CreateFromReport creates a JUnit representation of the given gtr.Report.
-func CreateFromReport(report gtr.Report, hostname string) Testsuites {
+func CreateFromReport(report gtr.Report, hostname string, skipSkipped bool) Testsuites {
 	var suites Testsuites
 	for _, pkg := range report.Packages {
 		var duration time.Duration
@@ -172,8 +172,10 @@ func CreateFromReport(report gtr.Report, hostname string) Testsuites {
 		}
 
 		for _, test := range pkg.Tests {
-			duration += test.Duration
-			suite.AddTestcase(createTestcaseForTest(pkg.Name, test))
+			if !(test.Result == gtr.Skip && skipSkipped) {
+				duration += test.Duration
+				suite.AddTestcase(createTestcaseForTest(pkg.Name, test))
+			}
 		}
 
 		// JUnit doesn't have a good way of dealing with build or runtime

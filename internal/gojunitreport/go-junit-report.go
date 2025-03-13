@@ -24,6 +24,7 @@ type Config struct {
 	Hostname      string
 	PackageName   string
 	SkipXMLHeader bool
+	SkipSkipped   bool
 	SubtestMode   gotest.SubtestMode
 	Properties    map[string]string
 	TimestampFunc func() time.Time
@@ -71,7 +72,7 @@ func (c Config) Run(input io.Reader, output io.Writer) (*gtr.Report, error) {
 }
 
 func (c Config) writeJunitXML(w io.Writer, report gtr.Report) error {
-	testsuites := junit.CreateFromReport(report, c.Hostname)
+	testsuites := junit.CreateFromReport(report, c.Hostname, c.SkipSkipped)
 	if !c.SkipXMLHeader {
 		_, err := fmt.Fprintf(w, xml.Header)
 		if err != nil {
