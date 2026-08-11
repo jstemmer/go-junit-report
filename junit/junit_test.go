@@ -153,6 +153,7 @@ func TestMarshalUnmarshal(t *testing.T) {
 						Name:      "test1",
 						Classname: "class",
 						Time:      "12.345",
+						Timestamp: "2012-03-09T14:38:06+01:00",
 						Status:    "status",
 						Skipped:   &Result{Message: "skipped", Type: "type", Data: "data"},
 						Error:     &Result{Message: "error", Type: "type", Data: "data"},
