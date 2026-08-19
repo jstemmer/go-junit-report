@@ -116,14 +116,20 @@ type Testcase struct {
 	Classname string `xml:"classname,attr"`
 
 	// optional attributes
-	Time   string `xml:"time,attr,omitempty"` // duration in seconds
-	Status string `xml:"status,attr,omitempty"`
+	Time      string `xml:"time,attr,omitempty"`      // duration in seconds
+	Timestamp string `xml:"timestamp,attr,omitempty"` // date and time in ISO8601
+	Status    string `xml:"status,attr,omitempty"`
 
 	Skipped   *Result `xml:"skipped,omitempty"`
 	Error     *Result `xml:"error,omitempty"`
 	Failure   *Result `xml:"failure,omitempty"`
 	SystemOut *Output `xml:"system-out,omitempty"`
 	SystemErr *Output `xml:"system-err,omitempty"`
+}
+
+// SetTimestamp sets the timestamp in this Testcase.
+func (t *Testcase) SetTimestamp(timestamp time.Time) {
+	t.Timestamp = timestamp.Format(time.RFC3339)
 }
 
 // Property represents a key/value pair.
