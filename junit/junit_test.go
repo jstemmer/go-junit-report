@@ -119,7 +119,94 @@ func TestCreateFromReport(t *testing.T) {
 		},
 	}
 
-	got := CreateFromReport(report, "")
+	got := CreateFromReport(report, "", false)
+	if diff := cmp.Diff(want, got); diff != "" {
+		t.Errorf("CreateFromReport incorrect, diff (-want, +got):\n%s\n", diff)
+	}
+}
+
+func TestCreateFromReportWithSkipped(t *testing.T) {
+	report := gtr.Report{
+		Packages: []gtr.Package{
+			{
+				Name:       "package/name",
+				Timestamp:  time.Date(2022, 6, 26, 0, 0, 0, 0, time.UTC),
+				Duration:   1 * time.Second,
+				Coverage:   0.9,
+				Output:     []string{"output"},
+				Properties: []gtr.Property{{Name: "go.version", Value: "go1.18"}},
+				Tests: []gtr.Test{
+					{
+						Name:   "TestPass",
+						Result: gtr.Pass,
+						Output: []string{"ok"},
+					},
+					{
+						Name:   "TestFail",
+						Result: gtr.Fail,
+						Output: []string{"fail"},
+					},
+					{
+						Name:   "TestSkip",
+						Result: gtr.Skip,
+					},
+				},
+				BuildError: gtr.Error{Name: "Build error"},
+				RunError:   gtr.Error{Name: "Run error"},
+			},
+		},
+	}
+
+	want := Testsuites{
+		Tests:    4,
+		Errors:   2,
+		Failures: 1,
+		Skipped:  0,
+		Suites: []Testsuite{
+			{
+				Name:      "package/name",
+				Tests:     4,
+				Errors:    2,
+				ID:        0,
+				Failures:  1,
+				Skipped:   0,
+				Time:      "1.000",
+				Timestamp: "2022-06-26T00:00:00Z",
+				Properties: &[]Property{
+					{Name: "go.version", Value: "go1.18"},
+					{Name: "coverage.statements.pct", Value: "0.90"},
+				},
+				Testcases: []Testcase{
+					{
+						Name:      "TestPass",
+						Classname: "package/name",
+						Time:      "0.000",
+						SystemOut: &Output{Data: "ok"},
+					},
+					{
+						Name:      "TestFail",
+						Classname: "package/name",
+						Time:      "0.000",
+						Failure:   &Result{Message: "Failed", Data: "fail"},
+					},
+					{
+						Classname: "Build error",
+						Time:      "0.000",
+						Error:     &Result{Message: "Build error"},
+					},
+					{
+						Name:      "Failure",
+						Classname: "Run error",
+						Time:      "0.000",
+						Error:     &Result{Message: "Runtime error"},
+					},
+				},
+				SystemOut: &Output{Data: "output"},
+			},
+		},
+	}
+
+	got := CreateFromReport(report, "", true)
 	if diff := cmp.Diff(want, got); diff != "" {
 		t.Errorf("CreateFromReport incorrect, diff (-want, +got):\n%s\n", diff)
 	}
