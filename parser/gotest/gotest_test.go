@@ -225,3 +225,40 @@ func TestParseLine(t *testing.T) {
 		})
 	}
 }
+
+func TestParseLine_AssumeNoBuildOutput(t *testing.T) {
+	tests := []parseLineTest{
+		{
+			"# package/name/failing1",
+			[]Event{{Type: "output", Data: "# package/name/failing1"}},
+		},
+		{
+			"# package/name/failing2 [package/name/failing2.test]",
+			[]Event{{Type: "output", Data: "# package/name/failing2 [package/name/failing2.test]"}},
+		},
+	}
+
+    // Include all the other tests that don't produce build_output as well, they
+    // should continue functioning normally.
+Outer:
+	for _, test := range parseLineTests {
+		for _, event := range test.events {
+			if event.Type == "build_output" {
+				continue Outer
+			}
+		}
+
+        tests = append(tests, test)
+	}
+
+	for i, test := range tests {
+		name := fmt.Sprintf("%d-%s", i, test.Name())
+		t.Run(name, func(t *testing.T) {
+			parser := NewParser(AssumeNoBuildOutput())
+			events := parser.parseLine(test.input)
+			if diff := cmp.Diff(test.events, events); diff != "" {
+				t.Errorf("parseLine(%q) returned unexpected events, diff (-want, +got):\n%v", test.input, diff)
+			}
+		})
+	}
+}

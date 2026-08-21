@@ -109,10 +109,21 @@ func SetSubtestMode(mode SubtestMode) Option {
 	}
 }
 
+// AssumeNoBuildOutput is an Option disables "build_output" event parsing. This
+// option is most useful when running tests that are known to build correctly,
+// or have already been built (e.g. via go test -c, or an alternative build
+// system).
+func AssumeNoBuildOutput() Option {
+	return func(p *Parser) {
+		p.assumeNoBuildOutput = true
+	}
+}
+
 // Parser is a Go test output Parser.
 type Parser struct {
-	packageName string
-	subtestMode SubtestMode
+	packageName         string
+	subtestMode         SubtestMode
+	assumeNoBuildOutput bool
 
 	timestampFunc func() time.Time
 
@@ -208,7 +219,7 @@ func (p *Parser) parseLine(line string) (events []Event) {
 		return p.benchSummary(matches[1], matches[2], matches[3], matches[4], matches[5], matches[6])
 	} else if matches := regexEndBenchmark.FindStringSubmatch(line); len(matches) == 3 {
 		return p.endBench(matches[1], matches[2])
-	} else if strings.HasPrefix(line, "# ") {
+	} else if !p.assumeNoBuildOutput && strings.HasPrefix(line, "# ") {
 		fields := strings.Fields(strings.TrimPrefix(line, "# "))
 		if len(fields) == 1 || len(fields) == 2 {
 			return p.buildOutput(fields[0])
