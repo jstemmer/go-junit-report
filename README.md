@@ -45,6 +45,13 @@ errors to be detected. For example:
 go test -json 2>&1 | go-junit-report -parser gojson > report.xml
 ```
 
+Full example, where Go test result is parsed as JSON, the test execution
+output is printed as part of go-junit-report and the step fails in case
+of test failure.
+```bash
+go test -json ./... 2>&1 | go-junit-report -set-exit-code -parser gojson -iocopy -out report.xml
+```
+
 Go benchmark output is also supported. The following example runs benchmarks for
 the package in the current directory and uses the `-out` flag to write the
 output to a file called `report.xml`.
