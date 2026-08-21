@@ -148,6 +148,10 @@ var parseLineTests = []parseLineTest{
 		[]Event{{Type: "coverage", CovPct: 99.8, CovPackages: []string{"fmt", "encoding/xml"}}},
 	},
 	{
+		"   package/name    coverage: 13.37% of statements",
+		[]Event{{Type: "coverage", CovPct: 13.37}},
+	},
+	{
 		"BenchmarkOK",
 		[]Event{{Type: "run_benchmark", Name: "BenchmarkOK"}},
 	},
